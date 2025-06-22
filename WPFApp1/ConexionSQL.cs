@@ -25,7 +25,8 @@ namespace WPFApp1
                 Conexion.Open();
                 if (_BanderaCrearTablas)
                 {
-                    CrearTablas(Conexion);
+                    CrearTablaPersonas(Conexion);
+                    CrearTablaProductos(Conexion);
                 }
                 else
                 { 
@@ -43,11 +44,31 @@ namespace WPFApp1
                         {
                             if (ex.Message.Contains("no such table"))
                             {
-                                CrearTablas(Conexion);
+                                CrearTablaPersonas(Conexion);
                                 Console.WriteLine("La tabla de personas no existia y fue creada nuevamente");
                             }
                         }
                     
+                    }
+                    _PruebaConexion = "SELECT * FROM Productos";
+                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
+                    {
+                        try
+                        {
+                            using (SQLiteDataReader Lector = comando.ExecuteReader())
+                            {
+                                Console.WriteLine("La tabla de productos existe y es accesible");
+                            }
+                        }
+                        catch (SQLiteException ex)
+                        {
+                            if (ex.Message.Contains("no such table"))
+                            {
+                                CrearTablaProductos(Conexion);
+                                Console.WriteLine("La tabla de productos no existia y fue creada nuevamente");
+                            }
+                        }
+
                     }
                 }
             }
@@ -57,7 +78,7 @@ namespace WPFApp1
             }
         }
 
-        public static bool CrearTablas(SQLiteConnection Conexion)
+        public static bool CrearTablaPersonas(SQLiteConnection Conexion)
         {
             try
             {
@@ -77,6 +98,31 @@ namespace WPFApp1
             catch(SQLiteException ex)
             {
                 Console.WriteLine($"Error al crear tabla personas {ex.Message}");
+                return false;
+            }
+        }
+
+        public static bool CrearTablaProductos(SQLiteConnection Conexion)
+        {
+            try
+            {
+                string consulta = "CREATE TABLE IF NOT EXISTS Productos (" +
+                    "producto_id INTEGER PRIMARY KEY, " +
+                    "Nombre TEXT NOT NULL," +
+                    "Categoria TEXT NOT NULL," +
+                    "Precio INTEGER NOT NULL), " +
+                    "ruta_imagen TEXT";
+
+                using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
+                {
+                    comando.ExecuteNonQuery();
+                    Console.WriteLine("Tabla 'Productos' creada");
+                    return true;
+                }
+            }
+            catch (SQLiteException ex)
+            {
+                Console.WriteLine($"Error al crear tabla productos {ex.Message}");
                 return false;
             }
         }

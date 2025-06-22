@@ -3,13 +3,14 @@ using System.Windows.Input;
 
 namespace WPFApp1
 {
-    public class MainWindowViewModel
+    public class MainWindowViewModel 
     {
         public ICommand VerListaCommand { get; }
         public ICommand AniadirPersonaCommand { get; }
         public ICommand EliminarPersonaCommand { get; }
         public ICommand EditarPersonaCommand { get; }
         public ICommand VerCatalogoCommand{ get; }
+        public ICommand AniadirProductoCommand { get; }
 
         public MainWindowViewModel()
         {
@@ -18,8 +19,15 @@ namespace WPFApp1
             EliminarPersonaCommand = new RelayCommand<object>(EliminarPersona);
             EditarPersonaCommand = new RelayCommand<object>(EditarPersona);
             VerCatalogoCommand = new RelayCommand<object>(VerCatalogo);
+            AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
         }
 
+        private void AniadirProducto(object parameter)
+        {
+            AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
+            AniadirProducto _AniadirProducto = new AniadirProducto(_viewModel);
+            _AniadirProducto.Show();
+        }
         private void VerLista(object parameter)
         {
             ListaPersonas lista = new ListaPersonas();
