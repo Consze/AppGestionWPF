@@ -28,7 +28,8 @@ namespace WPFApp1
 
         private void VerCatalogo()
         {
-            Catalogo _catalogo = new Catalogo();
+            CatalogoViewModel catalogoViewModel = new CatalogoViewModel();
+            Catalogo _catalogo = new Catalogo(catalogoViewModel);
             _catalogo.Show();
         }
         private void AniadirPersona()
