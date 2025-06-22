@@ -1,11 +1,12 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 
-public class RelayCommand : ICommand
+public class RelayCommand<T> : ICommand
 {
-    private readonly Action _execute;
-    private readonly Func<bool> _canExecute;
+    private readonly Action<T> _execute;
+    private readonly Func<T, bool> _canExecute;
 
-    public RelayCommand(Action execute, Func<bool> canExecute = null)
+    public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
     {
         _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         _canExecute = canExecute;
@@ -19,11 +20,33 @@ public class RelayCommand : ICommand
 
     public bool CanExecute(object parameter)
     {
-        return _canExecute == null || _canExecute();
+
+        if (_canExecute == null) return true;
+
+        if (parameter == null)
+        {
+            return _canExecute(default(T));
+        }
+
+        if (parameter is T typedParameter)
+        {
+            return _canExecute(typedParameter);
+        }
+
+        return false;
     }
 
     public void Execute(object parameter)
     {
-        _execute();
+        if (parameter == null)
+        {
+            _execute(default(T));
+            return;
+        }
+
+        if (parameter is T typedParameter)
+        {
+            _execute(typedParameter);
+        }
     }
 }

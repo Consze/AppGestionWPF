@@ -13,38 +13,38 @@ namespace WPFApp1
 
         public MainWindowViewModel()
         {
-            VerListaCommand = new RelayCommand(VerLista);
-            AniadirPersonaCommand = new RelayCommand(AniadirPersona);
-            EliminarPersonaCommand = new RelayCommand(EliminarPersona);
-            EditarPersonaCommand = new RelayCommand(EditarPersona);
-            VerCatalogoCommand = new RelayCommand(VerCatalogo);
+            VerListaCommand = new RelayCommand<object>(VerLista);
+            AniadirPersonaCommand = new RelayCommand<object>(AniadirPersona);
+            EliminarPersonaCommand = new RelayCommand<object>(EliminarPersona);
+            EditarPersonaCommand = new RelayCommand<object>(EditarPersona);
+            VerCatalogoCommand = new RelayCommand<object>(VerCatalogo);
         }
 
-        private void VerLista()
+        private void VerLista(object parameter)
         {
             ListaPersonas lista = new ListaPersonas();
             lista.Show();
         }
 
-        private void VerCatalogo()
+        private void VerCatalogo(object parameter)
         {
             CatalogoViewModel catalogoViewModel = new CatalogoViewModel();
             Catalogo _catalogo = new Catalogo(catalogoViewModel);
             _catalogo.Show();
         }
-        private void AniadirPersona()
+        private void AniadirPersona(object parameter)
         {
             AniadirPersona _AniadirPersona = new AniadirPersona();
             _AniadirPersona.Show();
         }
 
-        private void EliminarPersona()
+        private void EliminarPersona(object parameter)
         {
             EliminarPersona _EliminarPersona = new EliminarPersona();
             _EliminarPersona.Show();
         }
 
-        private void EditarPersona()
+        private void EditarPersona(object parameter)
         {
             EntradaUsuario ventanaEntrada = new EntradaUsuario();
             bool? resultado = ventanaEntrada.ShowDialog();
