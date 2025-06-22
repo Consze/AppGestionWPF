@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Storyboard x:Key="FadeIn1Sec">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="0" To="1" Duration="0:0:0.3" />
+    </Storyboard>
+
+    <SolidColorBrush x:Key="HighlightColor" Color="Transparent"/>
+
+    <Storyboard x:Key="FadeBackgroundAnimation">
+        <ColorAnimation Storyboard.TargetProperty="(TextBlock.Background).(SolidColorBrush.Color)"
+                    To="LightBlue" Duration="0:0:0.2" />
+    </Storyboard>
+</ResourceDictionary>
