@@ -24,6 +24,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         
+        
         <TextBlock Grid.Column="1" Grid.Row="1" FontSize="36" Text="Añadir Persona" 
                 FontWeight="Regular" Grid.ColumnSpan="3" Margin="0,0,0,10"/>
         <TextBlock Grid.Column="1" Grid.Row="2" Text="Nombre"/>

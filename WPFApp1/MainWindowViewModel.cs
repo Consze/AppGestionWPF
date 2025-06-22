@@ -9,6 +9,7 @@ namespace WPFApp1
         public ICommand AniadirPersonaCommand { get; }
         public ICommand EliminarPersonaCommand { get; }
         public ICommand EditarPersonaCommand { get; }
+        public ICommand VerCatalogoCommand{ get; }
 
         public MainWindowViewModel()
         {
@@ -16,6 +17,7 @@ namespace WPFApp1
             AniadirPersonaCommand = new RelayCommand(AniadirPersona);
             EliminarPersonaCommand = new RelayCommand(EliminarPersona);
             EditarPersonaCommand = new RelayCommand(EditarPersona);
+            VerCatalogoCommand = new RelayCommand(VerCatalogo);
         }
 
         private void VerLista()
@@ -24,6 +26,11 @@ namespace WPFApp1
             lista.Show();
         }
 
+        private void VerCatalogo()
+        {
+            Catalogo _catalogo = new Catalogo();
+            _catalogo.Show();
+        }
         private void AniadirPersona()
         {
             AniadirPersona _AniadirPersona = new AniadirPersona();
