@@ -20,7 +20,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0" Margin="5"
-                Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Width="150" Height="300" >
+                Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Width="{Binding AnchoImagenSeleccionada}" Height="{Binding AltoImagenSeleccionada}" >
             <Image x:Name="PlaceHolder" Source="{Binding RutaImagenSeleccionada}"/>
         </Border>
         <Button x:Name="ElegirImagen" Grid.Row="1" Grid.Column="1" Content="Elegir Imagen" Command="{Binding ElegirImagenCommand}"/>

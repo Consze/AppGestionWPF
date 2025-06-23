@@ -1,13 +1,19 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
-using Microsoft.Win32;
 using System.Windows.Media.Imaging;
 
 namespace WPFApp1
 {
+    public enum LadoMasLargo
+    {
+        Ancho,
+        Alto
+    }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        private int CalculoAlturaMarco { get; set; }
+        private int CalculoAnchoMarco { get; set; }
 
         private string _rutaImagenSeleccionada;
         public string RutaImagenSeleccionada 
@@ -59,6 +65,8 @@ namespace WPFApp1
             RutaImagenSeleccionada = string.Empty;
             AnchoImagenSeleccionada = 0;
             AltoImagenSeleccionada = 0;
+            CalculoAlturaMarco = 0;
+            CalculoAnchoMarco = 0;
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
         }
 
@@ -76,12 +84,49 @@ namespace WPFApp1
 
             if (resultado == true)
             {
+                int UBound = 0;
+                int LBound = 0;
                 string rutaArchivo = openFileDialog.FileName;
                 RutaImagenSeleccionada = rutaArchivo;
-                //System.Console.WriteLine($"Ruta de la imagen seleccionada: {rutaArchivo}");
+                LadoMasLargo lado = new LadoMasLargo();
+                
+                // Calcular relación de aspecto del marco
+                if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
+                {
+                    UBound = this.CalculoAlturaMarco;
+                    LBound = this.CalculoAnchoMarco;
+                    lado = LadoMasLargo.Alto;
+                }
+                else
+                {
+                    UBound = this.CalculoAnchoMarco;
+                    LBound = this.CalculoAlturaMarco;
+                    lado = LadoMasLargo.Ancho;
+                }
+
+                // Aplicar reducción
+                if (UBound > 300)
+                {
+                    float _RelacionAspecto = (float)UBound / (float)LBound;
+                    switch (lado)
+                    {
+                        case LadoMasLargo.Alto:
+                            AltoImagenSeleccionada = 300;
+                            AnchoImagenSeleccionada = Convert.ToInt32(300 / _RelacionAspecto);
+                            break;
+                        case LadoMasLargo.Ancho:
+                            AnchoImagenSeleccionada = 300;
+                            AltoImagenSeleccionada = Convert.ToInt32(300 / _RelacionAspecto);
+                            break;
+                    }
+                }
             }
         }
 
+        /// <summary>
+        /// Obtiene y almacena las dimensiones de una imagen seleccionada. Se utilizan para reducir la imagen sin alterar su relación de aspecto.
+        /// </summary>
+        /// <param name="rutaArchivo">La ruta a una imagen elegida por el usuario</param>
         private void CargarDimensionesImagen(string rutaArchivo)
         {
             if (!string.IsNullOrEmpty(rutaArchivo))
@@ -93,21 +138,20 @@ namespace WPFApp1
                     bitmapImage.UriSource = new Uri(rutaArchivo);
                     bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                     bitmapImage.EndInit();
-
-                    AnchoImagenSeleccionada = bitmapImage.PixelWidth;
-                    AltoImagenSeleccionada = bitmapImage.PixelHeight;
+                    this.CalculoAnchoMarco = bitmapImage.PixelWidth;
+                    this.CalculoAlturaMarco = bitmapImage.PixelHeight;
                 }
                 catch (Exception ex)
                 {
                     System.Console.WriteLine($"Error al cargar la imagen: {ex.Message}");
-                    AnchoImagenSeleccionada = 0;
-                    AltoImagenSeleccionada = 0;
+                    this.CalculoAnchoMarco = 0;
+                    this.CalculoAlturaMarco = 0;
                 }
             }
             else
             {
-                AnchoImagenSeleccionada = 0;
-                AltoImagenSeleccionada = 0;
+                this.CalculoAnchoMarco = 0;
+                this.CalculoAlturaMarco = 0;
             }
         }
 
