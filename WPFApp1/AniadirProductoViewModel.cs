@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace WPFApp1
 {
@@ -11,9 +13,8 @@ namespace WPFApp1
     }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private int CalculoAlturaMarco { get; set; }
-        private int CalculoAnchoMarco { get; set; }
+        private int CalculoAlturaMarco;
+        private int CalculoAnchoMarco;
 
         private string _rutaImagenSeleccionada;
         public string RutaImagenSeleccionada 
@@ -58,16 +59,70 @@ namespace WPFApp1
             }
         }
 
+        private string _nombreProducto;
+        public string NombreProducto
+        {
+            get { return _nombreProducto; }
+            set
+            {
+                if (_nombreProducto != value)
+                {
+                    _nombreProducto = value;
+                    OnPropertyChanged(nameof(NombreProducto));
+                }
+            }
+        }
+        private string _categoriaProducto;
+        public string CategoriaProducto
+        {
+            get { return _categoriaProducto; }
+            set
+            {
+                if (_categoriaProducto != value)
+                {
+                    _categoriaProducto = value;
+                    OnPropertyChanged(nameof(CategoriaProducto));
+                }
+            }
+        }
+        private int _precioProducto;
+        public int PrecioProducto
+        {
+            get { return _precioProducto; }
+            set
+            {
+                if (_precioProducto != value)
+                {
+                    _precioProducto = value;
+                    OnPropertyChanged(nameof(PrecioProducto));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler CierreSolicitado;
         public ICommand ElegirImagenCommand{ get; }
+        public ICommand AniadirProductoCommand { get; }
+        public ICommand CerrarVistaCommand { get; }
 
         public AniadirProductoViewModel()
         {
-            RutaImagenSeleccionada = string.Empty;
-            AnchoImagenSeleccionada = 0;
-            AltoImagenSeleccionada = 0;
-            CalculoAlturaMarco = 0;
-            CalculoAnchoMarco = 0;
+            //Imagen
+            this.RutaImagenSeleccionada = string.Empty;
+            this.AnchoImagenSeleccionada = 0;
+            this.AltoImagenSeleccionada = 0;
+            this.CalculoAlturaMarco = 0;
+            this.CalculoAnchoMarco = 0;
+
+            //Entidad
+            this.NombreProducto = string.Empty;
+            this.CategoriaProducto = string.Empty;
+            this.PrecioProducto = 0;
+
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
+            AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
+            CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
         }
 
         public void ElegirImagen(object parameter)
@@ -121,6 +176,81 @@ namespace WPFApp1
                     }
                 }
             }
+        }
+
+        public void AniadirProducto(object parameter)
+        {
+            if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(CategoriaProducto) || PrecioProducto == 0)
+            {
+                System.Windows.MessageBox.Show("Por favor, complete todos los campos.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string RutaImagenSalida = string.Empty;
+            if (RutaImagenSeleccionada != string.Empty)
+            { 
+                string NombreArchivo = System.IO.Path.GetFileNameWithoutExtension(RutaImagenSeleccionada);
+                string Extension = System.IO.Path.GetExtension(RutaImagenSeleccionada);
+                string Destino = ".\\datos\\miniaturas\\" + NombreArchivo + Extension;
+                bool SalirDelBucle = false;
+                int NumeroIntento = 0;
+
+                try
+                {
+                    File.Copy(RutaImagenSeleccionada, Destino);
+                    RutaImagenSalida = "./datos/miniaturas/" + NombreArchivo + Extension;
+                    RutaImagenSalida = System.IO.Path.GetFullPath(RutaImagenSalida);
+                    SalirDelBucle = true;
+                }
+                catch(Exception ex)
+                {
+                    while (!SalirDelBucle)
+                    {
+                        if (File.Exists(Destino) && NumeroIntento < 100)
+                        { 
+                            string DestinoPrueba = ".\\datos\\miniaturas\\" + NombreArchivo + NumeroIntento + Extension;
+                            try
+                            { 
+                                File.Copy(RutaImagenSeleccionada, DestinoPrueba); 
+                            }
+                            catch (Exception ex2)
+                            { 
+                                if(File.Exists(DestinoPrueba))
+                                {
+                                    SalirDelBucle = true;
+                                    RutaImagenSalida = "./datos/miniaturas/" + NombreArchivo + NumeroIntento + Extension;
+                                    RutaImagenSalida = System.IO.Path.GetFullPath(RutaImagenSalida);
+                                }
+                                else
+                                {
+                                    NumeroIntento += 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            SalirDelBucle = true;
+                            RutaImagenSalida = string.Empty;
+                        }
+                    }
+                }
+            }
+
+            Productos _nuevoProducto = new Productos(NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
+            if (ProductosRepository.AniadirNuevoProducto(_nuevoProducto))
+            {
+                System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Hubo un error al intentar añadir el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+
+        public void CerrarVista(object parameter)
+        {
+            CierreSolicitado?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

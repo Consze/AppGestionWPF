@@ -110,8 +110,8 @@ namespace WPFApp1
                     "producto_id INTEGER PRIMARY KEY, " +
                     "Nombre TEXT NOT NULL," +
                     "Categoria TEXT NOT NULL," +
-                    "Precio INTEGER NOT NULL), " +
-                    "ruta_imagen TEXT";
+                    "Precio INTEGER NOT NULL, " +
+                    "ruta_imagen VARCHAR);";
 
                 using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
                 {

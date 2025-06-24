@@ -22,7 +22,7 @@
         <TextBlock Grid.Row="1" Grid.Column="1" FontSize="24" FontWeight="Bold" Text="Catalogo" />
 
         <ScrollViewer Grid.Row="2" Grid.Column="1">
-            <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionPersonas}">
+            <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionProductos}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal"/>
@@ -68,9 +68,10 @@
                                 </Style>
                             </Border.Style>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding nombre}"/>
-                                <TextBlock Text="{Binding Path=altura, StringFormat='Altura: {0} cm'}"/>
-                                <TextBlock Text="{Binding Path=peso, StringFormat='Peso: {0} kg'}"/>
+                                <Image Source="{Binding Path=RutaImagen}"/>
+                                <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding Nombre}"/>
+                                <TextBlock Text="{Binding Path=Categoria, StringFormat='Categoria: {0}'}"/>
+                                <TextBlock Text="{Binding Path=Precio, StringFormat='Precio: ${0}'}"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

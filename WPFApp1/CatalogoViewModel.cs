@@ -7,22 +7,22 @@ namespace WPFApp1
 {
     public class CatalogoViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Persona> ColeccionPersonas { get; set; }
+        public ObservableCollection<Productos> ColeccionProductos { get; set; }
         public ICommand ItemDoubleClickCommand { get; private set; }
 
         public CatalogoViewModel()
         {
-            ColeccionPersonas = new ObservableCollection<Persona>();
-            CargarPersonas();
+            ColeccionProductos = new ObservableCollection<Productos>();
+            CargarProductos();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
         }
 
-        private void CargarPersonas()
+        private void CargarProductos()
         {
-            List<Persona> registros = personaRepository.LeerRegistros();
-            foreach (var persona in registros)
+            List<Productos> registros = ProductosRepository.LeerProductos();
+            foreach (var producto in registros)
             {
-                ColeccionPersonas.Add(persona);
+                ColeccionProductos.Add(producto);
             }
         }
         private void EjecutarDobleClickItem(object personaClickeada)

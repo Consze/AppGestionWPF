@@ -7,12 +7,12 @@
         public int Precio { get; set; }
         public string RutaImagen { get; set; }
 
-        public Productos()
+        public Productos(string NombreDeProducto, string CategoriaDeProducto, int PrecioDeProducto, string RutaAImagen)
         {
-            this.Nombre = "";
-            this.Categoria = "";
-            this.Precio = 0 ;
-            this.RutaImagen = "";
+            this.Nombre = NombreDeProducto;
+            this.Categoria = CategoriaDeProducto;
+            this.Precio = PrecioDeProducto ;
+            this.RutaImagen = RutaAImagen;
         }
     }
 }

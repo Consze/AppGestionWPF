@@ -5,24 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1"
         mc:Ignorable="d" FontFamily="Roboto" FontSize="18"
-        Title="AniadirProducto" Height="450" Width="800">
+        Title="AniadirProducto" Height="450" Width="500">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0" Margin="5"
-                Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Width="{Binding AnchoImagenSeleccionada}" Height="{Binding AltoImagenSeleccionada}" >
-            <Image x:Name="PlaceHolder" Source="{Binding RutaImagenSeleccionada}"/>
+        
+        <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="1" CornerRadius="2">
+            <StackPanel Margin="5" Orientation="Vertical">
+                <TextBlock Text="Nombre" Margin="4"/>
+                <TextBlock Text="Categoria" Margin="4"/>
+                <TextBlock Text="Precio" Margin="4"/>
+            </StackPanel>
         </Border>
-        <Button x:Name="ElegirImagen" Grid.Row="1" Grid.Column="1" Content="Elegir Imagen" Command="{Binding ElegirImagenCommand}"/>
+
+        <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="2" Margin="5,0"
+                CornerRadius="2">
+            <StackPanel Orientation="Vertical">
+                <TextBox x:Name="CampoNombre" Width="100" Margin="4" Text="{Binding NombreProducto}"/>
+                <TextBox x:Name="CampoCategoria" Width="100" Margin="4" Text="{Binding CategoriaProducto}"/>
+                <TextBox x:Name="CampoPrecio" Width="100" Margin="4" Text="{Binding PrecioProducto}"/>
+            </StackPanel>
+        </Border>
+
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="2"
+            Grid.Row="2" Grid.Column="1" Margin="0,10" >
+            <StackPanel>
+                <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0.5" Margin="5"
+                         Width="{Binding AnchoImagenSeleccionada}" Height="{Binding AltoImagenSeleccionada}" >
+                    <Image x:Name="PlaceHolder" Source="{Binding RutaImagenSeleccionada}"/>
+                </Border>
+                <Button x:Name="ElegirImagen" Content="Elegir Imagen" Command="{Binding ElegirImagenCommand}" Margin="5" FontSize="12"/>
+            </StackPanel>
+        </Border>
+        
+        <Button x:Name="BotonAñadir" Grid.Row="2" Grid.Column="2" Content="Almacenar" Margin="12" FontSize="16" Command="{Binding AniadirProductoCommand}"/>
+
     </Grid>
 </Window>
