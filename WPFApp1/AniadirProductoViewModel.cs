@@ -199,7 +199,6 @@ namespace WPFApp1
                 {
                     File.Copy(RutaImagenSeleccionada, Destino);
                     RutaImagenSalida = "./datos/miniaturas/" + NombreArchivo + Extension;
-                    RutaImagenSalida = System.IO.Path.GetFullPath(RutaImagenSalida);
                     SalirDelBucle = true;
                 }
                 catch(Exception ex)
@@ -219,7 +218,6 @@ namespace WPFApp1
                                 {
                                     SalirDelBucle = true;
                                     RutaImagenSalida = "./datos/miniaturas/" + NombreArchivo + NumeroIntento + Extension;
-                                    RutaImagenSalida = System.IO.Path.GetFullPath(RutaImagenSalida);
                                 }
                                 else
                                 {
@@ -239,6 +237,7 @@ namespace WPFApp1
             Productos _nuevoProducto = new Productos(NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
             if (ProductosRepository.AniadirNuevoProducto(_nuevoProducto))
             {
+                CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else

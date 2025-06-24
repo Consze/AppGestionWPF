@@ -46,6 +46,7 @@ namespace WPFApp1
                         string Nombre = Lector["Nombre"].ToString();
                         string Categoria = Lector["Categoria"].ToString();
                         string RutaImagen = Lector["ruta_imagen"].ToString();
+                        if (!string.IsNullOrWhiteSpace(RutaImagen)) { RutaImagen = System.IO.Path.GetFullPath(RutaImagen); }
                         Productos _registroActual = new Productos(Nombre, Categoria, Precio, RutaImagen);
                         ListaProductos.Add(_registroActual);
                     }

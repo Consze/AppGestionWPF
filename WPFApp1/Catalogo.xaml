@@ -10,7 +10,8 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -20,8 +21,22 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="1" Grid.Column="1" FontSize="24" FontWeight="Bold" Text="Catalogo" />
-
-        <ScrollViewer Grid.Row="2" Grid.Column="1">
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="5">
+            <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0">
+                <Button.Background>
+                    <SolidColorBrush Color="Transparent"/>
+                </Button.Background>
+                <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png"/>
+            </Button>
+            <Button x:Name="Ordenar" Margin="0,0,10,0" BorderThickness="0">
+                <Button.Background>
+                    <SolidColorBrush Color="Transparent"/>
+                </Button.Background>
+                <Image Width="24" Height="24" Source="./iconos/ascending-sort.png"/>
+            </Button>
+        </StackPanel>
+        
+        <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
             <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionProductos}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -68,7 +83,9 @@
                                 </Style>
                             </Border.Style>
                             <StackPanel Orientation="Vertical">
-                                <Image Source="{Binding Path=RutaImagen}"/>
+                                <Border Width="150" Height="150">
+                                    <Image Source="{Binding Path=RutaImagen}"/>
+                                </Border>
                                 <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding Nombre}"/>
                                 <TextBlock Text="{Binding Path=Categoria, StringFormat='Categoria: {0}'}"/>
                                 <TextBlock Text="{Binding Path=Precio, StringFormat='Precio: ${0}'}"/>

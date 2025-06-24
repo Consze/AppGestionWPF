@@ -25,11 +25,11 @@ namespace WPFApp1
                 ColeccionProductos.Add(producto);
             }
         }
-        private void EjecutarDobleClickItem(object personaClickeada)
+        private void EjecutarDobleClickItem(object ProductoClickeado)
         {
-            if (personaClickeada is Persona persona)
+            if (ProductoClickeado is Productos producto)
             {
-                System.Windows.MessageBox.Show($"Doble Click sobre item. {persona.nombre}", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                System.Windows.MessageBox.Show($"Doble Click sobre item. {producto.Nombre}", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
