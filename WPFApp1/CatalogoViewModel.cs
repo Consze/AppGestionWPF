@@ -44,10 +44,6 @@ namespace WPFApp1
         }
         private void CargarProductos()
         {
-            if(ColeccionProductos.Count > 0)
-            {
-                ColeccionProductos.Clear();
-            }
             List<Productos> registros = ProductosRepository.LeerProductos();
             foreach (var producto in registros)
             {
@@ -63,7 +59,10 @@ namespace WPFApp1
         }
         private void OnNuevoProductoAniadido(ProductoAniadidoMensaje Mensaje)
         {
-            CargarProductos();
+            if (Mensaje?.NuevoProducto != null)
+            {
+                ColeccionProductos.Add(Mensaje.NuevoProducto);
+            }
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

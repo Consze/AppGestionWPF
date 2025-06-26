@@ -2,5 +2,6 @@
 {
     public class ProductoAniadidoMensaje
     {
+        public Productos NuevoProducto { get; set; }
     }
 }

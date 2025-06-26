@@ -234,7 +234,8 @@ namespace WPFApp1
             Productos _nuevoProducto = new Productos(NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
             if (ProductosRepository.AniadirNuevoProducto(_nuevoProducto))
             {
-                Messenger.Default.Publish(new ProductoAniadidoMensaje());
+                _nuevoProducto.RutaImagen = System.IO.Path.GetFullPath(_nuevoProducto.RutaImagen); 
+                Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
