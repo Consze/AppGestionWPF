@@ -15,4 +15,23 @@
             this.RutaImagen = RutaAImagen;
         }
     }
+
+    public class Flags
+    {
+        public bool NombreCambiado { get; set; }
+        public bool CategoriaCambiada { get; set; }
+        public bool PrecioCambiado { get; set; }
+        public bool RutaImagenCambiada { get; set; }
+        public int ContadorCambios { get; set; }
+
+        public Flags()
+        {
+            this.NombreCambiado = false;
+            this.CategoriaCambiada = false;
+            this.PrecioCambiado = false;
+            this.PrecioCambiado = false;
+            this.RutaImagenCambiada = false;
+            this.ContadorCambios = 0;
+        }
+    }
 }

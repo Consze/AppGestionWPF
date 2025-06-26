@@ -22,7 +22,7 @@
 
         <TextBlock Grid.Row="1" Grid.Column="1" FontSize="24" FontWeight="Bold" Text="Catalogo" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="5">
-            <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0">
+            <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0" Command="{Binding AniadirProductoCommand}">
                 <Button.Background>
                     <SolidColorBrush Color="Transparent"/>
                 </Button.Background>

@@ -17,14 +17,19 @@
     }
     public class FlagsCambios
     {
-        public bool idCambiado { get; set; } = false;
-        public bool nombreCambiado { get; set; } = false;
-        public bool alturaCambiada { get; set; } = false;
-        public bool pesoCambiado { get; set; } = false;
-        public int Count { get; set; } = 0;
+        public bool idCambiado { get; set; }
+        public bool nombreCambiado { get; set; } 
+        public bool alturaCambiada { get; set; } 
+        public bool pesoCambiado { get; set; } 
+        public int Count { get; set; }
 
         public FlagsCambios()
         {
+            this.idCambiado = false;
+            this.nombreCambiado = false;
+            this.alturaCambiada = false;
+            this.pesoCambiado = false;
+            this.Count = 0;
         }
     }
 }

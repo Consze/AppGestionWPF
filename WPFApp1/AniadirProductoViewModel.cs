@@ -15,7 +15,6 @@ namespace WPFApp1
     {
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
-
         private string _rutaImagenSeleccionada;
         public string RutaImagenSeleccionada 
         {
@@ -30,7 +29,6 @@ namespace WPFApp1
                 }
             }
         }
-
         private int _altoImagenSeleccionada;
         public int AltoImagenSeleccionada 
         {
@@ -44,7 +42,6 @@ namespace WPFApp1
                 }
             }
         }
-
         private int _anchoImagenSeleccionada;
         public int AnchoImagenSeleccionada
         {
@@ -58,7 +55,7 @@ namespace WPFApp1
                 }
             }
         }
-
+ 
         private string _nombreProducto;
         public string NombreProducto
         {
@@ -100,7 +97,6 @@ namespace WPFApp1
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public event EventHandler CierreSolicitado;
         public ICommand ElegirImagenCommand{ get; }
         public ICommand AniadirProductoCommand { get; }
@@ -141,6 +137,7 @@ namespace WPFApp1
             {
                 int UBound = 0;
                 int LBound = 0;
+                int TamanioMaximo = 200;
                 string rutaArchivo = openFileDialog.FileName;
                 RutaImagenSeleccionada = rutaArchivo;
                 LadoMasLargo lado = new LadoMasLargo();
@@ -160,18 +157,18 @@ namespace WPFApp1
                 }
 
                 // Aplicar reducción
-                if (UBound > 300)
+                if (UBound > TamanioMaximo)
                 {
                     float _RelacionAspecto = (float)UBound / (float)LBound;
                     switch (lado)
                     {
                         case LadoMasLargo.Alto:
-                            AltoImagenSeleccionada = 300;
-                            AnchoImagenSeleccionada = Convert.ToInt32(300 / _RelacionAspecto);
+                            AltoImagenSeleccionada = TamanioMaximo;
+                            AnchoImagenSeleccionada = Convert.ToInt32(TamanioMaximo / _RelacionAspecto);
                             break;
                         case LadoMasLargo.Ancho:
-                            AnchoImagenSeleccionada = 300;
-                            AltoImagenSeleccionada = Convert.ToInt32(300 / _RelacionAspecto);
+                            AnchoImagenSeleccionada = TamanioMaximo;
+                            AltoImagenSeleccionada = Convert.ToInt32(TamanioMaximo / _RelacionAspecto);
                             break;
                     }
                 }
@@ -237,6 +234,7 @@ namespace WPFApp1
             Productos _nuevoProducto = new Productos(NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
             if (ProductosRepository.AniadirNuevoProducto(_nuevoProducto))
             {
+                Messenger.Default.Publish(new ProductoAniadidoMensaje());
                 CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
