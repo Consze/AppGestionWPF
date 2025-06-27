@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.IO;
+using NPOI.SS.Formula.Functions;
 
 namespace WPFApp1
 {
@@ -13,6 +14,7 @@ namespace WPFApp1
     }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
+        public bool EsModoEdicion { get; set; }  
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
         private string _rutaImagenSeleccionada;
@@ -95,11 +97,12 @@ namespace WPFApp1
                 }
             }
         }
-
+        public int IDProducto { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
         public ICommand ElegirImagenCommand{ get; }
         public ICommand AniadirProductoCommand { get; }
+        public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
         public AniadirProductoViewModel()
@@ -110,6 +113,7 @@ namespace WPFApp1
             this.AltoImagenSeleccionada = 0;
             this.CalculoAlturaMarco = 0;
             this.CalculoAnchoMarco = 0;
+            this.IDProducto = 0;
 
             //Entidad
             this.NombreProducto = string.Empty;
@@ -119,8 +123,107 @@ namespace WPFApp1
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
+            BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
         }
 
+        public void BotonPresionado(object parameter)
+        {
+            if(this.EsModoEdicion)
+            {
+                EditarProducto(0);
+            }
+            else
+            {
+                AniadirProducto(0);
+            }
+        }
+
+        public void ConfigurarEdicionDeProducto(Productos Producto)
+        {
+            // Configurar Bindings
+            this.EsModoEdicion = true;
+            this.RutaImagenSeleccionada = Producto.RutaImagen;
+            this.NombreProducto = Producto.Nombre;
+            this.PrecioProducto= Producto.Precio;
+            this.CategoriaProducto = Producto.Categoria;
+            this.IDProducto = Producto.ID;
+            CargarDimensionesImagen(this.RutaImagenSeleccionada);
+            LadoMasLargo lado = new LadoMasLargo();
+            int UBound = 0;
+            int LBound = 0;
+            int TamanioMaximo = 200;
+            // Calcular relación de aspecto del marco
+            if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
+            {
+                UBound = this.CalculoAlturaMarco;
+                LBound = this.CalculoAnchoMarco;
+                lado = LadoMasLargo.Alto;
+            }
+            else
+            {
+                UBound = this.CalculoAnchoMarco;
+                LBound = this.CalculoAlturaMarco;
+                lado = LadoMasLargo.Ancho;
+            }
+
+            // Aplicar reducción
+            if (UBound > TamanioMaximo)
+            {
+                float _RelacionAspecto = (float)UBound / (float)LBound;
+                switch (lado)
+                {
+                    case LadoMasLargo.Alto:
+                        AltoImagenSeleccionada = TamanioMaximo;
+                        AnchoImagenSeleccionada = Convert.ToInt32(TamanioMaximo / _RelacionAspecto);
+                        break;
+                    case LadoMasLargo.Ancho:
+                        AnchoImagenSeleccionada = TamanioMaximo;
+                        AltoImagenSeleccionada = Convert.ToInt32(TamanioMaximo / _RelacionAspecto);
+                        break;
+                }
+            }
+        }
+        public void EditarProducto(object parameter)
+        {
+            if(this.RutaImagenSeleccionada != string.Empty)
+            {
+                //comprobar si la imagen elegida existe en la carpeta de miniaturas
+                string NombreArchivo = System.IO.Path.GetFileNameWithoutExtension(this.RutaImagenSeleccionada);
+                string Extension = System.IO.Path.GetExtension(RutaImagenSeleccionada);
+                string Destino = ".\\datos\\miniaturas\\" + NombreArchivo + Extension;
+                bool SalirDelBucle = false;
+                if (!File.Exists(Destino))
+                {
+                    try
+                    {
+                        File.Copy(RutaImagenSeleccionada, Destino, false);
+                        RutaImagenSeleccionada = "./datos/miniaturas/" + NombreArchivo + Extension;
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    this.RutaImagenSeleccionada = "./datos/miniaturas/" + NombreArchivo + Extension;
+                }
+            }
+
+            //validar imagen
+            Productos ProductoModificado = new Productos(this.IDProducto, this.NombreProducto, this.CategoriaProducto, this.PrecioProducto, this.RutaImagenSeleccionada);
+
+            if (ProductosRepository.ModificarProducto(ProductoModificado))
+            {
+                CerrarVistaCommand.Execute(0);
+                System.Windows.MessageBox.Show("El producto fue editado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                CerrarVistaCommand.Execute(0);
+                System.Windows.MessageBox.Show("Hubo un error al intentar editar el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         public void ElegirImagen(object parameter)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -174,6 +277,44 @@ namespace WPFApp1
                 }
             }
         }
+        public void RedimensionarImagen(object parameter)
+        {
+            int UBound = 0;
+            int LBound = 0;
+            int TamanioMaximo = 200;
+            LadoMasLargo lado = new LadoMasLargo();
+
+            // Calcular relación de aspecto del marco
+            if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
+            {
+                UBound = this.CalculoAlturaMarco;
+                LBound = this.CalculoAnchoMarco;
+                lado = LadoMasLargo.Alto;
+            }
+            else
+            {
+                UBound = this.CalculoAnchoMarco;
+                LBound = this.CalculoAlturaMarco;
+                lado = LadoMasLargo.Ancho;
+            }
+
+            // Aplicar reducción
+            if (UBound > TamanioMaximo)
+            {
+                float _RelacionAspecto = (float)UBound / (float)LBound;
+                switch (lado)
+                {
+                    case LadoMasLargo.Alto:
+                        AltoImagenSeleccionada = TamanioMaximo;
+                        AnchoImagenSeleccionada = Convert.ToInt32(TamanioMaximo / _RelacionAspecto);
+                        break;
+                    case LadoMasLargo.Ancho:
+                        AnchoImagenSeleccionada = TamanioMaximo;
+                        AltoImagenSeleccionada = Convert.ToInt32(TamanioMaximo / _RelacionAspecto);
+                        break;
+                }
+            }
+        }
 
         public void AniadirProducto(object parameter)
         {
@@ -194,7 +335,7 @@ namespace WPFApp1
 
                 try
                 {
-                    File.Copy(RutaImagenSeleccionada, Destino);
+                    File.Copy(RutaImagenSeleccionada, Destino,false);
                     RutaImagenSalida = "./datos/miniaturas/" + NombreArchivo + Extension;
                     SalirDelBucle = true;
                 }

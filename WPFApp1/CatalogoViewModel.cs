@@ -54,7 +54,10 @@ namespace WPFApp1
         {
             if (ProductoClickeado is Productos producto)
             {
-                System.Windows.MessageBox.Show($"Doble Click sobre item. {producto.Nombre}", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
+                _viewModel.ConfigurarEdicionDeProducto(producto);
+                AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
+                AniadirProductoInstanciado.Show();
             }
         }
         private void OnNuevoProductoAniadido(ProductoAniadidoMensaje Mensaje)

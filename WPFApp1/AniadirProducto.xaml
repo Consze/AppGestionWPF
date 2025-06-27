@@ -47,8 +47,8 @@
                 <Button x:Name="ElegirImagen" Content="Elegir Imagen" Command="{Binding ElegirImagenCommand}" Margin="5" FontSize="12"/>
             </StackPanel>
         </Border>
-        
-        <Button x:Name="BotonAñadir" Grid.Row="2" Grid.Column="2" Content="Almacenar" Margin="12" FontSize="16" Command="{Binding AniadirProductoCommand}"/>
+
+        <Button x:Name="BotonAñadir" Grid.Row="2" Grid.Column="2" Content="Almacenar" Margin="12" FontSize="16" Command="{Binding BotonPresionadoCommand}"/>
 
     </Grid>
 </Window>

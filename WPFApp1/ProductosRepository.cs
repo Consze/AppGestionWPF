@@ -66,7 +66,7 @@ namespace WPFApp1
             {
                 FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
 
-                // 1 - Comprobar cambios
+                // Comprobar cambios
                 string Consulta = "UPDATE Productos SET ";
                 if (RegistroModificado.Nombre != ProductoVigente.Nombre)
                 {
