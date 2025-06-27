@@ -3,7 +3,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using NPOI.SS.Formula.Functions;
 
 namespace WPFApp1
 {
@@ -147,11 +146,14 @@ namespace WPFApp1
             this.PrecioProducto= Producto.Precio;
             this.CategoriaProducto = Producto.Categoria;
             this.IDProducto = Producto.ID;
+
+            // Obtener dimensiones de imagen
             CargarDimensionesImagen(this.RutaImagenSeleccionada);
             LadoMasLargo lado = new LadoMasLargo();
             int UBound = 0;
             int LBound = 0;
             int TamanioMaximo = 200;
+
             // Calcular relación de aspecto del marco
             if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
             {
@@ -215,6 +217,7 @@ namespace WPFApp1
 
             if (ProductosRepository.ModificarProducto(ProductoModificado))
             {
+                Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue editado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }

@@ -33,6 +33,7 @@ namespace WPFApp1
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
+            Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
         }
 
         public void AniadirProducto(object parameter)
@@ -65,6 +66,18 @@ namespace WPFApp1
             if (Mensaje?.NuevoProducto != null)
             {
                 ColeccionProductos.Add(Mensaje.NuevoProducto);
+            }
+        }
+        private void OnProductoModificado(ProductoModificadoMensaje Mensaje)
+        {
+            if(Mensaje?.ProductoModificado != null)
+            {
+                Productos ProductoModificado = Mensaje.ProductoModificado;
+                Productos productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
+                productoAEditar.Nombre = ProductoModificado.Nombre;
+                productoAEditar.Precio= ProductoModificado.Precio;
+                productoAEditar.Categoria= ProductoModificado.Categoria;
+                productoAEditar.RutaImagen= System.IO.Path.GetFullPath(ProductoModificado.RutaImagen);
             }
         }
         protected virtual void OnPropertyChanged(string propertyName)

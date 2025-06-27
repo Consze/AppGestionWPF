@@ -1,12 +1,40 @@
-﻿namespace WPFApp1
+﻿using System.ComponentModel;
+
+namespace WPFApp1
 {
-    public class Productos
+    public class Productos : INotifyPropertyChanged
     {
-        public int ID { get; set; }
-        public string Nombre { get; set; }
-        public string Categoria { get; set; }
-        public int Precio { get; set; }
-        public string RutaImagen { get; set; }
+        private int _id;
+        public int ID
+        {
+            get { return _id; }
+            set { _id = value; OnPropertyChanged(nameof(ID)); }
+        }
+        private string _nombre;
+        public string Nombre
+        {
+            get { return _nombre; }
+            set { _nombre = value; OnPropertyChanged(nameof(Nombre)); }
+        }
+        private string _categoria;
+        public string Categoria
+        {
+            get { return _categoria; }
+            set { _categoria = value; OnPropertyChanged(nameof(Categoria)); }
+        }
+        private int _precio;
+        public int Precio 
+        {
+            get { return _precio; }
+            set { _precio = value; OnPropertyChanged(nameof(Precio)); }
+        }
+
+        private string _rutaImagen;
+        public string RutaImagen
+        {
+            get { return _rutaImagen; }
+            set { _rutaImagen = value; OnPropertyChanged(nameof(RutaImagen)); }
+        }
 
         public Productos(int ProductoID, string NombreDeProducto, string CategoriaDeProducto, int PrecioDeProducto, string RutaAImagen)
         {
@@ -15,6 +43,11 @@
             this.Categoria = CategoriaDeProducto;
             this.Precio = PrecioDeProducto ;
             this.RutaImagen = RutaAImagen;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
