@@ -231,7 +231,7 @@ namespace WPFApp1
                 }
             }
 
-            Productos _nuevoProducto = new Productos(NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
+            Productos _nuevoProducto = new Productos(0,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
             if (ProductosRepository.AniadirNuevoProducto(_nuevoProducto))
             {
                 _nuevoProducto.RutaImagen = System.IO.Path.GetFullPath(_nuevoProducto.RutaImagen); 

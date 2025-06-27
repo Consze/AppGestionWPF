@@ -1,4 +1,5 @@
 ﻿using System.Data.SQLite;
+using Org.BouncyCastle.Bcpg.Sig;
 
 namespace WPFApp1
 {
@@ -42,18 +43,152 @@ namespace WPFApp1
                 {
                     while (Lector.Read())
                     {
+                        int ProductoID = Convert.ToInt32(Lector["producto_id"]);
                         int Precio = Convert.ToInt32(Lector["Precio"]);
                         string Nombre = Lector["Nombre"].ToString();
                         string Categoria = Lector["Categoria"].ToString();
                         string RutaImagen = Lector["ruta_imagen"].ToString();
                         if (!string.IsNullOrWhiteSpace(RutaImagen)) { RutaImagen = System.IO.Path.GetFullPath(RutaImagen); }
-                        Productos _registroActual = new Productos(Nombre, Categoria, Precio, RutaImagen);
+                        Productos _registroActual = new Productos(ProductoID,Nombre, Categoria, Precio, RutaImagen);
                         ListaProductos.Add(_registroActual);
                     }
                 }
             }
             Instancia.CerrarConexionDB();
             return ListaProductos;
+        }
+        public static bool ModificarProducto(Productos RegistroModificado)
+        {
+            ConexionDB Instancia = new ConexionDB();
+            Productos ProductoVigente = RecuperarRegistro(RegistroModificado.ID);
+
+            if(ProductoVigente.ID > 0 ) // Validar registro
+            {
+                FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
+
+                // 1 - Comprobar cambios
+                string Consulta = "UPDATE Productos SET ";
+                if (RegistroModificado.Nombre != ProductoVigente.Nombre)
+                {
+                    Consulta += "Nombre = @Nombre";
+                    Propiedades.NombreCambiado = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                if (RegistroModificado.Categoria != ProductoVigente.Categoria)
+                {
+                    Consulta += "Categoria = @Categoria";
+                    Propiedades.CategoriaCambiada = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                if(RegistroModificado.Precio != ProductoVigente.Precio)
+                {
+                    Consulta += "Precio = @Precio";
+                    Propiedades.PrecioCambiado = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                if (RegistroModificado.RutaImagen != ProductoVigente.RutaImagen)
+                {
+                    Consulta += "ruta_imagen = @ruta_imagen";
+                    Propiedades.RutaImagenCambiada = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                Consulta += " WHERE producto_id = @id";
+
+                if(Propiedades.ContadorCambios > 0)
+                {
+                    using(SQLiteCommand Comando = new SQLiteCommand(Consulta,Instancia.Conexion))
+                    {
+                        Comando.Parameters.AddWithValue("@id", RegistroModificado.ID);
+                        if(Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", RegistroModificado.Nombre); }
+                        if(Propiedades.CategoriaCambiada) { Comando.Parameters.AddWithValue("@Categoria", RegistroModificado.Categoria); }
+                        if (Propiedades.PrecioCambiado) { Comando.Parameters.AddWithValue("@Precio", RegistroModificado.Precio); }
+                        if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", RegistroModificado.RutaImagen); }
+
+                        int FilasAfectadas = Comando.ExecuteNonQuery();
+                        Instancia.CerrarConexionDB();
+                        if (FilasAfectadas > 0)
+                        { 
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else // No se modifico ninguna propiedad
+                {
+                    Instancia.CerrarConexionDB();
+                    return false;
+                }
+            }
+            else // No existe el registro
+            {
+                Instancia.CerrarConexionDB();
+                return false;
+            }
+        }
+        public static bool EliminarProducto(int RegistroID)
+        {
+            Productos Registro = new Productos(0, "", "", 0, "");
+            ConexionDB Instancia = new ConexionDB();
+            Registro = RecuperarRegistro(RegistroID);
+            string Consulta = "DELETE FROM Productos WHERE producto_id = @id";
+            if (Registro.ID > 0)
+            {
+                try
+                {
+                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+                    {
+                        Comando.Parameters.AddWithValue("@id", RegistroID);
+                        int FilasAfectadas = Comando.ExecuteNonQuery();
+                        if (FilasAfectadas > 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                catch(SQLiteException ex)
+                {
+                    Console.WriteLine($"Error {ex.Message}");
+                    return false;
+                }
+                finally
+                {
+                    Instancia.CerrarConexionDB();
+                }
+            }
+            else // No existe el registro
+            {
+                return false;
+            }
+        }
+        public static Productos RecuperarRegistro(int RegistroID)
+        {
+            Productos Registro = new Productos(0,"", "", 0, "");
+            ConexionDB Instancia = new ConexionDB();
+            string Consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
+            using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+            {
+                Comando.Parameters.AddWithValue("@id", RegistroID);
+                using (SQLiteDataReader Lector = Comando.ExecuteReader())
+                {
+                    while(Lector.Read())
+                    {
+                        Registro.ID = Convert.ToInt32(Lector["producto_id"]);
+                        Registro.Nombre = Lector["Nombre"].ToString();
+                        Registro.Categoria = Lector["Categoria"].ToString();
+                        Registro.Precio = Convert.ToInt32(Lector["Precio"]);
+                        Registro.RutaImagen = Lector["ruta_imagen"].ToString();
+                    }
+                }
+            }
+            Instancia.CerrarConexionDB();
+            return Registro;
         }
     }
 }
