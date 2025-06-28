@@ -6,6 +6,15 @@
         xmlns:local="clr-namespace:WPFApp1" FontFamily="Roboto"
         mc:Ignorable="d" FontSize="12"
         Title="Catalogo" Height="450" Width="800">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Iconos.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid x:Name="Grilla1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
@@ -22,6 +31,7 @@
 
         <TextBlock Grid.Row="1" Grid.Column="1" FontSize="24" FontWeight="Bold" Text="Catalogo" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="5">
+            <Path Style="{StaticResource CuadradoIcono}" Margin="0,2,10,0"/>
             <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0" Command="{Binding AniadirProductoCommand}">
                 <Button.Background>
                     <SolidColorBrush Color="Transparent"/>
