@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1" MinWidth="250"
         mc:Ignorable="d" FontFamily="Roboto" FontSize="18" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
-        Title="AniadirProducto" Height="250" Width="250">
+        Title="{Binding NombreDeVentana}" Height="250" Width="250">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>

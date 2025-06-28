@@ -8,6 +8,37 @@
         <Setter Property="Data" Value="{StaticResource Cuadrado}"/>
         <Setter Property="Width" Value="20"/>
         <Setter Property="Height" Value="20"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+                                            To="OrangeRed" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Width"
+                                             To="24" Duration="0:0:0.1"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Height"
+                                             To="24" Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+                                            To="Black" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Width"
+                                             To="20" Duration="0:0:0.1"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Height"
+                                             To="20" Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </Style.Triggers>
+        
     </Style>
 
 </ResourceDictionary>

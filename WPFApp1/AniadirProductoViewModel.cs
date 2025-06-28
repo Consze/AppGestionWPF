@@ -13,7 +13,8 @@ namespace WPFApp1
     }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        public bool EsModoEdicion { get; set; }  
+        public bool EsModoEdicion { get; set; }
+        public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
         private string _rutaImagenSeleccionada;
@@ -119,6 +120,7 @@ namespace WPFApp1
             this.CategoriaProducto = string.Empty;
             this.PrecioProducto = 0;
 
+            this.NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
@@ -146,6 +148,7 @@ namespace WPFApp1
             this.PrecioProducto= Producto.Precio;
             this.CategoriaProducto = Producto.Categoria;
             this.IDProducto = Producto.ID;
+            this.NombreDeVentana = "Editar Producto";
 
             // Obtener dimensiones de imagen
             CargarDimensionesImagen(this.RutaImagenSeleccionada);
