@@ -11,6 +11,7 @@ namespace WPFApp1
         public ICommand EditarPersonaCommand { get; }
         public ICommand VerCatalogoCommand{ get; }
         public ICommand AniadirProductoCommand { get; }
+        public ICommand VerExportarProductosCommand { get; }
 
         public MainWindowViewModel()
         {
@@ -20,6 +21,7 @@ namespace WPFApp1
             EditarPersonaCommand = new RelayCommand<object>(EditarPersona);
             VerCatalogoCommand = new RelayCommand<object>(VerCatalogo);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
+            VerExportarProductosCommand = new RelayCommand<object>(VerExportarProductos);
         }
 
         private void AniadirProducto(object parameter)
@@ -27,6 +29,12 @@ namespace WPFApp1
             AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
             AniadirProducto _AniadirProducto = new AniadirProducto(_viewModel);
             _AniadirProducto.Show();
+        }
+        private void VerExportarProductos(object parameter)
+        {
+            ExportarProductosViewModel ExportarViewModel = new ExportarProductosViewModel();
+            ExportarProductos VistaExportar = new ExportarProductos(ExportarViewModel);
+            VistaExportar.Show();
         }
         private void VerLista(object parameter)
         {

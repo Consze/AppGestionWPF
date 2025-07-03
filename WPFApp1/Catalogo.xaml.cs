@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 
 namespace WPFApp1
 {
@@ -11,9 +10,9 @@ namespace WPFApp1
         private CatalogoViewModel _viewModel;
         public Catalogo(CatalogoViewModel viewModel)
         {
-            InitializeComponent();
             DataContext = viewModel;
             _viewModel = viewModel;
+            InitializeComponent();
         }
     }
 }
