@@ -212,7 +212,7 @@ namespace WPFApp1
             EncabezadoFila.CreateCell(3).SetCellValue("ID");
 
             // Escribir datos
-            int NumeroDeFila = 0;
+            int NumeroDeFila = 1;
             for (int i = 0; i < Productos.Count; i++)
             {
                 IRow Fila = Hoja.CreateRow(NumeroDeFila++);
@@ -223,29 +223,12 @@ namespace WPFApp1
             }
 
             // Crear Archivo XLSX
-            bool SalirDeBucle = false;
-            string DestinoArchivo = string.Empty;
-            string DestinoPrueba = ".\\Exportaciones\\Productos_Exportados.xlsx";
+            string DestinoArchivo = ".\\Exportaciones\\Productos_Exportados.xlsx";
             int NumeroIntento = 0;
 
-            while(!SalirDeBucle)
+            while(File.Exists(DestinoArchivo))
             {
-                if(File.Exists(DestinoPrueba))
-                {
-                    DestinoPrueba = ".\\Exportaciones\\Productos_Exportados" + NumeroIntento++ + ".xlsx";
-                }
-                else
-                {
-                    SalirDeBucle = true;
-                    if (NumeroIntento > 0)
-                    {
-                        DestinoArchivo = DestinoPrueba;
-                    }
-                    else
-                    {
-                        DestinoArchivo = ".\\Exportaciones\\Productos_Exportados.xlsx";
-                    }
-                }
+                DestinoArchivo = $".\\Exportaciones\\Productos_Exportados{NumeroIntento++}.xlsx";
             }
 
             try
