@@ -1,5 +1,7 @@
 ﻿using System.Data.SQLite;
-using Org.BouncyCastle.Bcpg.Sig;
+using System.IO;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace WPFApp1
 {
@@ -189,6 +191,76 @@ namespace WPFApp1
             }
             Instancia.CerrarConexionDB();
             return Registro;
+        }
+
+        /// <summary>
+        /// Crea un archivo XLSX conteniendo Nombre, Categoría, Precio e ID de cada registro de la tabla 'Productos'
+        /// </summary>
+        /// <param name="Productos"></param>
+        /// <returns></returns>
+        public static bool CrearLibro(List<Productos> Productos)
+        {
+            XSSFWorkbook WorkBook = new XSSFWorkbook();
+            ISheet Hoja;
+            Hoja = WorkBook.CreateSheet("Productos");
+
+            // Crear Filas
+            IRow EncabezadoFila = Hoja.CreateRow(0);
+            EncabezadoFila.CreateCell(0).SetCellValue("Nombre de Producto");
+            EncabezadoFila.CreateCell(1).SetCellValue("Categoría");
+            EncabezadoFila.CreateCell(2).SetCellValue("Precio");
+            EncabezadoFila.CreateCell(3).SetCellValue("ID");
+
+            // Escribir datos
+            int NumeroDeFila = 0;
+            for (int i = 0; i < Productos.Count; i++)
+            {
+                IRow Fila = Hoja.CreateRow(NumeroDeFila++);
+                Fila.CreateCell(0).SetCellValue(Productos[i].Nombre);
+                Fila.CreateCell(1).SetCellValue(Productos[i].Categoria);
+                Fila.CreateCell(2).SetCellValue(Productos[i].Precio.ToString());
+                Fila.CreateCell(3).SetCellValue(Productos[i].ID.ToString());
+            }
+
+            // Crear Archivo XLSX
+            bool SalirDeBucle = false;
+            string DestinoArchivo = string.Empty;
+            string DestinoPrueba = ".\\Exportaciones\\Productos_Exportados.xlsx";
+            int NumeroIntento = 0;
+
+            while(!SalirDeBucle)
+            {
+                if(File.Exists(DestinoPrueba))
+                {
+                    DestinoPrueba = ".\\Exportaciones\\Productos_Exportados" + NumeroIntento++ + ".xlsx";
+                }
+                else
+                {
+                    SalirDeBucle = true;
+                    if (NumeroIntento > 0)
+                    {
+                        DestinoArchivo = DestinoPrueba;
+                    }
+                    else
+                    {
+                        DestinoArchivo = ".\\Exportaciones\\Productos_Exportados.xlsx";
+                    }
+                }
+            }
+
+            try
+            {
+                using (FileStream file = new FileStream(DestinoArchivo, FileMode.Create, FileAccess.Write))
+                {
+                    WorkBook.Write(file);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine($"Error {ex.Message}");
+                return false;
+            }
         }
     }
 }
