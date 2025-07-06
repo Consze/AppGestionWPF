@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <RectangleGeometry x:Key="Cuadrado" Rect="0,0,20,20"/>
-
     <Style x:Key="CuadradoIcono" TargetType="Path">
         <Setter Property="Fill" Value="Black"/>
         <Setter Property="Data" Value="{StaticResource Cuadrado}"/>
@@ -15,30 +14,70 @@
                 <Trigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-                                            To="OrangeRed" Duration="0:0:0.2"/>
-                            <DoubleAnimation Storyboard.TargetProperty="Width"
-                                             To="24" Duration="0:0:0.1"/>
-                            <DoubleAnimation Storyboard.TargetProperty="Height"
-                                             To="24" Duration="0:0:0.1"/>
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="OrangeRed" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                         To="1.2" Duration="0:0:0.1"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                         To="1.2" Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
                 <Trigger.ExitActions>
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-                                            To="Black" Duration="0:0:0.2"/>
-                            <DoubleAnimation Storyboard.TargetProperty="Width"
-                                             To="20" Duration="0:0:0.1"/>
-                            <DoubleAnimation Storyboard.TargetProperty="Height"
-                                             To="20" Duration="0:0:0.1"/>
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="Black" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                         To="1.0" Duration="0:0:0.1"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                         To="1.0" Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.ExitActions>
             </Trigger>
         </Style.Triggers>
-        
     </Style>
 
+    <Storyboard x:Key="HoverIconoTresLineas">
+        <DoubleAnimation Storyboard.TargetName="LineaSuperior" Storyboard.TargetProperty="StrokeThickness" To="3" Duration="0:0:0.15"/>
+        <DoubleAnimation Storyboard.TargetName="LineaCentro" Storyboard.TargetProperty="StrokeThickness" To="3" Duration="0:0:0.15"/>
+        <DoubleAnimation Storyboard.TargetName="LineaInferior" Storyboard.TargetProperty="StrokeThickness" To="3" Duration="0:0:0.15"/>
+    </Storyboard>
+    <Storyboard x:Key="SalirHoverIconoTresLineas">
+        <DoubleAnimation Storyboard.TargetName="LineaSuperior" Storyboard.TargetProperty="StrokeThickness" To="2" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetName="LineaCentro" Storyboard.TargetProperty="StrokeThickness" To="2" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetName="LineaInferior" Storyboard.TargetProperty="StrokeThickness" To="2" Duration="0:0:0.1"/>
+    </Storyboard>
+
+    <Storyboard x:Key="ClickIconoTresLineas">
+        <DoubleAnimation Storyboard.TargetName="LineaSuperior" Storyboard.TargetProperty="Opacity" To="0.7" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetName="LineaCentro" Storyboard.TargetProperty="Opacity" To="0.7" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetName="LineaInferior" Storyboard.TargetProperty="Opacity" To="0.7" Duration="0:0:0.1"/>
+    </Storyboard>
+    <Storyboard x:Key="ClickIzquierdoSalida">
+        <DoubleAnimation Storyboard.TargetName="LineaSuperior" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetName="LineaCentro" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetName="LineaInferior" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
+    </Storyboard>
+    <Style x:Key="IconoConAnimaciones" TargetType="Canvas">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard Storyboard="{StaticResource HoverIconoTresLineas}"/>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard Storyboard="{StaticResource SalirHoverIconoTresLineas}"/>
+            </EventTrigger>
+
+            <EventTrigger RoutedEvent="MouseLeftButtonDown">
+                <BeginStoryboard Storyboard="{StaticResource ClickIconoTresLineas}"/>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeftButtonUp">
+                <BeginStoryboard Storyboard="{StaticResource ClickIzquierdoSalida}"/>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    <Canvas x:Key="IconoTresLineas" Style="{StaticResource IconoConAnimaciones}">
+        <Line x:Name="LineaSuperior" X1="0" Y1="5" X2="20" Y2="5" Stroke="Black" StrokeThickness="2"/>
+        <Line x:Name="LineaCentro" X1="0" Y1="10" X2="20" Y2="10" Stroke="Black" StrokeThickness="2"/>
+        <Line x:Name="LineaInferior" X1="0" Y1="15" X2="20" Y2="15" Stroke="Black" StrokeThickness="2"/>
+    </Canvas>
 </ResourceDictionary>
