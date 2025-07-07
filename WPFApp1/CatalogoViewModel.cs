@@ -45,6 +45,10 @@ namespace WPFApp1
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
                 AniadirProductoInstanciado.Show();
             }
+            else
+            {
+                AniadirProducto.VentanaAniadirProductoVigente.Activate();
+            }
         }
         private void CargarProductos()
         {
@@ -54,8 +58,16 @@ namespace WPFApp1
                 ColeccionProductos.Add(producto);
             }
         }
+        /// <summary>
+        /// Inicia la vista de edición de productos
+        /// </summary>
+        /// <param name="ProductoClickeado"></param>
         private void EjecutarDobleClickItem(object ProductoClickeado)
         {
+            if(AniadirProducto.Instancias > 0)
+            {
+                AniadirProducto.VentanaAniadirProductoVigente.Close();
+            }
             if (ProductoClickeado is Productos producto)
             {
                 AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();

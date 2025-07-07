@@ -4,11 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1"
-        mc:Ignorable="d" FontFamily="Roboto" FontSize="18"
+        mc:Ignorable="d" FontFamily="Roboto" FontSize="18" WindowStartupLocation="CenterScreen"
         Title="Exportar Productos" Height="450" Width="800" Closed="Window_Closed">
+    <Window.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+            <SolidColorBrush x:Key="ThrobberFillBrush" Color="Gray"/>
+            <Path x:Key="PruebaThrobber" Stroke="Black" StrokeThickness="2">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure StartPoint="10,1">
+                            <ArcSegment x:Name="Arco1" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="19,10"/>
+                            <ArcSegment x:Name="Arco2" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,19"/>
+                            <ArcSegment x:Name="Arco3" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="1,10"/>
+                            <ArcSegment x:Name="Arco4" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,1"/>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
@@ -18,6 +37,20 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
+        <StackPanel Grid.Row="1" Grid.Column="2">
+            <StackPanel Grid.Row="1" Grid.Column="2">
+                <Border Margin="5">
+                    <ContentControl x:Name="Throbber"
+                        Visibility="{Binding ExportacionEnProceso, Converter={StaticResource BooleanToVisibility}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                        <ContentControl.Content>
+                            <Ellipse Width="30" Height="30" Fill="{Binding Color, Source={StaticResource ThrobberFillBrush}}"/>
+                        </ContentControl.Content>
+                    </ContentControl>
+                </Border>
+            </StackPanel>
+        </StackPanel>
         <Button x:Name="ExportarXLSX" Content="Exportar a Excel" Margin="5" Grid.Row="1" Grid.Column="1" Command="{Binding ExportarXLSXCommand}"/>
     </Grid>
 </Window>

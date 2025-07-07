@@ -1,19 +1,17 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
     <Path x:Key="PruebaThrobber" Stroke="Black" StrokeThickness="2">
         <Path.Data>
             <PathGeometry>
                 <PathFigure StartPoint="10,1">
-                    <ArcSegment Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="19,10"/>
-                    <ArcSegment Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,19"/>
-                    <ArcSegment Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="1,10"/>
-                    <ArcSegment Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,1"/>
+                    <ArcSegment x:Name="Arco1" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="19,10"/>
+                    <ArcSegment x:Name="Arco2" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,19"/>
+                    <ArcSegment x:Name="Arco3" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="1,10"/>
+                    <ArcSegment x:Name="Arco4" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,1"/>
                 </PathFigure>
             </PathGeometry>
         </Path.Data>
     </Path>
-
     <RectangleGeometry x:Key="Cuadrado" Rect="0,0,20,20"/>
     <Style x:Key="CuadradoIcono" TargetType="Path">
         <Setter Property="Fill" Value="Black"/>

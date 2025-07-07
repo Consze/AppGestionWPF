@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1" FontFamily="Roboto"
-        mc:Ignorable="d" FontSize="12"
+        mc:Ignorable="d" FontSize="12" WindowStartupLocation="CenterScreen"
         Title="Catalogo" Height="450" Width="800" Closed="Window_Closed">
 
     <Window.Resources>

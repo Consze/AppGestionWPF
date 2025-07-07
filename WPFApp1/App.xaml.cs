@@ -62,7 +62,7 @@ namespace WPFApp1
                 _mainWindow = new MainWindow();
             }
             _mainWindow.Show();
-            _mainWindow.WindowState = WindowState.Normal;
+            _mainWindow.WindowState = WindowState.Maximized;
             _mainWindow.Activate();
         }
 
@@ -79,7 +79,7 @@ namespace WPFApp1
                 _mainWindow = new MainWindow();
             }
             _mainWindow.Show();
-            _mainWindow.WindowState = WindowState.Normal;
+            _mainWindow.WindowState = WindowState.Maximized;
             _mainWindow.Activate();
         }
 

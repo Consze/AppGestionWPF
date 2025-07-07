@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.CodeDom;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -6,31 +7,53 @@ namespace WPFApp1
 {
     public class ExportarProductosViewModel : INotifyPropertyChanged
     {
-        public bool ExportacionEnProceso { get; set; }
+        private bool _Exportacion;
+        public bool ExportacionEnProceso 
+        {
+            get { return _Exportacion; } 
+            set
+            {
+                if (_Exportacion != value) {
+                    _Exportacion = value;
+                    OnPropertyChanged(nameof(ExportacionEnProceso));
+                }
+            }
+        }
         public ICommand ExportarXLSXCommand { get; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         //constructor
         public ExportarProductosViewModel()
         {
-            ExportarXLSXCommand = new RelayCommand<object>(ExportarXLSX);
-            this.ExportacionEnProceso = false;
+            ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX(param));
+            this._Exportacion = false;
         }
 
-        public void ExportarXLSX(object parameter)
+        public async Task ExportarXLSX(Object parameter)
         {
-            if (!this.ExportacionEnProceso) 
+            await ExportarXLSXAsync().ConfigureAwait(false);
+        }
+        public async Task ExportarXLSXAsync()
+        {
+            if (!this._Exportacion) 
             {
                 this.ExportacionEnProceso = true;
-                List <Productos> Productos = ProductosRepository.LeerProductos();
-                bool resultado = ProductosRepository.CrearLibro(Productos); //<------- Tarea asíncronica
-                if (resultado)
-                {
-                    System.Windows.MessageBox.Show("Se exportaron los productos.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                try { 
+                    List <Productos> Productos = await Task.Run(() => ProductosRepository.LeerProductos());
+                    bool resultado = await Task.Run(() => ProductosRepository.CrearLibro(Productos));
+                    this.ExportacionEnProceso = false;
+                    if (resultado)
+                    {
+                        System.Windows.MessageBox.Show("Se exportaron los productos.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("Hubo un error al intentar exportar los productos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-                else
+                finally
                 {
-                    System.Windows.MessageBox.Show("Hubo un error al intentar exportar los productos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    this.ExportacionEnProceso = false;
                 }
             }
             else

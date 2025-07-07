@@ -8,12 +8,14 @@ namespace WPFApp1
     public partial class Catalogo : Window
     {
         private CatalogoViewModel _viewModel;
+        public static Catalogo VentanaCatalogoVigente { get;private set; }
         public static int Instancias{get;set;}
         public Catalogo(CatalogoViewModel viewModel)
         {
             Instancias++;
             DataContext = viewModel;
             _viewModel = viewModel;
+            VentanaCatalogoVigente = this;
             InitializeComponent();
         }
 

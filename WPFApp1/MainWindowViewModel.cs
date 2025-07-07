@@ -32,7 +32,7 @@ namespace WPFApp1
         }
         private void VerExportarProductos(object parameter)
         {
-            if (ExportarProductos.InstanciaVistas < 1) // Limitar cantidad de Instancias de vista
+            if (ExportarProductos.Instancias < 1) // Limitar cantidad de Instancias de vista
             {
                 ExportarProductosViewModel ExportarViewModel = new ExportarProductosViewModel();
                 ExportarProductos VistaExportar = new ExportarProductos(ExportarViewModel);
@@ -40,7 +40,7 @@ namespace WPFApp1
             }
             else
             {
-                // la logica del activate iria aca
+                ExportarProductos.VentanaExportarProductosVigente.Activate();
             }
         }
         private void VerLista(object parameter)
@@ -51,9 +51,16 @@ namespace WPFApp1
 
         private void VerCatalogo(object parameter)
         {
-            CatalogoViewModel catalogoViewModel = new CatalogoViewModel();
-            Catalogo _catalogo = new Catalogo(catalogoViewModel);
-            _catalogo.Show();
+            if (Catalogo.Instancias < 1)
+            {
+                CatalogoViewModel catalogoViewModel = new CatalogoViewModel();
+                Catalogo _catalogo = new Catalogo(catalogoViewModel);
+                _catalogo.Show();
+            }
+            else
+            {
+                Catalogo.VentanaCatalogoVigente.Activate();
+            }
         }
         private void AniadirPersona(object parameter)
         {

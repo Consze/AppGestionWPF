@@ -5,18 +5,22 @@ namespace WPFApp1
     public partial class MainWindow : Window
     {
         public MainWindowViewModel ViewModel { get; set; }
-
+        public bool PermitirCierrre { get; set; }
         public MainWindow()
         {
-            InitializeComponent();
+            PermitirCierrre = false;
             ViewModel = new MainWindowViewModel();
             DataContext = ViewModel;
             this.Closing += Window_Closing;
+            InitializeComponent();
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
+            if(!PermitirCierrre)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
         }
     }
 }

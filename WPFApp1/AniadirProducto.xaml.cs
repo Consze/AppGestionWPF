@@ -8,6 +8,7 @@ namespace WPFApp1
     public partial class AniadirProducto : Window
     {
         private AniadirProductoViewModel _viewModel;
+        public static AniadirProducto VentanaAniadirProductoVigente { get; private set; }
         public static int Instancias { get; set; }
         public AniadirProducto(AniadirProductoViewModel viewModel)
         {
@@ -15,6 +16,7 @@ namespace WPFApp1
             DataContext = viewModel;
             _viewModel = viewModel;
             _viewModel.CierreSolicitado += OnCierreSolicitado;
+            VentanaAniadirProductoVigente = this;
             InitializeComponent();
         }
 
