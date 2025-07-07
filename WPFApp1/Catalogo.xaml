@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1" FontFamily="Roboto"
         mc:Ignorable="d" FontSize="12"
-        Title="Catalogo" Height="450" Width="800">
+        Title="Catalogo" Height="450" Width="800" Closed="Window_Closed">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -31,10 +31,16 @@
 
         <TextBlock Grid.Row="1" Grid.Column="1" FontSize="24" FontWeight="Bold" Text="Catalogo" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2">
-            <Border Margin="5">
-                <ContentControl Content="{StaticResource IconoTresLineas}" Width="10"/>
+            <Border Margin="10,5,0,5">
+                <ContentControl x:Name="Throbber" Content="{StaticResource PruebaThrobber}" />
             </Border>
-            <Path Style="{StaticResource CuadradoIcono}" Margin="15,2,10,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Margin="10,5,0,5">
+                <Canvas Width="20" Height="20">
+                    <ContentControl Content="{StaticResource IconoTresLineas}" />
+                </Canvas> 
+            </Border>
+            <Path Style="{StaticResource CuadradoIcono}"  
+                  Margin="10,2,10,0" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Path.RenderTransform>
                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                 </Path.RenderTransform>

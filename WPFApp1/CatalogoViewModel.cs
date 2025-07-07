@@ -31,17 +31,20 @@ namespace WPFApp1
             ColeccionProductos = new ObservableCollection<Productos>();
             CargarProductos();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
-            AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
+            AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
         }
 
-        public void AniadirProducto(object parameter)
+        public void MostrarAniadirProducto(object parameter)
         {
-            this.MostrarVentanaAniadirProducto = true;
-            AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
-            AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
-            AniadirProductoInstanciado.Show();
+            if (AniadirProducto.Instancias < 1)
+            {
+                this.MostrarVentanaAniadirProducto = true;
+                AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
+                AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
+                AniadirProductoInstanciado.Show();
+            }
         }
         private void CargarProductos()
         {

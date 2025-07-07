@@ -8,17 +8,24 @@ namespace WPFApp1
     public partial class AniadirProducto : Window
     {
         private AniadirProductoViewModel _viewModel;
+        public static int Instancias { get; set; }
         public AniadirProducto(AniadirProductoViewModel viewModel)
         {
-            InitializeComponent();
+            Instancias++;
             DataContext = viewModel;
             _viewModel = viewModel;
             _viewModel.CierreSolicitado += OnCierreSolicitado;
+            InitializeComponent();
         }
 
         private void OnCierreSolicitado(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Instancias--;
         }
     }
 }

@@ -32,9 +32,16 @@ namespace WPFApp1
         }
         private void VerExportarProductos(object parameter)
         {
-            ExportarProductosViewModel ExportarViewModel = new ExportarProductosViewModel();
-            ExportarProductos VistaExportar = new ExportarProductos(ExportarViewModel);
-            VistaExportar.Show();
+            if (ExportarProductos.InstanciaVistas < 1) // Limitar cantidad de Instancias de vista
+            {
+                ExportarProductosViewModel ExportarViewModel = new ExportarProductosViewModel();
+                ExportarProductos VistaExportar = new ExportarProductos(ExportarViewModel);
+                VistaExportar.Show();
+            }
+            else
+            {
+                // la logica del activate iria aca
+            }
         }
         private void VerLista(object parameter)
         {
