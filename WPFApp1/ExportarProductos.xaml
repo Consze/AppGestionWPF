@@ -36,25 +36,30 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1" Grid.Column="2">
-            <StackPanel Grid.Row="1" Grid.Column="2">
-                <Border Margin="5">
-                    <ContentControl x:Name="Throbber"
-                        Visibility="{Binding ExportacionEnProceso, Converter={StaticResource BooleanToVisibility}}"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center">
-                        <ContentControl.Content>
-                            <Path Style="{StaticResource ThrobberSimpleEstilo}" Margin="0,3,0,0"
-                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </ContentControl.Content>
-                    </ContentControl>
-                </Border>
-            </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+            <Button x:Name="ExportarXLSX" Content="Exportar a Excel" Margin="5" Command="{Binding ExportarXLSXCommand}"/>
+            <Border Margin="5">
+                <ContentControl x:Name="Throbber"
+                    Visibility="{Binding ExportacionEnProceso, Converter={StaticResource BooleanToVisibility}}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                    <ContentControl.Content>
+                        <Path Style="{StaticResource ThrobberSimpleEstilo}"
+                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Path.RenderTransform>
+                            <Path.RenderTransformOrigin>
+                                <Point X="0.5" Y="0.5"/>
+                            </Path.RenderTransformOrigin>
+                        </Path>
+                    </ContentControl.Content>
+                </ContentControl>
+            </Border>
         </StackPanel>
-        <Button x:Name="ExportarXLSX" Content="Exportar a Excel" Margin="5" Grid.Row="1" Grid.Column="1" Command="{Binding ExportarXLSXCommand}"/>
     </Grid>
 </Window>

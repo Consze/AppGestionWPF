@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <CubicEase x:Key="SmoothEase" EasingMode="EaseInOut"/>
     <Path x:Key="PruebaThrobber" Stroke="Black" StrokeThickness="2">
         <Path.Data>
             <PathGeometry>
@@ -28,15 +29,25 @@
                     <BeginStoryboard>
                         <Storyboard RepeatBehavior="Forever">
                             <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-                                        From="OrangeRed" To="Transparent" Duration="0:0:0.7"/>
+                                From="Transparent" To="OrangeRed" Duration="0:0:0.6" EasingFunction="{StaticResource SmoothEase}"/>
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+                                From="OrangeRed" To="Transparent" Duration="0:0:0.4"
+                                BeginTime="0:0:0.6"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                 To="1.3" Duration="0:0:0.5"
+                                 EasingFunction="{StaticResource SmoothEase}"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                 To="1.3" Duration="0:0:0.5"
+                                 EasingFunction="{StaticResource SmoothEase}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </DataTrigger.EnterActions>
                 <DataTrigger.ExitActions>
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-                                        To="OrangeRed" Duration="0:0:0.5"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     To="0" Duration="0:0:0.7"
+                                     EasingFunction="{StaticResource SmoothEase}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </DataTrigger.ExitActions>
