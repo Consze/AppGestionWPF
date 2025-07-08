@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
 
 namespace WPFApp1
@@ -21,21 +20,63 @@ namespace WPFApp1
                     OnPropertyChanged(nameof(MostrarVentanaAniadirProducto));
                 }
             }
-        }  
+        }
+        private bool _mostrarVistaTabular;
+        public bool MostrarVistaTabular 
+        {
+            get { return _mostrarVistaTabular; }
+            set {
+                if(_mostrarVistaTabular != value)
+                {
+                    _mostrarVistaTabular = value;
+                    OnPropertyChanged(nameof(MostrarVistaTabular));
+                }
+            } 
+        }
+        private bool _mostrarVistaExpandida;
+        public bool MostrarVistaExpandida
+        {
+            get { return _mostrarVistaExpandida; }
+            set
+            {
+                if (_mostrarVistaExpandida != value)
+                {
+                    _mostrarVistaExpandida = value;
+                    OnPropertyChanged(nameof(MostrarVistaExpandida));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand ItemDoubleClickCommand { get; private set; }
         public ICommand AniadirProductoCommand { get; private set; }
+        public ICommand AlternarFormatoVistaCommand { get; private set; }
 
         public CatalogoViewModel()
         {
+            this._mostrarVistaTabular = false;
+            this._mostrarVistaExpandida = true;
             ColeccionProductos = new ObservableCollection<Productos>();
             CargarProductos();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
+            AlternarFormatoVistaCommand = new RelayCommand<object>(AlternarFormatoVista);
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
         }
 
+        public void AlternarFormatoVista(object parameter)
+        {
+            if (this.MostrarVistaExpandida)
+            {
+                this.MostrarVistaExpandida = false;
+                this.MostrarVistaTabular = true;
+            }
+            else
+            {
+                this.MostrarVistaExpandida = true;
+                this.MostrarVistaTabular = false;
+            }
+        }
         public void MostrarAniadirProducto(object parameter)
         {
             if (AniadirProducto.Instancias < 1)

@@ -95,4 +95,32 @@
         <Line x:Name="LineaCentro" X1="0" Y1="10" X2="20" Y2="10" Stroke="Black" StrokeThickness="2"/>
         <Line x:Name="LineaInferior" X1="0" Y1="15" X2="20" Y2="15" Stroke="Black" StrokeThickness="2"/>
     </Canvas>
+
+    <CombinedGeometry x:Key="AniadirItem" GeometryCombineMode="Exclude">
+        <CombinedGeometry.Geometry1>
+            <RectangleGeometry Rect="0,0,100,100"/>
+        </CombinedGeometry.Geometry1>
+        <CombinedGeometry.Geometry2>
+            <CombinedGeometry GeometryCombineMode="Union">
+                <CombinedGeometry.Geometry1>
+                    <RectangleGeometry Rect="30,40,40,20"/>
+                </CombinedGeometry.Geometry1>
+                <CombinedGeometry.Geometry2>
+                    <RectangleGeometry Rect="40,30,20,40"/>
+                </CombinedGeometry.Geometry2>
+            </CombinedGeometry>
+        </CombinedGeometry.Geometry2>
+    </CombinedGeometry>
+
+    <Style x:Key="BotonSinEstilo" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <ContentPresenter/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

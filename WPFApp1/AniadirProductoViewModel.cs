@@ -379,8 +379,10 @@ namespace WPFApp1
             }
 
             Productos _nuevoProducto = new Productos(0,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
-            if (ProductosRepository.AniadirNuevoProducto(_nuevoProducto))
+            long Resultado = ProductosRepository.AniadirNuevoProducto(_nuevoProducto);
+            if (Resultado > -1 )
             {
+                _nuevoProducto.ID = Convert.ToInt32(Resultado);
                 _nuevoProducto.RutaImagen = System.IO.Path.GetFullPath(_nuevoProducto.RutaImagen); 
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);

@@ -7,10 +7,11 @@ namespace WPFApp1
 {
     public class ProductosRepository
     {
-        public static bool AniadirNuevoProducto(Productos NuevoProducto)
+        public static long AniadirNuevoProducto(Productos NuevoProducto)
         {
             ConexionDB Instancia = new ConexionDB();
             string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@nombre, @categoria, @precio, @ruta_imagen)";
+            long nuevoProductoId = -1;
             try
             {
                 using (SQLiteCommand Comando = new SQLiteCommand(Consulta,Instancia.Conexion))
@@ -20,13 +21,17 @@ namespace WPFApp1
                     Comando.Parameters.AddWithValue("@precio", NuevoProducto.Precio);
                     Comando.Parameters.AddWithValue("@ruta_imagen", NuevoProducto.RutaImagen);
                     Comando.ExecuteNonQuery();
-                    return true;
+
+                    Comando.CommandText = "SELECT last_insert_rowid()";
+                    nuevoProductoId = (long)Comando.ExecuteScalar();
+
+                    return nuevoProductoId;
                 }
             }
             catch (SQLiteException ex)
             {
                 Console.WriteLine($"Error : {ex.Message}");
-                return false;
+                return nuevoProductoId;
             }
             finally
             {

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 namespace WPFApp1
 {
     /// <summary>
@@ -17,22 +16,6 @@ namespace WPFApp1
             _viewModel = ViewModel;
             VentanaExportarProductosVigente = this;
             InitializeComponent();
-            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
-        }
-     
-        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            /**
-            if (e.PropertyName == nameof(_viewModel.ExportacionEnProceso))
-            {
-                if (!_viewModel.ExportacionEnProceso)
-                {
-                }
-                else
-                {
-                }
-            }
-            */
         }
         private void Window_Closed(object sender, EventArgs e)
         {
