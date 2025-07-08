@@ -8,6 +8,9 @@
         Title="Exportar Productos" Height="450" Width="800" Closed="Window_Closed">
     <Window.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Iconos.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
             <SolidColorBrush x:Key="ThrobberFillBrush" Color="Gray"/>
             <Path x:Key="PruebaThrobber" Stroke="Black" StrokeThickness="2">
@@ -45,7 +48,8 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                         <ContentControl.Content>
-                            <Ellipse Width="30" Height="30" Fill="{Binding Color, Source={StaticResource ThrobberFillBrush}}"/>
+                            <Path Style="{StaticResource ThrobberSimpleEstilo}" Margin="0,3,0,0"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </ContentControl.Content>
                     </ContentControl>
                 </Border>

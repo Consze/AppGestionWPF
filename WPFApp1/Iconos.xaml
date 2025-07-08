@@ -12,6 +12,38 @@
             </PathGeometry>
         </Path.Data>
     </Path>
+
+
+    <EllipseGeometry x:Key="ThrobberSimple" Center="10,10" RadiusX="10" RadiusY="10" />
+    <Style x:Key="ThrobberSimpleEstilo" TargetType="Path">
+        <Setter Property="Data" Value="{StaticResource ThrobberSimple}"/>
+        <Setter Property="Fill" Value="OrangeRed"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=DataContext.ExportacionEnProceso, RelativeSource={RelativeSource AncestorType=ContentControl}}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+                                        From="OrangeRed" To="Transparent" Duration="0:0:0.7"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+                                        To="OrangeRed" Duration="0:0:0.5"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <RectangleGeometry x:Key="Cuadrado" Rect="0,0,20,20"/>
     <Style x:Key="CuadradoIcono" TargetType="Path">
         <Setter Property="Fill" Value="Black"/>

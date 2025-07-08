@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 namespace WPFApp1
 {
     /// <summary>
@@ -25,39 +22,17 @@ namespace WPFApp1
      
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            /**
             if (e.PropertyName == nameof(_viewModel.ExportacionEnProceso))
             {
                 if (!_viewModel.ExportacionEnProceso)
                 {
-                    if (Throbber.Content is Path throbberPath)  
-                    {
-                        Storyboard cambioColorStoryboard = (Storyboard)this.FindResource("AnimacionCambioColorThrobber");
-                        if (cambioColorStoryboard != null)
-                        {
-                            cambioColorStoryboard.Stop(throbberPath);
-                        }
-                    }
                 }
                 else
                 {
-                    if (Throbber.Content is Ellipse ellipse)
-                    {
-                        Storyboard storyboard = new Storyboard();
-                        ColorAnimation colorAnimation = new ColorAnimation();
-
-                        colorAnimation.From = Colors.Gray;
-                        colorAnimation.To = Colors.Red;
-                        colorAnimation.Duration = TimeSpan.FromSeconds(1);
-                        colorAnimation.RepeatBehavior = RepeatBehavior.Forever;
-
-                        Storyboard.SetTargetName(colorAnimation, "ThrobberFillBrush");
-                        Storyboard.SetTargetProperty(colorAnimation, new PropertyPath("Color"));
-
-                        storyboard.Children.Add(colorAnimation);
-                        storyboard.Begin(Throbber);
-                    }
                 }
             }
+            */
         }
         private void Window_Closed(object sender, EventArgs e)
         {
