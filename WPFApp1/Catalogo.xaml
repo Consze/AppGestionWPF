@@ -77,14 +77,14 @@
 
         <Border Margin="5" Grid.Row="2" Grid.Column="1">
             <ContentControl x:Name="Throbber"
-                Visibility="{Binding CargaEnProceso, Converter={StaticResource BooleanToVisibility}}"
+                Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
-                <ContentControl.Content>
+                <ContentControl.Content >
                     <Path Style="{StaticResource ThrobberSimpleEstilo}"
                     VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Path.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            <ScaleTransform ScaleX="3" ScaleY="3"/>
                         </Path.RenderTransform>
                         <Path.RenderTransformOrigin>
                             <Point X="0.5" Y="0.5"/>

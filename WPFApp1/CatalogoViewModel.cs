@@ -46,15 +46,15 @@ namespace WPFApp1
                 }
             }
         }
-        private bool _cargando;
-        public bool CargaEnProceso {
-            get { return _cargando; }
+        private bool _procesando;
+        public bool Procesando {
+            get { return _procesando; }
             set
             {
-                if (_cargando != value)
+                if (_procesando != value)
                 {
-                    _cargando = value;
-                    OnPropertyChanged(nameof(CargaEnProceso));
+                    _procesando = value;
+                    OnPropertyChanged(nameof(Procesando));
                 }
             }        
         }
@@ -65,31 +65,35 @@ namespace WPFApp1
 
         public CatalogoViewModel()
         {
-            this._cargando = true;
             this._mostrarVistaTabular = false;
             this._mostrarVistaExpandida = true;
             ColeccionProductos = new ObservableCollection<Productos>();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
-            AlternarFormatoVistaCommand = new RelayCommand<object>(AlternarFormatoVista);
+            AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
 
             Task.Run(async () => await CargarProductosAsync());
         }
 
-        public void AlternarFormatoVista(object parameter)
+        public async Task AlternarFormatoVista()
         {
-            if (this.MostrarVistaExpandida)
+            this.Procesando = true;
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                this.MostrarVistaExpandida = false;
-                this.MostrarVistaTabular = true;
-            }
-            else
-            {
-                this.MostrarVistaExpandida = true;
-                this.MostrarVistaTabular = false;
-            }
+                    if (this.MostrarVistaExpandida)
+                {
+                    this.MostrarVistaExpandida = false;
+                    this.MostrarVistaTabular = true;
+                }
+                else
+                {
+                    this.MostrarVistaExpandida = true;
+                    this.MostrarVistaTabular = false;
+                }
+            });
+            this.Procesando = false;
         }
         public void MostrarAniadirProducto(object parameter)
         {
@@ -107,15 +111,16 @@ namespace WPFApp1
         }
         private async Task CargarProductosAsync()
         {
+            this.Procesando = true;
             List<Productos> registros = await Task.Run(() => ProductosRepository.LeerProductos());
             System.Windows.Application.Current.Dispatcher.Invoke(() => 
             {
-                foreach (var producto in registros)
+            foreach (var producto in registros)
                 {
                     ColeccionProductos.Add(producto);
                 }
+                this.Procesando = false;
             });
-            this._cargando = false;
         }
         /// <summary>
         /// Inicia la vista de edición de productos

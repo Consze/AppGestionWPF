@@ -6,15 +6,15 @@ namespace WPFApp1
 {
     public class ExportarProductosViewModel : INotifyPropertyChanged
     {
-        private bool _Exportacion;
-        public bool ExportacionEnProceso 
+        private bool _procesando;
+        public bool Procesando
         {
-            get { return _Exportacion; } 
+            get { return _procesando; } 
             set
             {
-                if (_Exportacion != value) {
-                    _Exportacion = value;
-                    OnPropertyChanged(nameof(ExportacionEnProceso));
+                if (_procesando != value) {
+                    _procesando = value;
+                    OnPropertyChanged(nameof(Procesando));
                 }
             }
         }
@@ -25,7 +25,7 @@ namespace WPFApp1
         public ExportarProductosViewModel()
         {
             ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX(param));
-            this._Exportacion = false;
+            this._procesando = false;
         }
 
         public async Task ExportarXLSX(Object parameter)
@@ -34,13 +34,13 @@ namespace WPFApp1
         }
         public async Task ExportarXLSXAsync()
         {
-            if (!this._Exportacion) 
+            if (!this._procesando) 
             {
-                this.ExportacionEnProceso = true;
+                this.Procesando = true;
                 try { 
                     List <Productos> Productos = await Task.Run(() => ProductosRepository.LeerProductos());
                     bool resultado = await Task.Run(() => ProductosRepository.CrearLibro(Productos));
-                    this.ExportacionEnProceso = false;
+                    this.Procesando = false;
                     if (resultado)
                     {
                         System.Windows.MessageBox.Show("Se exportaron los productos.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -52,7 +52,7 @@ namespace WPFApp1
                 }
                 finally
                 {
-                    this.ExportacionEnProceso = false;
+                    this.Procesando = false;
                 }
             }
             else

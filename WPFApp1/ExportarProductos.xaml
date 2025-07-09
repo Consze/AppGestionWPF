@@ -32,7 +32,7 @@
             <Button x:Name="ExportarXLSX" Content="Exportar a Excel" Margin="5" Command="{Binding ExportarXLSXCommand}"/>
             <Border Margin="5">
                 <ContentControl x:Name="Throbber"
-                    Visibility="{Binding ExportacionEnProceso, Converter={StaticResource BooleanToVisibility}}"
+                    Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
                     <ContentControl.Content>

@@ -24,7 +24,7 @@
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
 
         <Style.Triggers>
-            <DataTrigger Binding="{Binding Path=DataContext.ExportacionEnProceso, RelativeSource={RelativeSource AncestorType=ContentControl}}" Value="True">
+            <DataTrigger Binding="{Binding Procesando}" Value="True">
                 <DataTrigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard RepeatBehavior="Forever">
