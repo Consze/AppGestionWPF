@@ -13,6 +13,18 @@
                 <ResourceDictionary Source="Iconos.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+            
+            <ContextMenu x:Key="MenuContextual">
+                <MenuItem Header="Editar"/>
+                <MenuItem Header="Eliminar"/>
+                <MenuItem Header="Registrar Venta"/>
+                <Separator/>
+                <MenuItem Header="Duplicar"/>
+                <MenuItem Header="Reservar"/>
+                <Separator/>
+                <MenuItem Header="Exportar"/>
+            </ContextMenu>
+            
         </ResourceDictionary>
     </Window.Resources>
 
@@ -62,9 +74,28 @@
                 <Image Width="24" Height="24" Source="./iconos/ascending-sort.png"/>
             </Button>
         </StackPanel>
-        
+
+        <Border Margin="5" Grid.Row="2" Grid.Column="1">
+            <ContentControl x:Name="Throbber"
+                Visibility="{Binding CargaEnProceso, Converter={StaticResource BooleanToVisibility}}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+                <ContentControl.Content>
+                    <Path Style="{StaticResource ThrobberSimpleEstilo}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                        </Path.RenderTransform>
+                        <Path.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5"/>
+                        </Path.RenderTransformOrigin>
+                    </Path>
+                </ContentControl.Content>
+            </ContentControl>
+        </Border>
+
         <!--Vista tabular-->
-        <DataGrid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ColeccionProductos}"
+        <DataGrid x:Name="Tabla"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ColeccionProductos}"
                   Visibility="{Binding MostrarVistaTabular, Converter={StaticResource BooleanToVisibility}}" FontSize="18"
                   FontFamily="Monserrat" AutoGenerateColumns="False" Background="Transparent" GridLinesVisibility="None" 
                   BorderBrush="Transparent" IsReadOnly="True">
@@ -73,6 +104,13 @@
                     <Setter Property="Padding" Value="5,3,5,3"/>
                 </Style>
             </DataGrid.CellStyle>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource MenuContextual}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Visibility="Visible"/>
                 <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria}" Visibility="Visible"/>
@@ -91,7 +129,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10">
+                        <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" ContextMenu="{StaticResource MenuContextual}">
                             <Border.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick"
                                       Command="{Binding DataContext.ItemDoubleClickCommand,

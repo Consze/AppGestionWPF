@@ -12,19 +12,6 @@
                 <ResourceDictionary Source="Iconos.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
-            <SolidColorBrush x:Key="ThrobberFillBrush" Color="Gray"/>
-            <Path x:Key="PruebaThrobber" Stroke="Black" StrokeThickness="2">
-                <Path.Data>
-                    <PathGeometry>
-                        <PathFigure StartPoint="10,1">
-                            <ArcSegment x:Name="Arco1" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="19,10"/>
-                            <ArcSegment x:Name="Arco2" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,19"/>
-                            <ArcSegment x:Name="Arco3" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="1,10"/>
-                            <ArcSegment x:Name="Arco4" Size="9,9" RotationAngle="0" IsLargeArc="False" SweepDirection="Clockwise" Point="10,1"/>
-                        </PathFigure>
-                    </PathGeometry>
-                </Path.Data>
-            </Path>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>

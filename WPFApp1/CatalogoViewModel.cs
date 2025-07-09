@@ -46,6 +46,18 @@ namespace WPFApp1
                 }
             }
         }
+        private bool _cargando;
+        public bool CargaEnProceso {
+            get { return _cargando; }
+            set
+            {
+                if (_cargando != value)
+                {
+                    _cargando = value;
+                    OnPropertyChanged(nameof(CargaEnProceso));
+                }
+            }        
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand ItemDoubleClickCommand { get; private set; }
         public ICommand AniadirProductoCommand { get; private set; }
@@ -53,15 +65,17 @@ namespace WPFApp1
 
         public CatalogoViewModel()
         {
+            this._cargando = true;
             this._mostrarVistaTabular = false;
             this._mostrarVistaExpandida = true;
             ColeccionProductos = new ObservableCollection<Productos>();
-            CargarProductos();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
             AlternarFormatoVistaCommand = new RelayCommand<object>(AlternarFormatoVista);
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
+
+            Task.Run(async () => await CargarProductosAsync());
         }
 
         public void AlternarFormatoVista(object parameter)
@@ -91,13 +105,17 @@ namespace WPFApp1
                 AniadirProducto.VentanaAniadirProductoVigente.Activate();
             }
         }
-        private void CargarProductos()
+        private async Task CargarProductosAsync()
         {
-            List<Productos> registros = ProductosRepository.LeerProductos();
-            foreach (var producto in registros)
+            List<Productos> registros = await Task.Run(() => ProductosRepository.LeerProductos());
+            System.Windows.Application.Current.Dispatcher.Invoke(() => 
             {
-                ColeccionProductos.Add(producto);
-            }
+                foreach (var producto in registros)
+                {
+                    ColeccionProductos.Add(producto);
+                }
+            });
+            this._cargando = false;
         }
         /// <summary>
         /// Inicia la vista de edición de productos
