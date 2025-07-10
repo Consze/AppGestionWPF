@@ -4,6 +4,12 @@ using System.Windows.Input;
 
 namespace WPFApp1
 {
+    public enum VistaElegida
+    {
+        Tabla,
+        Galeria,
+        Ninguna
+    }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Productos> ColeccionProductos { get; set; }
@@ -33,16 +39,16 @@ namespace WPFApp1
                 }
             } 
         }
-        private bool _mostrarVistaExpandida;
-        public bool MostrarVistaExpandida
+        private bool _mostrarVistaGaleria;
+        public bool MostrarVistaGaleria
         {
-            get { return _mostrarVistaExpandida; }
+            get { return _mostrarVistaGaleria; }
             set
             {
-                if (_mostrarVistaExpandida != value)
+                if (_mostrarVistaGaleria != value)
                 {
-                    _mostrarVistaExpandida = value;
-                    OnPropertyChanged(nameof(MostrarVistaExpandida));
+                    _mostrarVistaGaleria = value;
+                    OnPropertyChanged(nameof(MostrarVistaGaleria));
                 }
             }
         }
@@ -65,8 +71,9 @@ namespace WPFApp1
 
         public CatalogoViewModel()
         {
+            this._procesando = false;
             this._mostrarVistaTabular = false;
-            this._mostrarVistaExpandida = true;
+            this._mostrarVistaGaleria = true;
             ColeccionProductos = new ObservableCollection<Productos>();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
@@ -74,24 +81,53 @@ namespace WPFApp1
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
 
+            Task.Run(async () => await CargarEstadoInicialAsync());
             Task.Run(async () => await CargarProductosAsync());
+        }
+
+        public async Task CargarEstadoInicialAsync()
+        {
+            this.Procesando = true;
+            VistaElegida vista = PersistenciaConfiguracion.LeerUltimaVista();
+            switch(vista)
+            {
+                case VistaElegida.Ninguna:
+                case VistaElegida.Galeria:
+                    this.MostrarVistaGaleria = true;
+                    this.MostrarVistaTabular = false;
+                    break;
+                case VistaElegida.Tabla:
+                    this.MostrarVistaGaleria = false;
+                    this.MostrarVistaTabular = true;
+                    break;
+            }
+            this.Procesando = false;
         }
 
         public async Task AlternarFormatoVista()
         {
+            await AlternarFormatoVistaAsync().ConfigureAwait(false);   
+        }
+
+        public async Task AlternarFormatoVistaAsync()
+        {
             this.Procesando = true;
+            VistaElegida vista = new VistaElegida();
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                    if (this.MostrarVistaExpandida)
+                if (this.MostrarVistaGaleria)
                 {
-                    this.MostrarVistaExpandida = false;
+                    vista = VistaElegida.Tabla;
+                    this.MostrarVistaGaleria = false;
                     this.MostrarVistaTabular = true;
                 }
                 else
                 {
-                    this.MostrarVistaExpandida = true;
+                    vista = VistaElegida.Galeria;
+                    this.MostrarVistaGaleria = true;
                     this.MostrarVistaTabular = false;
                 }
+                PersistenciaConfiguracion.GuardarUltimaVista(vista);
             });
             this.Procesando = false;
         }

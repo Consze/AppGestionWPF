@@ -42,7 +42,26 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="1" Grid.Column="1" FontSize="24" FontWeight="Bold" Text="Catalogo" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+            <TextBlock FontSize="24" FontWeight="Bold" Text="Catalogo"/>
+            <!--Throbber-->
+            <Border Margin="5" Grid.Row="1" Grid.Column="1">
+                <ContentControl x:Name="Throbber" Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}">
+                    <ContentControl.Content >
+                        <Path Style="{StaticResource ThrobberSimpleEstilo}"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Path.RenderTransform>
+                            <Path.RenderTransformOrigin>
+                                <Point X="0.5" Y="0.5"/>
+                            </Path.RenderTransformOrigin>
+                        </Path>
+                    </ContentControl.Content>
+                </ContentControl>
+            </Border>
+        </StackPanel>
+        
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2">
             <Border Margin="10,5,0,5">
                 <Canvas Width="20" Height="20">
@@ -75,25 +94,6 @@
             </Button>
         </StackPanel>
 
-        <Border Margin="5" Grid.Row="2" Grid.Column="1">
-            <ContentControl x:Name="Throbber"
-                Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center">
-                <ContentControl.Content >
-                    <Path Style="{StaticResource ThrobberSimpleEstilo}"
-                    VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Path.RenderTransform>
-                            <ScaleTransform ScaleX="3" ScaleY="3"/>
-                        </Path.RenderTransform>
-                        <Path.RenderTransformOrigin>
-                            <Point X="0.5" Y="0.5"/>
-                        </Path.RenderTransformOrigin>
-                    </Path>
-                </ContentControl.Content>
-            </ContentControl>
-        </Border>
-
         <!--Vista tabular-->
         <DataGrid x:Name="Tabla"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ColeccionProductos}"
                   Visibility="{Binding MostrarVistaTabular, Converter={StaticResource BooleanToVisibility}}" FontSize="18"
@@ -118,9 +118,9 @@
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" Visibility="Visible" />
             </DataGrid.Columns>
         </DataGrid>
-        
-        <!--Vista con Miniaturas de registros-->
-        <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding MostrarVistaExpandida, Converter={StaticResource BooleanToVisibility}}">
+         
+        <!--Vista Galeria con Imagenes-->
+        <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding MostrarVistaGaleria, Converter={StaticResource BooleanToVisibility}}">
             <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionProductos}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

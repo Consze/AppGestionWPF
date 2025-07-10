@@ -24,11 +24,11 @@ namespace WPFApp1
         //constructor
         public ExportarProductosViewModel()
         {
-            ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX(param));
+            ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX());
             this._procesando = false;
         }
 
-        public async Task ExportarXLSX(Object parameter)
+        public async Task ExportarXLSX()
         {
             await ExportarXLSXAsync().ConfigureAwait(false);
         }
