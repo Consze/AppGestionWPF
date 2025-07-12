@@ -17,6 +17,8 @@
     <None Remove="ico128.ico" />
     <None Remove="iconos\aniadir-registro.png" />
     <None Remove="iconos\ascending-sort.png" />
+    <None Remove="iconos\exportar_xlsx.png" />
+    <None Remove="iconos\Stack.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +30,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\ascending-sort.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\exportar_xlsx.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\Stack.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

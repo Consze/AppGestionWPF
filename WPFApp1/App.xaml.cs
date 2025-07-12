@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Forms = System.Windows.Forms;
 namespace WPFApp1
@@ -9,7 +10,7 @@ namespace WPFApp1
         private static Mutex _mutex = null;
         private Forms.NotifyIcon _trayIcon = new NotifyIcon();
         private MainWindow _mainWindow;
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async Task OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             const string appName = "WPFApp1";

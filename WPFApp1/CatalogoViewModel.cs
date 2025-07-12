@@ -106,12 +106,13 @@ namespace WPFApp1
 
         public async Task AlternarFormatoVista()
         {
-            await AlternarFormatoVistaAsync().ConfigureAwait(false);   
+            this.Procesando = true;
+            await AlternarFormatoVistaAsync().ConfigureAwait(false);
+            this.Procesando = false;
         }
 
         public async Task AlternarFormatoVistaAsync()
         {
-            this.Procesando = true;
             VistaElegida vista = new VistaElegida();
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
@@ -129,7 +130,6 @@ namespace WPFApp1
                 }
                 PersistenciaConfiguracion.GuardarUltimaVista(vista);
             });
-            this.Procesando = false;
         }
         public void MostrarAniadirProducto(object parameter)
         {
