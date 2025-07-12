@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using Forms = System.Windows.Forms;
 namespace WPFApp1
 {
@@ -23,6 +24,8 @@ namespace WPFApp1
             _splashScreen.Show();
             _mainWindow = new MainWindow();
 
+            Task.Run(() => ValidarIntegridadDirectorios());
+
             // Inicializar el icono en la bandeja del sistema
             _trayIcon = new NotifyIcon();
             _trayIcon.Icon = new System.Drawing.Icon("ico128.ico");
@@ -42,6 +45,40 @@ namespace WPFApp1
 
             _mainWindow.Closing += MainWindow_Closing;
             _splashScreen.Close();
+        }
+
+        private void ValidarIntegridadDirectorios()
+        {
+            string rutaDatos = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Datos");
+            string rutaExportaciones = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exportaciones");
+            string rutaIconos = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Iconos");
+            string rutaGaleria = Path.Combine(rutaDatos, "Miniaturas");
+
+            CrearDirectorioInexistente(rutaDatos);
+            CrearDirectorioInexistente(rutaExportaciones);
+            CrearDirectorioInexistente(rutaIconos);
+            CrearDirectorioInexistente(rutaGaleria);
+        }
+
+        private bool CrearDirectorioInexistente(string Ruta)
+        {
+            if (!Directory.Exists(Ruta))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Ruta);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al crear el directorio {ex.Message}");
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
         }
 
         /// <summary>
