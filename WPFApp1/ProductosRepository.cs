@@ -9,7 +9,7 @@ namespace WPFApp1
     {
         public static long AniadirNuevoProducto(Productos NuevoProducto)
         {
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@nombre, @categoria, @precio, @ruta_imagen)";
             long nuevoProductoId = -1;
             try
@@ -41,7 +41,7 @@ namespace WPFApp1
         public static List<Productos> LeerProductos()
         {
             List<Productos> ListaProductos = new List<Productos>();
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string consulta = "SELECT * FROM Productos";
 
             using (SQLiteCommand Comando = new SQLiteCommand(consulta, Instancia.Conexion))
@@ -66,7 +66,7 @@ namespace WPFApp1
         }
         public static bool ModificarProducto(Productos RegistroModificado)
         {
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             Productos ProductoVigente = RecuperarRegistro(RegistroModificado.ID);
 
             if(ProductoVigente.ID > 0 ) // Validar registro
@@ -138,7 +138,7 @@ namespace WPFApp1
         public static bool EliminarProducto(int RegistroID)
         {
             Productos Registro = new Productos(0, "", "", 0, "");
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             Registro = RecuperarRegistro(RegistroID);
             string Consulta = "DELETE FROM Productos WHERE producto_id = @id";
             if (Registro.ID > 0)
@@ -177,7 +177,7 @@ namespace WPFApp1
         public static Productos RecuperarRegistro(int RegistroID)
         {
             Productos Registro = new Productos(0,"", "", 0, "");
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string Consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
             using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
             {

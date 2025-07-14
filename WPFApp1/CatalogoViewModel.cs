@@ -13,7 +13,6 @@ namespace WPFApp1
     public class CatalogoViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Productos> ColeccionProductos { get; set; }
-
         private bool _mostrarVentanaAniadirProducto;
         public bool MostrarVentanaAniadirProducto
         {

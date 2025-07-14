@@ -10,8 +10,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Iconos.xaml"/>
-                <ResourceDictionary Source="Animaciones.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
         </ResourceDictionary>
     </Window.Resources>
     
@@ -42,6 +42,25 @@
             <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerExportarProductosCommand}">
                 <Image Source="/iconos/exportar_xlsx.png" Width="40" Height="40"/>
             </Button>
+            <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding ConfigurarServidorCommand}">
+                <Image Source="/iconos/Server.png" Width="40" Height="40"/>
+            </Button>
+            <!--Throbber-->
+            <Border Margin="5" Grid.Row="1" Grid.Column="1">
+                <ContentControl x:Name="Throbber" Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}">
+                    <ContentControl.Content >
+                        <Path Style="{StaticResource ThrobberSimpleEstilo}"
+                VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Path.RenderTransform>
+                            <Path.RenderTransformOrigin>
+                                <Point X="0.5" Y="0.5"/>
+                            </Path.RenderTransformOrigin>
+                        </Path>
+                    </ContentControl.Content>
+                </ContentControl>
+            </Border>
         </StackPanel>
         <TextBlock Grid.Column="1" Grid.Row="1" FontSize="36" Text="Menu" 
                    FontWeight="Regular" Grid.ColumnSpan="2" Margin="0,0,0,10"/>

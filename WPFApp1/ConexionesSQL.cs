@@ -1,16 +1,90 @@
-﻿using System.Data.SQLite;
+﻿using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.IO;
-using NPOI.SS.Formula.Functions;
+using System.Text.Json;
 
 namespace WPFApp1
 {
-    class ConexionDB
+    public class ConfiguracionSQLServer()
     {
-        public string CadenaConexion { get; private set; } = "Data Source=.\\datos\\base.db;Version=3;";
-        private string _rutaArchivo { get; set; } = ".\\datos\\base.db";
+        public string CadenaConexion { get; set; }
+        public bool ConexionValida { get; set; }
+        public DateTime FechaHora { get; set; }
+        public string Excepcion { get; set; }
+    }
+    public class ConexionDBSQLServer
+    {
+        public string CadenaConexion { get; set; }
+        public bool ConexionValida { get; set; }
+        private string rutaArchivoConfiguracion { get; set; }
+        public string ExcepcionSQL { get; set; } 
+        public ConexionDBSQLServer()
+        {
+            this.rutaArchivoConfiguracion = @".\datos\configuracionSQLServer.json";
+        }
+        public ConfiguracionSQLServer LeerArchivoConfiguracion()
+        {
+            try
+            {
+                if (File.Exists(rutaArchivoConfiguracion))
+                {
+                    string jsonString = File.ReadAllText(rutaArchivoConfiguracion);
+                    var configuracion = JsonSerializer.Deserialize<ConfiguracionSQLServer>(jsonString);
+                    return configuracion;
+                }
+                else
+                {
+                    File.Create(rutaArchivoConfiguracion);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error {ex.Message}");
+                return null;
+            }
+        }
+        public void GuardarEstadoConexion()
+        {
+            var configuracion = new ConfiguracionSQLServer {CadenaConexion = this.CadenaConexion, ConexionValida = this.ConexionValida, Excepcion = this.ExcepcionSQL, FechaHora = DateTime.Now };
+            string jsonString = JsonSerializer.Serialize(configuracion);
+            try
+            {
+                File.WriteAllText(this.rutaArchivoConfiguracion, jsonString);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        public bool ProbarConexion(string ruta)
+        {
+            using (SqlConnection conexion = new SqlConnection(ruta))
+            {
+                try
+                {
+                    conexion.Open();
+                    this.ConexionValida = true;
+                    this.ExcepcionSQL = null;
+                    return true;
+                }
+                catch (SqlException ex)
+                {
+                    this.ConexionValida = false;
+                    this.ExcepcionSQL = ex.Message;
+                    return false;
+                }
+            }
+        }
+    }
+    public class ConexionDBSQLite
+    {
+        public string CadenaConexion { get; private set; } = @"Data Source=.\datos\base.db;Version=3;";
+        private string _rutaArchivo { get; set; } = @".\datos\base.db";
         public SQLiteConnection Conexion { get; private set; }
 
-        public ConexionDB()
+        public ConexionDBSQLite()
         {
             bool _BanderaCrearTablas = false;
             if (File.Exists(_rutaArchivo) == false)
@@ -29,9 +103,9 @@ namespace WPFApp1
                     CrearTablaProductos(Conexion);
                 }
                 else
-                { 
+                {
                     string _PruebaConexion = "SELECT * FROM Personas";
-                    using(SQLiteCommand comando = new SQLiteCommand(_PruebaConexion,Conexion))
+                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
                     {
                         try
                         {
@@ -48,7 +122,7 @@ namespace WPFApp1
                                 Console.WriteLine("La tabla de personas no existia y fue creada nuevamente");
                             }
                         }
-                    
+
                     }
                     _PruebaConexion = "SELECT * FROM Productos";
                     using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
@@ -95,7 +169,7 @@ namespace WPFApp1
                     return true;
                 }
             }
-            catch(SQLiteException ex)
+            catch (SQLiteException ex)
             {
                 Console.WriteLine($"Error al crear tabla personas {ex.Message}");
                 return false;

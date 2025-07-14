@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using Forms = System.Windows.Forms;
 namespace WPFApp1
@@ -10,7 +9,7 @@ namespace WPFApp1
         private static Mutex _mutex = null;
         private Forms.NotifyIcon _trayIcon = new NotifyIcon();
         private MainWindow _mainWindow;
-        protected override async Task OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             const string appName = "WPFApp1";
@@ -25,16 +24,16 @@ namespace WPFApp1
             _splashScreen.Show();
             _mainWindow = new MainWindow();
 
-            Task.Run(() => ValidarIntegridadDirectorios());
+            await Task.Run(() => ValidarIntegridadDirectorios());
 
-            // Inicializar el icono en la bandeja del sistema
+            // Iniciar el icono en bandeja del sistema
             _trayIcon = new NotifyIcon();
             _trayIcon.Icon = new System.Drawing.Icon("ico128.ico");
             _trayIcon.Text = "Aplicación";
             _trayIcon.Visible = true;
             _trayIcon.DoubleClick += TrayIcon_DoubleClick;
 
-            // Crear un menú contextual
+            // Crear menu contextual
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             ToolStripMenuItem menuItemAbrir = new ToolStripMenuItem("Abrir");
             ToolStripMenuItem menuItemSalir = new ToolStripMenuItem("Salir");
@@ -121,7 +120,7 @@ namespace WPFApp1
             _mainWindow.Activate();
         }
 
-        protected override void OnExit(ExitEventArgs e)
+        protected override async void OnExit(ExitEventArgs e)
         {
             if (_mutex != null)
             {

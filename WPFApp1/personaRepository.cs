@@ -8,7 +8,7 @@ namespace WPFApp1
         public static List<Persona> LeerRegistros()
         {
             List<Persona> listaRegistros = new List<Persona>();
-            ConexionDB instancia = new ConexionDB();
+            ConexionDBSQLite instancia = new ConexionDBSQLite();
             string consulta = "SELECT * FROM personas";
             using (SQLiteCommand comando = new SQLiteCommand(consulta, instancia.Conexion))
             {
@@ -36,7 +36,7 @@ namespace WPFApp1
         /// <returns>Boolean</returns>
         public static bool AniadirPersona(Persona nuevaPersona)
         {
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string Consulta = "INSERT INTO Personas (nombre, altura, peso) VALUES (@nombre, @altura, @peso)";
             try
             {
@@ -62,7 +62,7 @@ namespace WPFApp1
 
         public static bool EliminarPersona(int IDPersona)
         {
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             try
             {
                 string _consulta = "DELETE FROM Personas WHERE persona_id = @id";
@@ -98,7 +98,7 @@ namespace WPFApp1
         /// <returns></returns>
         public static bool EditarPersona(Persona personaEditar)
         {
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             Persona registroVigente = new Persona(0, "", 0, 0);
             registroVigente = RecuperarRegistro(personaEditar.id);
 
@@ -187,7 +187,7 @@ namespace WPFApp1
         public static Persona RecuperarRegistro(int IDPersona)
         {
             Persona registro = new Persona(0, "", 0, 0);
-            ConexionDB Instancia = new ConexionDB();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string consulta = "SELECT * FROM Personas WHERE persona_id = @id";
             using (SQLiteCommand Comando = new SQLiteCommand(consulta, Instancia.Conexion))
             {

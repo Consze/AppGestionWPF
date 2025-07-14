@@ -13,6 +13,7 @@ namespace WPFApp1
     }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
+        private readonly IProductosAccesoDatos _productosDatos;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -120,6 +121,7 @@ namespace WPFApp1
             this.CategoriaProducto = string.Empty;
             this.PrecioProducto = 0;
 
+            //this._productosDatos = productosDatos;
             this.NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);

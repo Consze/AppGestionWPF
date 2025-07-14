@@ -10,7 +10,7 @@ namespace WPFApp1
 
     public class PersistenciaConfiguracion
     {
-        private static string _rutaArchivoConfiguracion = ".\\configuracion.json";
+        private static string _rutaArchivoConfiguracion = @".\configuracion.json";
 
         public static bool GuardarUltimaVista(VistaElegida Vista)
         {
