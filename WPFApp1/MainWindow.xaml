@@ -50,7 +50,7 @@
                 <ContentControl x:Name="Throbber" Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}">
                     <ContentControl.Content >
                         <Path Style="{StaticResource ThrobberSimpleEstilo}"
-                VerticalAlignment="Center" HorizontalAlignment="Center">
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Path.RenderTransform>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
                             </Path.RenderTransform>

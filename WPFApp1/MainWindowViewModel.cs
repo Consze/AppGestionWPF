@@ -86,7 +86,8 @@ namespace WPFApp1
                 bool conexionExitosa = await Task.Run(() => _configuracionServidor.ProbarConexion(cadenaConexion));
                 _configuracionServidor.ConexionValida = conexionExitosa;
                 await Task.Run(() => _configuracionServidor.GuardarEstadoConexion());
-                if(conexionExitosa)
+                this.Procesando = false;
+                if (conexionExitosa)
                 {
                     System.Windows.MessageBox.Show($"Conexion Exitosa a: {cadenaConexion}", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -99,7 +100,6 @@ namespace WPFApp1
             {
                 System.Windows.MessageBox.Show("No se ingresaron datos", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            this.Procesando = false;
         }
         private void VerCatalogo(object parameter)
         {
