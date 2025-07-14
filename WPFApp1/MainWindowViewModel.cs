@@ -67,20 +67,14 @@ namespace WPFApp1
         }
         private async Task ConfigurarServidorAsync()
         {
-            InputUsuarioViewModel viewModel = new InputUsuarioViewModel("Ingrese el nombre de instancia de SQLServer:");
-            InputUsuario dialogo = new InputUsuario(viewModel);
+            ConfigurarSQLServerViewModel viewModel = new ConfigurarSQLServerViewModel();
+            ConfigurarSQLServer dialogo = new ConfigurarSQLServer(viewModel);
             bool? resultado = dialogo.ShowDialog();
 
-            InputUsuarioViewModel viewModel2 = new InputUsuarioViewModel("Ingrese el nombre de la base de datos:");
-            InputUsuario dialogo2 = new InputUsuario(viewModel2);
-            bool? resultado2 = dialogo2.ShowDialog();
-
-            if (resultado == true && resultado2 == true)
+            if (resultado == true)
             {
                 this.Procesando = true;
-                string nombreServidor = viewModel.Entrada;
-                string nombreDB = viewModel2.Entrada;
-                string cadenaConexion = $"Server={Environment.MachineName}\\{nombreServidor};Database={nombreDB};Integrated Security=True;";
+                string cadenaConexion = viewModel.CadenaConexionAServidor;
                 ConexionDBSQLServer _configuracionServidor = new ConexionDBSQLServer();
                 _configuracionServidor.CadenaConexion = cadenaConexion;
                 bool conexionExitosa = await Task.Run(() => _configuracionServidor.ProbarConexion(cadenaConexion));
@@ -98,7 +92,7 @@ namespace WPFApp1
             }
             else
             {
-                System.Windows.MessageBox.Show("No se ingresaron datos", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("No se ingresaron los datos suficientes para establecer la conexión", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         private void VerCatalogo(object parameter)
