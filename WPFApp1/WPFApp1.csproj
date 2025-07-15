@@ -17,6 +17,7 @@
     <None Remove="ico128.ico" />
     <None Remove="iconos\aniadir-registro.png" />
     <None Remove="iconos\ascending-sort.png" />
+    <None Remove="iconos\configuracion.png" />
     <None Remove="iconos\exportar_xlsx.png" />
     <None Remove="iconos\Server.png" />
     <None Remove="iconos\Stack.png" />
@@ -26,11 +27,16 @@
     <Content Include="datos\base.db">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Include="ico128.ico" />
+    <Content Include="ico128.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="iconos\aniadir-registro.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\ascending-sort.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\configuracion.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\exportar_xlsx.png">
