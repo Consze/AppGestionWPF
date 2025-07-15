@@ -1,24 +1,18 @@
-﻿using System.Windows;
+﻿using System.Windows.Controls;
 
 namespace WPFApp1
 {
     /// <summary>
     /// Lógica de interacción para ConfigurarSQLServer.xaml
     /// </summary>
-    public partial class ConfigurarSQLServer : Window
+    public partial class ConfigurarSQLServer : System.Windows.Controls.UserControl
     {
         private ConfigurarSQLServerViewModel _viewModel;
         public ConfigurarSQLServer(ConfigurarSQLServerViewModel ViewModel)
         {
-            _viewModel = ViewModel;
+            this._viewModel = ViewModel;
             DataContext = ViewModel;
-            _viewModel.DialogoCerrado += OnDialogoCerrado;
             InitializeComponent();
-        }
-        private void OnDialogoCerrado(object sender, bool resultado)
-        {
-            DialogResult = resultado;
-            Close();
         }
     }
 }

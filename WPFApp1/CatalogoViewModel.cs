@@ -79,6 +79,7 @@ namespace WPFApp1
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
+            this.Procesando = true;
 
             Task.Run(async () => await CargarEstadoInicialAsync());
             Task.Run(async () => await CargarProductosAsync());
@@ -107,7 +108,6 @@ namespace WPFApp1
         {
             this.Procesando = true;
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
-            this.Procesando = false;
         }
 
         public async Task AlternarFormatoVistaAsync()
@@ -129,6 +129,7 @@ namespace WPFApp1
                 }
                 PersistenciaConfiguracion.GuardarUltimaVista(vista);
             });
+            this.Procesando = false;
         }
         public void MostrarAniadirProducto(object parameter)
         {
@@ -146,7 +147,6 @@ namespace WPFApp1
         }
         private async Task CargarProductosAsync()
         {
-            this.Procesando = true;
             List<Productos> registros = await Task.Run(() => ProductosRepository.LeerProductos());
             System.Windows.Application.Current.Dispatcher.Invoke(() => 
             {

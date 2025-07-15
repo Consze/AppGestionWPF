@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace WPFApp1
@@ -6,7 +7,6 @@ namespace WPFApp1
     public class ConfigurarSQLServerViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler<bool> DialogoCerrado;
         public ICommand AceptarEntradaCommand { get; private set; }
         public ICommand CancelarEntradaCommand { get; private set; }
         public ICommand CambiarModoAutenticacionCommand { get; private set; }
@@ -102,12 +102,43 @@ namespace WPFApp1
             }
         }
         public string CadenaConexionAServidor { get; private set; }
+        public bool CadenaValida { get; private set; }
+        private bool _procesando;
+        public bool Procesando
+        {
+            get { return _procesando; }
+            set
+            {
+                if (_procesando != value)
+                {
+                    _procesando = value;
+                    OnPropertyChanged(nameof(Procesando));
+                }
+            }
+        }
+        private bool _botonesActivos;
+        public bool BotonesActivos
+        {
+            get { return _botonesActivos; }
+            set
+            {
+                if (_botonesActivos != value)
+                {
+                    _botonesActivos = value;
+                    OnPropertyChanged(nameof(BotonesActivos));
+                }
+            }
+        }
+
         public ConfigurarSQLServerViewModel()
         {
+            this._botonesActivos = true;
+            this._procesando = false;
+            this.CadenaValida = false;
             this.ToggleActivado = false;
-            this.TextoToggle = "Autenticación SQL";
-            AceptarEntradaCommand = new RelayCommand<object>(PresentarEntrada);
-            CancelarEntradaCommand = new RelayCommand<object>(PresentarEntrada);
+            this.TextoToggle = "Autenticación Windows";
+            AceptarEntradaCommand = new RelayCommand<object>(async (param) => await PresentarEntrada());
+            CancelarEntradaCommand = new RelayCommand<object>(CancelarEntrada);
             CambiarModoAutenticacionCommand = new RelayCommand<object>(CambiarModoAutenticacion);
         }
         public void CambiarModoAutenticacion(object parameter)
@@ -125,38 +156,65 @@ namespace WPFApp1
         public void CancelarEntrada(object parameter)
         {
             this.CadenaConexionAServidor = null;
-            CerrarVista(false);
+            this.CadenaValida = false;
         }
-        public void PresentarEntrada(object parameter)
+
+        public async Task PresentarEntrada()
         {
-            if (this.ToggleActivado) //Autenticación Windows
+            this.Procesando = true;
+            await PresentarEntradaAsync().ConfigureAwait(false);
+        }
+        public async Task PresentarEntradaAsync()
+        {
+            if (this.ToggleActivado) //Autenticación SQL
             {
                 if (this.NombreBaseDatos != null && this.NombreComputadora != null && this.NombreInstanciaServidor != null && this.NombreUsuario != null && this.ClaveUsuario != null)
                 { 
                     this.CadenaConexionAServidor = $"Server={NombreComputadora}\\{NombreInstanciaServidor};Database={NombreBaseDatos};User ID={NombreUsuario};Password={ClaveUsuario}";
-                    CerrarVista(true);
+                    this.CadenaValida = true;
                 }
                 else
                 {
-                    CerrarVista(false);
+                    this.CadenaValida = false;
                 }
             }
-            else //Auntenticación SQL
+            else //Auntenticación Windows
             {
                 if (this.NombreBaseDatos != null && this.NombreComputadora != null && this.NombreInstanciaServidor != null)
                 {
                     this.CadenaConexionAServidor = $"Server={NombreComputadora}\\{NombreInstanciaServidor};Database={NombreBaseDatos};Integrated Security=True;";
-                    CerrarVista(true);
+                    this.CadenaValida = true;
                 }
                 else
                 {
-                    CerrarVista(false);
+                    this.CadenaValida = false;
                 }
             }
-        }
-        public void CerrarVista(bool resultado)
-        {
-            DialogoCerrado?.Invoke(this, resultado);
+
+            if (this.CadenaValida)
+            {
+                this.BotonesActivos = false;
+                string cadenaConexion = this.CadenaConexionAServidor;
+                ConexionDBSQLServer _configuracionServidor = new ConexionDBSQLServer();
+                _configuracionServidor.CadenaConexion = cadenaConexion;
+                bool conexionExitosa = await Task.Run(() => _configuracionServidor.ProbarConexion(cadenaConexion));
+                _configuracionServidor.ConexionValida = conexionExitosa;
+                await Task.Run(() => _configuracionServidor.GuardarEstadoConexion());
+                this.Procesando = false;
+                this.BotonesActivos = true;
+                if (conexionExitosa)
+                {
+                    System.Windows.MessageBox.Show($"Conexion Exitosa a: {cadenaConexion}", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("No se pudo establecer conexion con la cadena ingresada", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("No se ingresaron los datos suficientes para establecer la conexión", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace WPFApp1
 {
@@ -27,6 +28,19 @@ namespace WPFApp1
                 }
             }
         }
+        private object _vistaActual;
+        public object VistaActual
+        {
+            get { return _vistaActual; }
+            set
+            {
+                if (_vistaActual != value)
+                {
+                    _vistaActual = value;
+                    OnPropertyChanged(nameof(VistaActual));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public MainWindowViewModel()
         {
@@ -38,7 +52,7 @@ namespace WPFApp1
             VerCatalogoCommand = new RelayCommand<object>(VerCatalogo);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             VerExportarProductosCommand = new RelayCommand<object>(VerExportarProductos);
-            ConfigurarServidorCommand = new RelayCommand<object>(async (param) => await ConfigurarServidorAsync());
+            ConfigurarServidorCommand = new RelayCommand<object>(ConfigurarServidor);
         }
 
         private void AniadirProducto(object parameter)
@@ -49,15 +63,15 @@ namespace WPFApp1
         }
         private void VerExportarProductos(object parameter)
         {
-            if (ExportarProductos.Instancias < 1) // Limitar cantidad de Instancias de vista
+            if(this.VistaActual is ExportarProductos)
             {
-                ExportarProductosViewModel ExportarViewModel = new ExportarProductosViewModel();
-                ExportarProductos VistaExportar = new ExportarProductos(ExportarViewModel);
-                VistaExportar.Show();
+                this.VistaActual = null;
             }
             else
             {
-                ExportarProductos.VentanaExportarProductosVigente.Activate();
+                ExportarProductosViewModel _viewModel = new ExportarProductosViewModel();
+                ExportarProductos _vista = new ExportarProductos(_viewModel);
+                this.VistaActual = _vista;
             }
         }
         private void VerLista(object parameter)
@@ -65,47 +79,30 @@ namespace WPFApp1
             ListaPersonas lista = new ListaPersonas();
             lista.Show();
         }
-        private async Task ConfigurarServidorAsync()
+        private void ConfigurarServidor(object parameter)
         {
-            ConfigurarSQLServerViewModel viewModel = new ConfigurarSQLServerViewModel();
-            ConfigurarSQLServer dialogo = new ConfigurarSQLServer(viewModel);
-            bool? resultado = dialogo.ShowDialog();
-
-            if (resultado == true)
+            if(VistaActual is ConfigurarSQLServer)
             {
-                this.Procesando = true;
-                string cadenaConexion = viewModel.CadenaConexionAServidor;
-                ConexionDBSQLServer _configuracionServidor = new ConexionDBSQLServer();
-                _configuracionServidor.CadenaConexion = cadenaConexion;
-                bool conexionExitosa = await Task.Run(() => _configuracionServidor.ProbarConexion(cadenaConexion));
-                _configuracionServidor.ConexionValida = conexionExitosa;
-                await Task.Run(() => _configuracionServidor.GuardarEstadoConexion());
-                this.Procesando = false;
-                if (conexionExitosa)
-                {
-                    System.Windows.MessageBox.Show($"Conexion Exitosa a: {cadenaConexion}", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("No se pudo establecer conexion con la cadena ingresada", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                this.VistaActual = null;
             }
             else
             {
-                System.Windows.MessageBox.Show("No se ingresaron los datos suficientes para establecer la conexión", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ConfigurarSQLServerViewModel viewModel = new ConfigurarSQLServerViewModel();
+                ConfigurarSQLServer vista = new ConfigurarSQLServer(viewModel);
+                this.VistaActual = vista;
             }
         }
         private void VerCatalogo(object parameter)
         {
-            if (Catalogo.Instancias < 1)
+            if (this.VistaActual is Catalogo)
             {
-                CatalogoViewModel catalogoViewModel = new CatalogoViewModel();
-                Catalogo _catalogo = new Catalogo(catalogoViewModel);
-                _catalogo.Show();
+                this.VistaActual = null;
             }
             else
             {
-                Catalogo.VentanaCatalogoVigente.Activate();
+                CatalogoViewModel _viewModel = new CatalogoViewModel();
+                Catalogo vista = new Catalogo(_viewModel);
+                this.VistaActual = vista;
             }
         }
         private void AniadirPersona(object parameter)

@@ -1,25 +1,18 @@
-﻿using System.Windows;
+﻿using System.Windows.Controls;
+
 namespace WPFApp1
 {
     /// <summary>
-    /// Lógica de interacción para ExportarProductos.xaml
+    /// Lógica de interacción para ExportarProductosU.xaml
     /// </summary>
-    public partial class ExportarProductos : Window
+    public partial class ExportarProductos : System.Windows.Controls.UserControl
     {
         private ExportarProductosViewModel _viewModel;
-        public static ExportarProductos VentanaExportarProductosVigente { get; private set; }
-        public static int Instancias { get; set; }
-        public ExportarProductos(ExportarProductosViewModel ViewModel)
+        public ExportarProductos(ExportarProductosViewModel viewModel)
         {
-            Instancias++;
-            DataContext = ViewModel;
-            _viewModel = ViewModel;
-            VentanaExportarProductosVigente = this;
+            DataContext = viewModel;
+            this._viewModel = viewModel;
             InitializeComponent();
-        }
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            Instancias--;
         }
     }
 }

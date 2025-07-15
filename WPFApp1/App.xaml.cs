@@ -45,6 +45,7 @@ namespace WPFApp1
 
             _mainWindow.Closing += MainWindow_Closing;
             _splashScreen.Close();
+            _mainWindow.Activate();
         }
 
         private void ValidarIntegridadDirectorios()
