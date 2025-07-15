@@ -12,6 +12,28 @@
                 <ResourceDictionary Source="Iconos.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+            
+            <Style TargetType="Border" x:Key="EstiloBorderConAnimacion">
+                <Setter Property="Background" Value="White"/>
+                <Style.Triggers>
+                    <EventTrigger RoutedEvent="MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation To="LightCyan" Duration="0:0:0.2"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation To="White" Duration="0:0:0.2"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -37,35 +59,41 @@
                 <TextBlock FontSize="36" Text="Menú" FontWeight="Regular" Margin="10,0,0,0"/>
                 <TextBlock FontSize="16" Text="herramientas" FontWeight="ExtraLight" Margin="12,0,0,20"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel.InputBindings>
-                        <MouseBinding Gesture="LeftClick" Command="{Binding VerCatalogoCommand}" />
-                    </StackPanel.InputBindings>
-                    <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerCatalogoCommand}">
-                        <Image Source="/iconos/Stack.png" Width="40" Height="40" HorizontalAlignment="Left"/>
-                    </Button>
-                    <TextBlock Text="Ver Catalogo" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                </StackPanel>
+                <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding VerCatalogoCommand}" />
+                        </StackPanel.InputBindings>
+                        <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerCatalogoCommand}">
+                            <Image Source="/iconos/Stack.png" Width="35" Height="35" HorizontalAlignment="Left"/>
+                        </Button>
+                        <TextBlock Text="Ver Catalogo" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    </StackPanel>
+                </Border>
 
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel.InputBindings>
-                        <MouseBinding Gesture="LeftClick" Command="{Binding ConfigurarServidorCommand}" />
-                    </StackPanel.InputBindings>
-                    <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding ConfigurarServidorCommand}">
-                        <Image Source="/iconos/Server.png" Width="40" Height="40"/>
-                    </Button>
-                    <TextBlock Text="Conexión a SQL Server" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                </StackPanel>
+                <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding ConfigurarServidorCommand}" />
+                        </StackPanel.InputBindings>
+                        <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding ConfigurarServidorCommand}">
+                            <Image Source="/iconos/Server.png" Width="35" Height="35"/>
+                        </Button>
+                        <TextBlock Text="Conexión a SQL Server" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    </StackPanel>
+                </Border>
 
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel.InputBindings>
-                        <MouseBinding Gesture="LeftClick" Command="{Binding VerExportarProductosCommand}" />
-                    </StackPanel.InputBindings>
-                    <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerExportarProductosCommand}">
-                        <Image Source="/iconos/exportar_xlsx.png" Width="40" Height="40"/>
-                    </Button>
-                    <TextBlock Text="Exportar Productos a XLSX" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                </StackPanel>
+                <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding VerExportarProductosCommand}" />
+                        </StackPanel.InputBindings>
+                        <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerExportarProductosCommand}">
+                            <Image Source="/iconos/exportar_xlsx.png" Width="35" Height="35"/>
+                        </Button>
+                        <TextBlock Text="Exportar Productos a XLSX" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    </StackPanel>
+                </Border>
 
                 <Button x:Name="verLista" Content="Ver Personas" Margin="10" Command="{Binding VerListaCommand}"/>
                 <Button x:Name="aniadirPersona" Content="Añadir Persona" Margin="10" Command="{Binding AniadirPersonaCommand}"/>

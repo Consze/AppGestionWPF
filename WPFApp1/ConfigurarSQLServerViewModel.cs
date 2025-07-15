@@ -213,6 +213,7 @@ namespace WPFApp1
             }
             else
             {
+                this.Procesando = false;
                 System.Windows.MessageBox.Show("No se ingresaron los datos suficientes para establecer la conexión", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }

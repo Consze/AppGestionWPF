@@ -51,7 +51,7 @@ namespace WPFApp1
                 }
             }
         }
-        private bool _procesando;
+        private bool _procesando = true;
         public bool Procesando {
             get { return _procesando; }
             set
@@ -70,7 +70,6 @@ namespace WPFApp1
 
         public CatalogoViewModel()
         {
-            this._procesando = false;
             this._mostrarVistaTabular = false;
             this._mostrarVistaGaleria = true;
             ColeccionProductos = new ObservableCollection<Productos>();
@@ -79,8 +78,7 @@ namespace WPFApp1
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
-            this.Procesando = true;
-
+            
             Task.Run(async () => await CargarEstadoInicialAsync());
             Task.Run(async () => await CargarProductosAsync());
         }

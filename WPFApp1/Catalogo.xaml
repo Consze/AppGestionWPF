@@ -157,7 +157,7 @@
                                         <EventTrigger RoutedEvent="MouseLeftButtonDown">
                                             <BeginStoryboard>
                                                 <Storyboard>
-                                                    <ColorAnimation To="OrangeRed" Duration="0:0:0.1" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                                                    <ColorAnimation To="LightCyan" Duration="0:0:0.1" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </EventTrigger>
