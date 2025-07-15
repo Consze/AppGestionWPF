@@ -1,7 +1,7 @@
 ﻿namespace WPFApp1
 {
     /// <summary>
-    /// Lógica de interacción para CatalogoU.xaml
+    /// Lógica de interacción para Catalogo.xaml
     /// </summary>
     public partial class Catalogo : System.Windows.Controls.UserControl
     {

@@ -178,7 +178,7 @@ namespace WPFApp1
                     this.CadenaValida = false;
                 }
             }
-            else //Auntenticación Windows
+            else //Autenticación Windows
             {
                 if (this.NombreBaseDatos != null && this.NombreComputadora != null && this.NombreInstanciaServidor != null)
                 {
