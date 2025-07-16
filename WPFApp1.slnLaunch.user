@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Nuevo perfil",
+    "Projects": [
+      {
+        "Path": "WPFApp1\\WPFApp1.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "WebHost\\WebHost.csproj",
+        "Action": "StartWithoutDebugging"
+      }
+    ]
+  }
+]
