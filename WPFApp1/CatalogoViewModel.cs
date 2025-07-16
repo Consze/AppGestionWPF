@@ -133,6 +133,7 @@ namespace WPFApp1
         {
             if (AniadirProducto.Instancias < 1)
             {
+                Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 this.MostrarVentanaAniadirProducto = true;
                 AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);

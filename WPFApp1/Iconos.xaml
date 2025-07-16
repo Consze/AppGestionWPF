@@ -54,6 +54,34 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="TransicionContenido" TargetType="ContentPresenter">
+        <Setter Property="Opacity" Value="1"/>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding CargandoVista}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                         From="1" To="0" Duration="0:0:0.3"
+                                         EasingFunction="{StaticResource SmoothEase}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+            </DataTrigger>
+
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.5"
+                                     BeginTime="0:0:0.3" EasingFunction="{StaticResource SmoothEase}"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
     <RectangleGeometry x:Key="Cuadrado" Rect="0,0,20,20"/>
     <Style x:Key="CuadradoIcono" TargetType="Path">
         <Setter Property="Fill" Value="Black"/>
@@ -121,5 +149,27 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="Border" x:Key="EstiloBorderConAnimacion">
+        <Setter Property="Background" Value="White"/>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <ColorAnimation To="LightCyan" Duration="0:0:0.2"
+                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <ColorAnimation To="White" Duration="0:0:0.2"
+                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

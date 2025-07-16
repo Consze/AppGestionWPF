@@ -27,6 +27,7 @@ namespace WPFApp1
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
             Instancias--;
         }
     }

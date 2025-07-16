@@ -11,6 +11,9 @@ namespace WPFApp1
         Ancho,
         Alto
     }
+
+    public class AbrirVistaAniadirProductoMensaje { }
+    public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
         private readonly IProductosAccesoDatos _productosDatos;
