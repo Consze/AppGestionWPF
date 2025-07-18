@@ -41,7 +41,7 @@
                         <ContentControl x:Name="Throbber" Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}">
                             <ContentControl.Content >
                                 <Path Style="{StaticResource ThrobberSimpleEstilo}"
-            VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Path.RenderTransform>
                                         <ScaleTransform ScaleX="1" ScaleY="1"/>
                                     </Path.RenderTransform>
@@ -69,7 +69,18 @@
                         <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerCatalogoCommand}">
                             <Image Source="/iconos/Stack.png" Width="35" Height="35" HorizontalAlignment="Left"/>
                         </Button>
-                        <TextBlock Text="Ver Catalogo" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <TextBlock Text="Ver Catalogo" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="Light"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=TituloActivo}" Value="Catálogo">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
@@ -87,7 +98,18 @@
                         <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding ConfigurarServidorCommand}">
                             <Image Source="/iconos/Server.png" Width="35" Height="35"/>
                         </Button>
-                        <TextBlock Text="Conexión a SQL Server" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <TextBlock Text="Conexión a SQL Server" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="Light"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=TituloActivo}" Value="Conectarse a Servidor">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
@@ -105,7 +127,18 @@
                         <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerExportarProductosCommand}">
                             <Image Source="/iconos/exportar_xlsx.png" Width="35" Height="35"/>
                         </Button>
-                        <TextBlock Text="Exportar Productos a XLSX" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <TextBlock Text="Exportar Productos a XLSX" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="Light"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=TituloActivo}" Value="Exportar Productos">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using WPFApp1.DTOS;
 
 namespace WPFApp1
 {
@@ -129,7 +130,7 @@ namespace WPFApp1
             }
             else
             {
-                this.TituloActivo = "Configurar conexión";
+                this.TituloActivo = "Conectarse a Servidor";
                 ConfigurarSQLServerViewModel viewModel = new ConfigurarSQLServerViewModel();
                 ConfigurarSQLServer vista = new ConfigurarSQLServer(viewModel);
                 CambiarVistaAsync(vista);
@@ -169,7 +170,6 @@ namespace WPFApp1
             EliminarPersona _EliminarPersona = new EliminarPersona();
             _EliminarPersona.Show();
         }
-
         private void EditarPersona(object parameter)
         {
             EntradaUsuario ventanaEntrada = new EntradaUsuario();

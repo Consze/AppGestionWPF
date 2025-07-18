@@ -1,4 +1,4 @@
-﻿namespace WPFApp1
+﻿namespace WPFApp1.DTOS
 {
     public class Persona
     {
@@ -25,11 +25,11 @@
 
         public FlagsCambios()
         {
-            this.idCambiado = false;
-            this.nombreCambiado = false;
-            this.alturaCambiada = false;
-            this.pesoCambiado = false;
-            this.Count = 0;
+            idCambiado = false;
+            nombreCambiado = false;
+            alturaCambiada = false;
+            pesoCambiado = false;
+            Count = 0;
         }
     }
 }

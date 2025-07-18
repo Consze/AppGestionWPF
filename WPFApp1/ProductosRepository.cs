@@ -2,6 +2,7 @@
 using System.IO;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using WPFApp1.DTOS;
 
 namespace WPFApp1
 {
@@ -83,19 +84,40 @@ namespace WPFApp1
                 }
                 if (RegistroModificado.Categoria != ProductoVigente.Categoria)
                 {
-                    Consulta += "Categoria = @Categoria";
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", Categoria = @Categoria";
+                    }
+                    else
+                    {
+                        Consulta += "Categoria = @Categoria";
+                    }
                     Propiedades.CategoriaCambiada = true;
                     Propiedades.ContadorCambios += 1;
                 }
                 if(RegistroModificado.Precio != ProductoVigente.Precio)
                 {
-                    Consulta += "Precio = @Precio";
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", Precio = @Precio";
+                    }
+                    else
+                    {
+                        Consulta += "Precio = @Precio";
+                    }
                     Propiedades.PrecioCambiado = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                if (RegistroModificado.RutaImagen != ProductoVigente.RutaImagen)
+                if (Path.GetFullPath(RegistroModificado.RutaImagen) != Path.GetFullPath(ProductoVigente.RutaImagen))
                 {
-                    Consulta += "ruta_imagen = @ruta_imagen";
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", ruta_imagen = @ruta_imagen";
+                    }
+                    else
+                    {
+                        Consulta += "ruta_imagen = @ruta_imagen";
+                    }
                     Propiedades.RutaImagenCambiada = true;
                     Propiedades.ContadorCambios += 1;
                 }

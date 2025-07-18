@@ -1,15 +1,10 @@
 ﻿using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.IO;
+using WPFApp1.DTOS;
 
 namespace WPFApp1
 {
-    public interface IProductosAccesoDatos
-    {
-
-        bool ActualizarProducto(Productos producto);
-        long CrearProducto(Productos producto);
-        Productos RecuperarProductoPorID(int producto_id);
-    }
     public class SQLiteAccesoProductos : IProductosAccesoDatos
     {
         private readonly string _conexionCadena;
@@ -50,10 +45,10 @@ namespace WPFApp1
                 Instancia.CerrarConexionDB();
             }
         }
-        public bool ActualizarProducto(Productos producto)
+        public bool ActualizarProducto(Productos productoModificado)
         {
             ConexionDBSQLite Instancia = new ConexionDBSQLite();
-            Productos ProductoVigente = RecuperarProductoPorID(producto.ID);
+            Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
 
             if (ProductoVigente.ID > 0) // Validar registro
             {
@@ -61,41 +56,62 @@ namespace WPFApp1
 
                 // Comprobar cambios
                 string Consulta = "UPDATE Productos SET ";
-                if (producto.Nombre != ProductoVigente.Nombre)
+                if (productoModificado.Nombre != ProductoVigente.Nombre)
                 {
                     Consulta += "Nombre = @Nombre";
                     Propiedades.NombreCambiado = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                if (producto.Categoria != ProductoVigente.Categoria)
+                if (productoModificado.Categoria != ProductoVigente.Categoria)
                 {
-                    Consulta += "Categoria = @Categoria";
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", Categoria = @Categoria";
+                    }
+                    else
+                    {
+                        Consulta += "Categoria = @Categoria";
+                    }
                     Propiedades.CategoriaCambiada = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                if (producto.Precio != ProductoVigente.Precio)
+                if (productoModificado.Precio != ProductoVigente.Precio)
                 {
-                    Consulta += "Precio = @Precio";
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", Precio = @Precio";
+                    }
+                    else
+                    {
+                        Consulta += "Precio = @Precio";
+                    }
                     Propiedades.PrecioCambiado = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                if (producto.RutaImagen != ProductoVigente.RutaImagen)
+                if (Path.GetFullPath(productoModificado.RutaImagen) != Path.GetFullPath(ProductoVigente.RutaImagen))
                 {
-                    Consulta += "ruta_imagen = @ruta_imagen";
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", ruta_imagen = @ruta_imagen";
+                    }
+                    else
+                    {
+                        Consulta += "ruta_imagen = @ruta_imagen";
+                    }
                     Propiedades.RutaImagenCambiada = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                Consulta += " WHERE producto_id = @id";
+                Consulta += " WHERE producto_id = @id;";
 
                 if (Propiedades.ContadorCambios > 0)
                 {
                     using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
                     {
-                        Comando.Parameters.AddWithValue("@id", producto.ID);
-                        if (Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", producto.Nombre); }
-                        if (Propiedades.CategoriaCambiada) { Comando.Parameters.AddWithValue("@Categoria", producto.Categoria); }
-                        if (Propiedades.PrecioCambiado) { Comando.Parameters.AddWithValue("@Precio", producto.Precio); }
-                        if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", producto.RutaImagen); }
+                        Comando.Parameters.AddWithValue("@id", productoModificado.ID);
+                        if (Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", productoModificado.Nombre); }
+                        if (Propiedades.CategoriaCambiada) { Comando.Parameters.AddWithValue("@Categoria", productoModificado.Categoria); }
+                        if (Propiedades.PrecioCambiado) { Comando.Parameters.AddWithValue("@Precio", productoModificado.Precio); }
+                        if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", productoModificado.RutaImagen); }
 
                         int FilasAfectadas = Comando.ExecuteNonQuery();
                         Instancia.CerrarConexionDB();
@@ -121,11 +137,11 @@ namespace WPFApp1
                 return false;
             }
         }
-        public long CrearProducto(Productos producto)
+        public int CrearProducto(Productos producto)
         {
             ConexionDBSQLite Instancia = new ConexionDBSQLite();
-            string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@nombre, @categoria, @precio, @ruta_imagen)";
-            long nuevoProductoId = -1;
+            string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@nombre, @categoria, @precio, @ruta_imagen);";
+            int nuevoProductoId = 0;
             try
             {
                 using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
@@ -137,7 +153,7 @@ namespace WPFApp1
                     Comando.ExecuteNonQuery();
 
                     Comando.CommandText = "SELECT last_insert_rowid()";
-                    nuevoProductoId = (long)Comando.ExecuteScalar();
+                    nuevoProductoId = Convert.ToInt32(Comando.ExecuteScalar());
 
                     return nuevoProductoId;
                 }
@@ -151,6 +167,10 @@ namespace WPFApp1
             {
                 Instancia.CerrarConexionDB();
             }
+        }
+        public bool EliminarProducto(int producto_id)
+        {
+            return true;
         }
     }
 
@@ -169,19 +189,20 @@ namespace WPFApp1
             {
                 using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
                 {
-                    SqlCommand comando = new SqlCommand(consulta, conexion);
                     conexion.Open();
-                    SqlDataReader Lector = comando.ExecuteReader();
-
-                    while (Lector.Read())
-                    {
-                        registro.ID = Convert.ToInt32(Lector["producto_id"]);
-                        registro.Nombre = Lector["Nombre"].ToString();
-                        registro.Categoria = Lector["Categoria"].ToString();
-                        registro.Precio = Convert.ToInt32(Lector["Precio"]);
-                        registro.RutaImagen = Lector["ruta_imagen"].ToString();
+                    using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                    {    
+                        SqlDataReader Lector = comando.ExecuteReader();
+                        while (Lector.Read())
+                        {
+                            registro.ID = Convert.ToInt32(Lector["producto_id"]);
+                            registro.Nombre = Lector["Nombre"].ToString();
+                            registro.Categoria = Lector["Categoria"].ToString();
+                            registro.Precio = Convert.ToInt32(Lector["Precio"]);
+                            registro.RutaImagen = Lector["ruta_imagen"].ToString();
+                        }
+                        Lector.Close();
                     }
-                    Lector.Close();
                 }
                 return registro;
             }
@@ -195,10 +216,43 @@ namespace WPFApp1
         {
             return false;
         }
-        public long CrearProducto(Productos producto)
+        public int CrearProducto(Productos producto)
         {
+            string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@Nombre, @Categoria, @Precio, @Ruta_imagen); SELECT SCOPE_IDENTITY();";
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                {
+                    conexion.Open();
+                    using (SqlCommand comando = new SqlCommand(Consulta, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@Nombre", producto.Nombre);
+                        comando.Parameters.AddWithValue("@Categoria", producto.Categoria);
+                        comando.Parameters.AddWithValue("@Precio", producto.Precio);
+                        comando.Parameters.AddWithValue("@Ruta_imagen", producto.RutaImagen);
 
-            return -1;
+                        object resultado = comando.ExecuteScalar();
+
+                        if (resultado != null && resultado != DBNull.Value)
+                        {
+                            return Convert.ToInt32(resultado);
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return 0;
+            }
+        }
+        public bool EliminarProducto(int producto_id)
+        {
+            return true;
         }
     }
 }

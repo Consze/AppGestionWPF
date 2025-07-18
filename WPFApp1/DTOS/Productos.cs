@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace WPFApp1
+namespace WPFApp1.DTOS
 {
     public class Productos : INotifyPropertyChanged
     {
@@ -38,11 +38,11 @@ namespace WPFApp1
 
         public Productos(int ProductoID, string NombreDeProducto, string CategoriaDeProducto, int PrecioDeProducto, string RutaAImagen)
         {
-            this.ID = ProductoID;
-            this.Nombre = NombreDeProducto;
-            this.Categoria = CategoriaDeProducto;
-            this.Precio = PrecioDeProducto ;
-            this.RutaImagen = RutaAImagen;
+            ID = ProductoID;
+            Nombre = NombreDeProducto;
+            Categoria = CategoriaDeProducto;
+            Precio = PrecioDeProducto ;
+            RutaImagen = RutaAImagen;
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
@@ -61,12 +61,12 @@ namespace WPFApp1
 
         public FlagsCambiosProductos()
         {
-            this.NombreCambiado = false;
-            this.CategoriaCambiada = false;
-            this.PrecioCambiado = false;
-            this.PrecioCambiado = false;
-            this.RutaImagenCambiada = false;
-            this.ContadorCambios = 0;
+            NombreCambiado = false;
+            CategoriaCambiada = false;
+            PrecioCambiado = false;
+            PrecioCambiado = false;
+            RutaImagenCambiada = false;
+            ContadorCambios = 0;
         }
     }
 }

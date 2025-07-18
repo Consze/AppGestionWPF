@@ -1,4 +1,6 @@
-﻿namespace WPFApp1
+﻿using WPFApp1.DTOS;
+
+namespace WPFApp1
 {
     public class ProductoModificadoMensaje
     {

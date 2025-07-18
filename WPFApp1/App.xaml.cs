@@ -1,10 +1,12 @@
 ﻿using System.IO;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Forms = System.Windows.Forms;
 namespace WPFApp1
 {
     public partial class App : System.Windows.Application
     {
+        private ServiceProvider _serviceProvider;
         private SplashScreen _splashScreen;
         private static Mutex _mutex = null;
         private Forms.NotifyIcon _trayIcon = new NotifyIcon();
@@ -47,7 +49,6 @@ namespace WPFApp1
             _splashScreen.Close();
             _mainWindow.Activate();
         }
-
         private void ValidarIntegridadDirectorios()
         {
             string rutaDatos = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Datos");
