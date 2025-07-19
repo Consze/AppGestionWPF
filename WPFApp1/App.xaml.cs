@@ -11,6 +11,16 @@ namespace WPFApp1
         private static Mutex _mutex = null;
         private Forms.NotifyIcon _trayIcon = new NotifyIcon();
         private MainWindow _mainWindow;
+        public App()
+        {
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+        }
+        private void ConfigureServices(IServiceCollection services)
+        {
+            
+        }
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
