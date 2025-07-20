@@ -115,14 +115,7 @@ namespace WPFApp1
 
                         int FilasAfectadas = Comando.ExecuteNonQuery();
                         Instancia.CerrarConexionDB();
-                        if (FilasAfectadas > 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return FilasAfectadas > 0;
                     }
                 }
                 else // No se modifico ninguna propiedad
@@ -131,7 +124,7 @@ namespace WPFApp1
                     return false;
                 }
             }
-            else // No existe el registro
+            else 
             {
                 Instancia.CerrarConexionDB();
                 return false;
@@ -170,7 +163,34 @@ namespace WPFApp1
         }
         public bool EliminarProducto(int producto_id)
         {
-            return true;
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
+            Productos Registro = this.RecuperarProductoPorID(producto_id);
+            string Consulta = "DELETE FROM Productos WHERE producto_id = @id";
+            if (Registro != null)
+            {
+                try
+                {
+                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+                    {
+                        Comando.Parameters.AddWithValue("@id", Registro.ID);
+                        int FilasAfectadas = Comando.ExecuteNonQuery();
+                        return FilasAfectadas > 0;
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    Console.WriteLine($"Error {ex.Message}");
+                    return false;
+                }
+                finally
+                {
+                    Instancia.CerrarConexionDB();
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
@@ -212,9 +232,95 @@ namespace WPFApp1
                 return null;
             }
         }
-        public bool ActualizarProducto(Productos producto)
+        public bool ActualizarProducto(Productos productoModificado)
         {
-            return false;
+            string Consulta = "UPDATE Productos SET";
+            Productos ProductoVigente = this.RecuperarProductoPorID(productoModificado.ID);
+            if(ProductoVigente != null)
+            {
+                FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
+
+                if (productoModificado.Nombre != ProductoVigente.Nombre)
+                {
+                    Consulta += "Nombre = @Nombre";
+                    Propiedades.NombreCambiado = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                if (productoModificado.Categoria != ProductoVigente.Categoria)
+                {
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", Categoria = @Categoria";
+                    }
+                    else
+                    {
+                        Consulta += "Categoria = @Categoria";
+                    }
+                    Propiedades.CategoriaCambiada = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                if (productoModificado.Precio != ProductoVigente.Precio)
+                {
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", Precio = @Precio";
+                    }
+                    else
+                    {
+                        Consulta += "Precio = @Precio";
+                    }
+                    Propiedades.PrecioCambiado = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                if (Path.GetFullPath(productoModificado.RutaImagen) != Path.GetFullPath(ProductoVigente.RutaImagen))
+                {
+                    if (Consulta.Contains(","))
+                    {
+                        Consulta += ", ruta_imagen = @ruta_imagen";
+                    }
+                    else
+                    {
+                        Consulta += "ruta_imagen = @ruta_imagen";
+                    }
+                    Propiedades.RutaImagenCambiada = true;
+                    Propiedades.ContadorCambios += 1;
+                }
+                Consulta += " WHERE producto_id = @id;";
+
+                if (Propiedades.ContadorCambios > 0)
+                {
+                    try
+                    {
+                        using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                        {
+                            conexion.Open();
+                            using (SqlCommand Comando = new SqlCommand(Consulta, conexion))
+                            {
+                                Comando.Parameters.AddWithValue("@id", productoModificado.ID);
+                                if (Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", productoModificado.Nombre); }
+                                if (Propiedades.CategoriaCambiada) { Comando.Parameters.AddWithValue("@Categoria", productoModificado.Categoria); }
+                                if (Propiedades.PrecioCambiado) { Comando.Parameters.AddWithValue("@Precio", productoModificado.Precio); }
+                                if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", productoModificado.RutaImagen); }
+                                int filasAfectadas = Comando.ExecuteNonQuery();
+                                return filasAfectadas > 0;
+                            }
+                        }
+                    }
+                    catch(SqlException ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         public int CrearProducto(Productos producto)
         {
@@ -252,7 +358,26 @@ namespace WPFApp1
         }
         public bool EliminarProducto(int producto_id)
         {
-            return true;
+            string consulta = "DELETE FROM Productos WHERE producto_id = @id;";
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                {
+                    conexion.Open();
+                    using(SqlCommand comando = new SqlCommand(consulta,conexion))
+                    {
+                        comando.Parameters.AddWithValue("@id", producto_id);
+                        int filasAfectadas = comando.ExecuteNonQuery();
+                        return filasAfectadas > 0;
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
         }
     }
 }
+

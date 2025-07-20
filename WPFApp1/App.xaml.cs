@@ -14,12 +14,35 @@ namespace WPFApp1
         public App()
         {
             var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
+            ConfigurarServicios(serviceCollection);
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }
-        private void ConfigureServices(IServiceCollection services)
+        private void ConfigurarServicios(IServiceCollection services)
         {
-            
+            ConexionDBSQLServer _instanciaSQLServer = new ConexionDBSQLServer();
+            ConfiguracionSQLServer configuracionServer = _instanciaSQLServer.LeerArchivoConfiguracion();
+
+            if (configuracionServer.ConexionValida && !string.IsNullOrEmpty(configuracionServer.CadenaConexion))
+            {
+                services.AddScoped<WPFApp1.IProductosAccesoDatos, WPFApp1.SQLServerAccesoProductos>(provider =>
+                {
+                    return new WPFApp1.SQLServerAccesoProductos(configuracionServer.CadenaConexion);
+                });
+                Console.WriteLine("Servicio de acceso a datos registrado para SQL Server.");
+            }
+            else
+            {
+                services.AddScoped<WPFApp1.IProductosAccesoDatos, WPFApp1.SQLiteAccesoProductos>(provider =>
+                {
+                    string sqliteConnectionString = @"Data Source=.\datos\base.db;Version=3;";
+                    return new WPFApp1.SQLiteAccesoProductos(sqliteConnectionString);
+                });
+                Console.WriteLine("Sevicio de acceso a datos registrado para SQLite");
+            }
+
+            // Registrar ViewModels
+            services.AddScoped<WPFApp1.MainWindowViewModel>();
+            services.AddScoped<WPFApp1.AniadirProductoViewModel>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -56,6 +79,7 @@ namespace WPFApp1
             _trayIcon.ContextMenuStrip = contextMenu;
 
             _mainWindow.Closing += MainWindow_Closing;
+            _mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
             _splashScreen.Close();
             _mainWindow.Activate();
         }

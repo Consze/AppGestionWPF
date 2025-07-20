@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using WPFApp1.DTOS;
+using WPFApp1.Factories;
 
 namespace WPFApp1
 {
@@ -17,7 +18,8 @@ namespace WPFApp1
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductosAccesoDatos _productosDatos;
+        private readonly IRepositorioProductosFactory _repositorioFactory;
+        private IProductosAccesoDatos _productosRepositorio;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -110,7 +112,7 @@ namespace WPFApp1
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
-        public AniadirProductoViewModel()
+        public AniadirProductoViewModel(IProductosAccesoDatos productosRepositorio)
         {
             //Imagen
             this.RutaImagenSeleccionada = string.Empty;
@@ -131,6 +133,10 @@ namespace WPFApp1
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
             BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
+
+            //Repositorio de entidad
+            //_repositorioFactory = repositorioFactory;
+            //_productosRepositorio = _repositorioFactory.CrearRepositorio();
         }
 
         public void BotonPresionado(object parameter)
@@ -385,7 +391,8 @@ namespace WPFApp1
             }
 
             Productos _nuevoProducto = new Productos(0,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
-            long Resultado = ProductosRepository.AniadirNuevoProducto(_nuevoProducto);
+            int Resultado = _productosRepositorio.CrearProducto(_nuevoProducto);
+            //long Resultado = ProductosRepository.AniadirNuevoProducto(_nuevoProducto);
             if (Resultado > -1 )
             {
                 _nuevoProducto.ID = Convert.ToInt32(Resultado);
