@@ -5,8 +5,10 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using WPFApp1.DTOS;
 using WPFApp1.Factories;
+using WPFApp1.Interfaces;
+using WPFApp1.Servicios;
 
-namespace WPFApp1
+namespace WPFApp1.ViewModels
 {
     public enum LadoMasLargo
     {
@@ -18,8 +20,8 @@ namespace WPFApp1
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        private readonly IRepositorioProductosFactory _repositorioFactory;
-        private IProductosAccesoDatos _productosRepositorio;
+        private readonly IProductosFactory _repositorioFactory;
+        private readonly IProductosAccesoDatos _productoService;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -112,36 +114,37 @@ namespace WPFApp1
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
-        public AniadirProductoViewModel(IProductosAccesoDatos productosRepositorio)
+        public AniadirProductoViewModel(IProductosAccesoDatos productoServicio)
         {
             //Imagen
-            this.RutaImagenSeleccionada = string.Empty;
-            this.AnchoImagenSeleccionada = 0;
-            this.AltoImagenSeleccionada = 0;
-            this.CalculoAlturaMarco = 0;
-            this.CalculoAnchoMarco = 0;
-            this.IDProducto = 0;
+            RutaImagenSeleccionada = string.Empty;
+            AnchoImagenSeleccionada = 0;
+            AltoImagenSeleccionada = 0;
+            CalculoAlturaMarco = 0;
+            CalculoAnchoMarco = 0;
+            IDProducto = 0;
 
             //Entidad
-            this.NombreProducto = string.Empty;
-            this.CategoriaProducto = string.Empty;
-            this.PrecioProducto = 0;
+            NombreProducto = string.Empty;
+            CategoriaProducto = string.Empty;
+            PrecioProducto = 0;
 
             //this._productosDatos = productosDatos;
-            this.NombreDeVentana = "Añadir Producto";
+            NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
             BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
 
             //Repositorio de entidad
+            _productoService = productoServicio;
             //_repositorioFactory = repositorioFactory;
             //_productosRepositorio = _repositorioFactory.CrearRepositorio();
         }
 
         public void BotonPresionado(object parameter)
         {
-            if(this.EsModoEdicion)
+            if(EsModoEdicion)
             {
                 EditarProducto(0);
             }
@@ -154,39 +157,39 @@ namespace WPFApp1
         public void ConfigurarEdicionDeProducto(Productos Producto)
         {
             // Configurar Bindings
-            this.EsModoEdicion = true;
-            this.RutaImagenSeleccionada = Producto.RutaImagen;
-            this.NombreProducto = Producto.Nombre;
-            this.PrecioProducto= Producto.Precio;
-            this.CategoriaProducto = Producto.Categoria;
-            this.IDProducto = Producto.ID;
-            this.NombreDeVentana = "Editar Producto";
+            EsModoEdicion = true;
+            RutaImagenSeleccionada = Producto.RutaImagen;
+            NombreProducto = Producto.Nombre;
+            PrecioProducto= Producto.Precio;
+            CategoriaProducto = Producto.Categoria;
+            IDProducto = Producto.ID;
+            NombreDeVentana = "Editar Producto";
 
             // Obtener dimensiones de imagen
-            CargarDimensionesImagen(this.RutaImagenSeleccionada);
+            CargarDimensionesImagen(RutaImagenSeleccionada);
             LadoMasLargo lado = new LadoMasLargo();
             int UBound = 0;
             int LBound = 0;
             int TamanioMaximo = 200;
 
             // Calcular relación de aspecto del marco
-            if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
+            if (CalculoAlturaMarco > CalculoAnchoMarco)
             {
-                UBound = this.CalculoAlturaMarco;
-                LBound = this.CalculoAnchoMarco;
+                UBound = CalculoAlturaMarco;
+                LBound = CalculoAnchoMarco;
                 lado = LadoMasLargo.Alto;
             }
             else
             {
-                UBound = this.CalculoAnchoMarco;
-                LBound = this.CalculoAlturaMarco;
+                UBound = CalculoAnchoMarco;
+                LBound = CalculoAlturaMarco;
                 lado = LadoMasLargo.Ancho;
             }
 
             // Aplicar reducción
             if (UBound > TamanioMaximo)
             {
-                float _RelacionAspecto = (float)UBound / (float)LBound;
+                float _RelacionAspecto = UBound / (float)LBound;
                 switch (lado)
                 {
                     case LadoMasLargo.Alto:
@@ -202,11 +205,11 @@ namespace WPFApp1
         }
         public void EditarProducto(object parameter)
         {
-            if(this.RutaImagenSeleccionada != string.Empty)
+            if(RutaImagenSeleccionada != string.Empty)
             {
                 //comprobar si la imagen elegida existe en la carpeta de miniaturas
-                string NombreArchivo = System.IO.Path.GetFileNameWithoutExtension(this.RutaImagenSeleccionada);
-                string Extension = System.IO.Path.GetExtension(RutaImagenSeleccionada);
+                string NombreArchivo = Path.GetFileNameWithoutExtension(RutaImagenSeleccionada);
+                string Extension = Path.GetExtension(RutaImagenSeleccionada);
                 string Destino = ".\\datos\\miniaturas\\" + NombreArchivo + Extension;
                 bool SalirDelBucle = false;
                 if (!File.Exists(Destino))
@@ -223,12 +226,12 @@ namespace WPFApp1
                 }
                 else
                 {
-                    this.RutaImagenSeleccionada = "./datos/miniaturas/" + NombreArchivo + Extension;
+                    RutaImagenSeleccionada = "./datos/miniaturas/" + NombreArchivo + Extension;
                 }
             }
 
             //validar imagen
-            Productos ProductoModificado = new Productos(this.IDProducto, this.NombreProducto, this.CategoriaProducto, this.PrecioProducto, this.RutaImagenSeleccionada);
+            Productos ProductoModificado = new Productos(IDProducto, NombreProducto, CategoriaProducto, PrecioProducto, RutaImagenSeleccionada);
 
             if (ProductosRepository.ModificarProducto(ProductoModificado))
             {
@@ -252,7 +255,7 @@ namespace WPFApp1
             openFileDialog.CheckFileExists = true;
             openFileDialog.CheckPathExists = true;
 
-            Nullable<bool> resultado = openFileDialog.ShowDialog();
+            bool? resultado = openFileDialog.ShowDialog();
 
             if (resultado == true)
             {
@@ -264,23 +267,23 @@ namespace WPFApp1
                 LadoMasLargo lado = new LadoMasLargo();
                 
                 // Calcular relación de aspecto del marco
-                if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
+                if (CalculoAlturaMarco > CalculoAnchoMarco)
                 {
-                    UBound = this.CalculoAlturaMarco;
-                    LBound = this.CalculoAnchoMarco;
+                    UBound = CalculoAlturaMarco;
+                    LBound = CalculoAnchoMarco;
                     lado = LadoMasLargo.Alto;
                 }
                 else
                 {
-                    UBound = this.CalculoAnchoMarco;
-                    LBound = this.CalculoAlturaMarco;
+                    UBound = CalculoAnchoMarco;
+                    LBound = CalculoAlturaMarco;
                     lado = LadoMasLargo.Ancho;
                 }
 
                 // Aplicar reducción
                 if (UBound > TamanioMaximo)
                 {
-                    float _RelacionAspecto = (float)UBound / (float)LBound;
+                    float _RelacionAspecto = UBound / (float)LBound;
                     switch (lado)
                     {
                         case LadoMasLargo.Alto:
@@ -303,23 +306,23 @@ namespace WPFApp1
             LadoMasLargo lado = new LadoMasLargo();
 
             // Calcular relación de aspecto del marco
-            if (this.CalculoAlturaMarco > this.CalculoAnchoMarco)
+            if (CalculoAlturaMarco > CalculoAnchoMarco)
             {
-                UBound = this.CalculoAlturaMarco;
-                LBound = this.CalculoAnchoMarco;
+                UBound = CalculoAlturaMarco;
+                LBound = CalculoAnchoMarco;
                 lado = LadoMasLargo.Alto;
             }
             else
             {
-                UBound = this.CalculoAnchoMarco;
-                LBound = this.CalculoAlturaMarco;
+                UBound = CalculoAnchoMarco;
+                LBound = CalculoAlturaMarco;
                 lado = LadoMasLargo.Ancho;
             }
 
             // Aplicar reducción
             if (UBound > TamanioMaximo)
             {
-                float _RelacionAspecto = (float)UBound / (float)LBound;
+                float _RelacionAspecto = UBound / (float)LBound;
                 switch (lado)
                 {
                     case LadoMasLargo.Alto:
@@ -345,8 +348,8 @@ namespace WPFApp1
             string RutaImagenSalida = string.Empty;
             if (RutaImagenSeleccionada != string.Empty)
             { 
-                string NombreArchivo = System.IO.Path.GetFileNameWithoutExtension(RutaImagenSeleccionada);
-                string Extension = System.IO.Path.GetExtension(RutaImagenSeleccionada);
+                string NombreArchivo = Path.GetFileNameWithoutExtension(RutaImagenSeleccionada);
+                string Extension = Path.GetExtension(RutaImagenSeleccionada);
                 string Destino = ".\\datos\\miniaturas\\" + NombreArchivo + Extension;
                 bool SalirDelBucle = false;
                 int NumeroIntento = 0;
@@ -391,12 +394,11 @@ namespace WPFApp1
             }
 
             Productos _nuevoProducto = new Productos(0,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
-            int Resultado = _productosRepositorio.CrearProducto(_nuevoProducto);
-            //long Resultado = ProductosRepository.AniadirNuevoProducto(_nuevoProducto);
+            int Resultado = _productoService.CrearProducto(_nuevoProducto);
             if (Resultado > -1 )
             {
                 _nuevoProducto.ID = Convert.ToInt32(Resultado);
-                _nuevoProducto.RutaImagen = System.IO.Path.GetFullPath(_nuevoProducto.RutaImagen); 
+                _nuevoProducto.RutaImagen = Path.GetFullPath(_nuevoProducto.RutaImagen); 
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -428,20 +430,20 @@ namespace WPFApp1
                     bitmapImage.UriSource = new Uri(rutaArchivo);
                     bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                     bitmapImage.EndInit();
-                    this.CalculoAnchoMarco = bitmapImage.PixelWidth;
-                    this.CalculoAlturaMarco = bitmapImage.PixelHeight;
+                    CalculoAnchoMarco = bitmapImage.PixelWidth;
+                    CalculoAlturaMarco = bitmapImage.PixelHeight;
                 }
                 catch (Exception ex)
                 {
-                    System.Console.WriteLine($"Error al cargar la imagen: {ex.Message}");
-                    this.CalculoAnchoMarco = 0;
-                    this.CalculoAlturaMarco = 0;
+                    Console.WriteLine($"Error al cargar la imagen: {ex.Message}");
+                    CalculoAnchoMarco = 0;
+                    CalculoAlturaMarco = 0;
                 }
             }
             else
             {
-                this.CalculoAnchoMarco = 0;
-                this.CalculoAlturaMarco = 0;
+                CalculoAnchoMarco = 0;
+                CalculoAlturaMarco = 0;
             }
         }
 

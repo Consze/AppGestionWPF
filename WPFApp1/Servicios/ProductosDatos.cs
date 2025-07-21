@@ -2,15 +2,16 @@
 using System.Data.SQLite;
 using System.IO;
 using WPFApp1.DTOS;
+using WPFApp1.Interfaces;
 
-namespace WPFApp1
+namespace WPFApp1.Servicios
 {
     public class SQLiteAccesoProductos : IProductosAccesoDatos
     {
         private readonly string _conexionCadena;
         public SQLiteAccesoProductos(string rutaConexion)
         {
-            this._conexionCadena = rutaConexion;
+            _conexionCadena = rutaConexion;
         }
         public Productos RecuperarProductoPorID(int producto_id)
         {
@@ -164,7 +165,7 @@ namespace WPFApp1
         public bool EliminarProducto(int producto_id)
         {
             ConexionDBSQLite Instancia = new ConexionDBSQLite();
-            Productos Registro = this.RecuperarProductoPorID(producto_id);
+            Productos Registro = RecuperarProductoPorID(producto_id);
             string Consulta = "DELETE FROM Productos WHERE producto_id = @id";
             if (Registro != null)
             {
@@ -192,6 +193,32 @@ namespace WPFApp1
                 return false;
             }
         }
+        public static List<Productos> LeerProductos()
+        {
+            List<Productos> ListaProductos = new List<Productos>();
+            ConexionDBSQLite Instancia = new ConexionDBSQLite();
+            string consulta = "SELECT * FROM Productos";
+
+            using (SQLiteCommand Comando = new SQLiteCommand(consulta, Instancia.Conexion))
+            {
+                using (SQLiteDataReader Lector = Comando.ExecuteReader())
+                {
+                    while (Lector.Read())
+                    {
+                        int ProductoID = Convert.ToInt32(Lector["producto_id"]);
+                        int Precio = Convert.ToInt32(Lector["Precio"]);
+                        string Nombre = Lector["Nombre"].ToString();
+                        string Categoria = Lector["Categoria"].ToString();
+                        string RutaImagen = Lector["ruta_imagen"].ToString();
+                        if (!string.IsNullOrWhiteSpace(RutaImagen)) { RutaImagen = Path.GetFullPath(RutaImagen); }
+                        Productos _registroActual = new Productos(ProductoID, Nombre, Categoria, Precio, RutaImagen);
+                        ListaProductos.Add(_registroActual);
+                    }
+                }
+            }
+            Instancia.CerrarConexionDB();
+            return ListaProductos;
+        }
     }
 
     public class SQLServerAccesoProductos : IProductosAccesoDatos
@@ -199,7 +226,7 @@ namespace WPFApp1
         private readonly string _conexionCadena;
         public SQLServerAccesoProductos(string rutaConexion)
         {
-            this._conexionCadena = rutaConexion;
+            _conexionCadena = rutaConexion;
         }
         public Productos RecuperarProductoPorID(int producto_id)
         {
@@ -207,7 +234,7 @@ namespace WPFApp1
             Productos registro = new Productos(0, "", "", 0, "");
             try
             {
-                using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                using (SqlConnection conexion = new SqlConnection(_conexionCadena))
                 {
                     conexion.Open();
                     using (SqlCommand comando = new SqlCommand(consulta, conexion))
@@ -235,7 +262,7 @@ namespace WPFApp1
         public bool ActualizarProducto(Productos productoModificado)
         {
             string Consulta = "UPDATE Productos SET";
-            Productos ProductoVigente = this.RecuperarProductoPorID(productoModificado.ID);
+            Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
             if(ProductoVigente != null)
             {
                 FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
@@ -291,7 +318,7 @@ namespace WPFApp1
                 {
                     try
                     {
-                        using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                        using (SqlConnection conexion = new SqlConnection(_conexionCadena))
                         {
                             conexion.Open();
                             using (SqlCommand Comando = new SqlCommand(Consulta, conexion))
@@ -327,7 +354,7 @@ namespace WPFApp1
             string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@Nombre, @Categoria, @Precio, @Ruta_imagen); SELECT SCOPE_IDENTITY();";
             try
             {
-                using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                using (SqlConnection conexion = new SqlConnection(_conexionCadena))
                 {
                     conexion.Open();
                     using (SqlCommand comando = new SqlCommand(Consulta, conexion))
@@ -361,7 +388,7 @@ namespace WPFApp1
             string consulta = "DELETE FROM Productos WHERE producto_id = @id;";
             try
             {
-                using (SqlConnection conexion = new SqlConnection(this._conexionCadena))
+                using (SqlConnection conexion = new SqlConnection(_conexionCadena))
                 {
                     conexion.Open();
                     using(SqlCommand comando = new SqlCommand(consulta,conexion))

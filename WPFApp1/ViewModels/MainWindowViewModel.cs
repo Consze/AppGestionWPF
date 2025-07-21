@@ -2,8 +2,9 @@
 using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Servicios;
 
-namespace WPFApp1
+namespace WPFApp1.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
@@ -84,11 +85,11 @@ namespace WPFApp1
         public event PropertyChangedEventHandler PropertyChanged;
         public MainWindowViewModel()
         {
-            this._tituloActivo = "Menú";
-            this._isAniadirProductoActivo = false;
-            this._vistaActual = null;
-            this._procesando = false;
-            this._cargandoVista = false;
+            _tituloActivo = "Menú";
+            _isAniadirProductoActivo = false;
+            _vistaActual = null;
+            _procesando = false;
+            _cargandoVista = false;
             VerListaCommand = new RelayCommand<object>(VerLista);
             AniadirPersonaCommand = new RelayCommand<object>(AniadirPersona);
             EliminarPersonaCommand = new RelayCommand<object>(EliminarPersona);
@@ -103,14 +104,14 @@ namespace WPFApp1
         }
         private void VerExportarProductos(object parameter)
         {
-            if(this.VistaActual is ExportarProductos)
+            if(VistaActual is ExportarProductos)
             {
-                this.VistaActual = null;
-                this.TituloActivo = "Menú";
+                VistaActual = null;
+                TituloActivo = "Menú";
             }
             else
             {
-                this.TituloActivo = "Exportar Productos";
+                TituloActivo = "Exportar Productos";
                 ExportarProductosViewModel _viewModel = new ExportarProductosViewModel();
                 ExportarProductos _vista = new ExportarProductos(_viewModel);
                 CambiarVistaAsync(_vista);
@@ -125,12 +126,12 @@ namespace WPFApp1
         {
             if(VistaActual is ConfigurarSQLServer)
             {
-                this.VistaActual = null;
-                this.TituloActivo = "Menú";
+                VistaActual = null;
+                TituloActivo = "Menú";
             }
             else
             {
-                this.TituloActivo = "Conectarse a Servidor";
+                TituloActivo = "Conectarse a Servidor";
                 ConfigurarSQLServerViewModel viewModel = new ConfigurarSQLServerViewModel();
                 ConfigurarSQLServer vista = new ConfigurarSQLServer(viewModel);
                 CambiarVistaAsync(vista);
@@ -138,20 +139,20 @@ namespace WPFApp1
         }
         private async Task VerCatalogoAsync()
         {
-            this.Procesando = true;
-            if (this.VistaActual is Catalogo)
+            Procesando = true;
+            if (VistaActual is Catalogo)
             {
-                this.VistaActual = null;
-                this.TituloActivo = "Menú";
+                VistaActual = null;
+                TituloActivo = "Menú";
             }
             else
             {
-                this.TituloActivo = "Catálogo";
+                TituloActivo = "Catálogo";
                 CatalogoViewModel _viewModel = await Task.Run(()=> new CatalogoViewModel());
                 Catalogo vista = new Catalogo(_viewModel);
                 CambiarVistaAsync(vista);
             }
-            this.Procesando = false;
+            Procesando = false;
         }
         private void AniadirPersona(object parameter)
         {
@@ -160,10 +161,10 @@ namespace WPFApp1
         }
         private async Task CambiarVistaAsync(object nuevaVista)
         {
-            this.CargandoVista = true;
+            CargandoVista = true;
             await Task.Delay(200);
-            this.VistaActual = nuevaVista;
-            this.CargandoVista = false;
+            VistaActual = nuevaVista;
+            CargandoVista = false;
         }
         private void EliminarPersona(object parameter)
         {
@@ -178,7 +179,7 @@ namespace WPFApp1
             {
                 if (!int.TryParse(ventanaEntrada.NumeroElegido, out int Numero))
                 {
-                    System.Windows.MessageBox.Show("Debe ingresar un numero.", "Error", MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("Debe ingresar un numero.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 Persona _registro = personaRepository.RecuperarRegistro(Numero);
@@ -189,7 +190,7 @@ namespace WPFApp1
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("No existe un registro con ese ID.", "Error", MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("No existe un registro con ese ID.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 
@@ -197,11 +198,11 @@ namespace WPFApp1
         }
         private void OnAbrirAniadirProducto(AbrirVistaAniadirProductoMensaje mensaje)
         {
-            this.IsAniadirProductoActivo = true;
+            IsAniadirProductoActivo = true;
         }
         private void OnCerrarAniadirProducto(CerrarVistaAniadirProductoMensaje mensaje)
         {
-            this.IsAniadirProductoActivo = false;
+            IsAniadirProductoActivo = false;
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

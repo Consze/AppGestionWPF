@@ -98,7 +98,7 @@
                 <Button.Background>
                     <SolidColorBrush Color="Transparent"/>
                 </Button.Background>
-                <Image Width="24" Height="24" Source="./iconos/ascending-sort.png"/>
+                <Image Width="24" Height="24" Source="/iconos/ascending-sort.png"/>
             </Button>
         </StackPanel>
         </Grid>

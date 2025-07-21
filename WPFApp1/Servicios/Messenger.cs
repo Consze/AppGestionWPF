@@ -1,4 +1,4 @@
-﻿namespace WPFApp1
+﻿namespace WPFApp1.Servicios
 {
     public class Messenger
     {

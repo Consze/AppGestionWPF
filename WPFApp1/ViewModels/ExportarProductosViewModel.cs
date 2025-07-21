@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 
-namespace WPFApp1
+namespace WPFApp1.ViewModels
 {
     public class ExportarProductosViewModel : INotifyPropertyChanged
     {
@@ -26,7 +26,7 @@ namespace WPFApp1
         public ExportarProductosViewModel()
         {
             ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX());
-            this._procesando = false;
+            _procesando = false;
         }
 
         public async Task ExportarXLSX()
@@ -35,13 +35,13 @@ namespace WPFApp1
         }
         public async Task ExportarXLSXAsync()
         {
-            if (!this._procesando) 
+            if (!_procesando) 
             {
-                this.Procesando = true;
+                Procesando = true;
                 try { 
                     List <Productos> Productos = await Task.Run(() => ProductosRepository.LeerProductos());
                     bool resultado = await Task.Run(() => ProductosRepository.CrearLibro(Productos));
-                    this.Procesando = false;
+                    Procesando = false;
                     if (resultado)
                     {
                         System.Windows.MessageBox.Show("Se exportaron los productos.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -53,12 +53,12 @@ namespace WPFApp1
                 }
                 finally
                 {
-                    this.Procesando = false;
+                    Procesando = false;
                 }
             }
             else
             {
-                System.Console.WriteLine("Ya hay una exportación en proceso");
+                Console.WriteLine("Ya hay una exportación en proceso");
             }
         }
         protected virtual void OnPropertyChanged(string propertyName)

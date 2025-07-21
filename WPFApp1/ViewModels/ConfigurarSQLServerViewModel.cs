@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace WPFApp1
+namespace WPFApp1.ViewModels
 {
     public class ConfigurarSQLServerViewModel : INotifyPropertyChanged
     {
@@ -132,76 +132,76 @@ namespace WPFApp1
 
         public ConfigurarSQLServerViewModel()
         {
-            this._botonesActivos = true;
-            this._procesando = false;
-            this.CadenaValida = false;
-            this.ToggleActivado = false;
-            this.TextoToggle = "Autenticación Windows";
+            _botonesActivos = true;
+            _procesando = false;
+            CadenaValida = false;
+            ToggleActivado = false;
+            TextoToggle = "Autenticación Windows";
             AceptarEntradaCommand = new RelayCommand<object>(async (param) => await PresentarEntrada());
             CancelarEntradaCommand = new RelayCommand<object>(CancelarEntrada);
             CambiarModoAutenticacionCommand = new RelayCommand<object>(CambiarModoAutenticacion);
         }
         public void CambiarModoAutenticacion(object parameter)
         {
-            this.ToggleActivado = !this.ToggleActivado;
-            if(this.ToggleActivado)
+            ToggleActivado = !ToggleActivado;
+            if(ToggleActivado)
             {
-                this.TextoToggle = "Autenticación SQL";
+                TextoToggle = "Autenticación SQL";
             }
             else
             {
-                this.TextoToggle = "Autenticación Windows";
+                TextoToggle = "Autenticación Windows";
             }   
         }
         public void CancelarEntrada(object parameter)
         {
-            this.CadenaConexionAServidor = null;
-            this.CadenaValida = false;
+            CadenaConexionAServidor = null;
+            CadenaValida = false;
         }
 
         public async Task PresentarEntrada()
         {
-            this.Procesando = true;
+            Procesando = true;
             await PresentarEntradaAsync().ConfigureAwait(false);
         }
         public async Task PresentarEntradaAsync()
         {
-            if (this.ToggleActivado) //Autenticación SQL
+            if (ToggleActivado) //Autenticación SQL
             {
-                if (this.NombreBaseDatos != null && this.NombreComputadora != null && this.NombreInstanciaServidor != null && this.NombreUsuario != null && this.ClaveUsuario != null)
+                if (NombreBaseDatos != null && NombreComputadora != null && NombreInstanciaServidor != null && NombreUsuario != null && ClaveUsuario != null)
                 { 
-                    this.CadenaConexionAServidor = $"Server={NombreComputadora}\\{NombreInstanciaServidor};Database={NombreBaseDatos};User ID={NombreUsuario};Password={ClaveUsuario}";
-                    this.CadenaValida = true;
+                    CadenaConexionAServidor = $"Server={NombreComputadora}\\{NombreInstanciaServidor};Database={NombreBaseDatos};User ID={NombreUsuario};Password={ClaveUsuario}";
+                    CadenaValida = true;
                 }
                 else
                 {
-                    this.CadenaValida = false;
+                    CadenaValida = false;
                 }
             }
             else //Autenticación Windows
             {
-                if (this.NombreBaseDatos != null && this.NombreComputadora != null && this.NombreInstanciaServidor != null)
+                if (NombreBaseDatos != null && NombreComputadora != null && NombreInstanciaServidor != null)
                 {
-                    this.CadenaConexionAServidor = $"Server={NombreComputadora}\\{NombreInstanciaServidor};Database={NombreBaseDatos};Integrated Security=True;";
-                    this.CadenaValida = true;
+                    CadenaConexionAServidor = $"Server={NombreComputadora}\\{NombreInstanciaServidor};Database={NombreBaseDatos};Integrated Security=True;";
+                    CadenaValida = true;
                 }
                 else
                 {
-                    this.CadenaValida = false;
+                    CadenaValida = false;
                 }
             }
 
-            if (this.CadenaValida)
+            if (CadenaValida)
             {
-                this.BotonesActivos = false;
-                string cadenaConexion = this.CadenaConexionAServidor;
+                BotonesActivos = false;
+                string cadenaConexion = CadenaConexionAServidor;
                 ConexionDBSQLServer _configuracionServidor = new ConexionDBSQLServer();
                 _configuracionServidor.CadenaConexion = cadenaConexion;
                 bool conexionExitosa = await Task.Run(() => _configuracionServidor.ProbarConexion(cadenaConexion));
                 _configuracionServidor.ConexionValida = conexionExitosa;
                 await Task.Run(() => _configuracionServidor.GuardarEstadoConexion());
-                this.Procesando = false;
-                this.BotonesActivos = true;
+                Procesando = false;
+                BotonesActivos = true;
                 if (conexionExitosa)
                 {
                     System.Windows.MessageBox.Show($"Conexion Exitosa a: {cadenaConexion}", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -213,7 +213,7 @@ namespace WPFApp1
             }
             else
             {
-                this.Procesando = false;
+                Procesando = false;
                 System.Windows.MessageBox.Show("No se ingresaron los datos suficientes para establecer la conexión", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }

@@ -1,6 +1,6 @@
 ﻿using WPFApp1.DTOS;
 
-namespace WPFApp1
+namespace WPFApp1.Interfaces
 {
     public interface IProductosAccesoDatos
     {

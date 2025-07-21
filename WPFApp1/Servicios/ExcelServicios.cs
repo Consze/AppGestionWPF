@@ -1,7 +1,7 @@
 ﻿using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
-namespace WPFApp1
+namespace WPFApp1.Servicios
 {
     public class ExcelServicios
     {

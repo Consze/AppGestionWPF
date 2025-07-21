@@ -1,12 +1,15 @@
 ﻿using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using WPFApp1.Interfaces;
+using WPFApp1.Servicios;
+using WPFApp1.ViewModels;
 using Forms = System.Windows.Forms;
 namespace WPFApp1
 {
     public partial class App : System.Windows.Application
     {
-        private ServiceProvider _serviceProvider;
+        private static ServiceProvider _serviceProvider;
         private SplashScreen _splashScreen;
         private static Mutex _mutex = null;
         private Forms.NotifyIcon _trayIcon = new NotifyIcon();
@@ -17,6 +20,10 @@ namespace WPFApp1
             ConfigurarServicios(serviceCollection);
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }
+        public static T GetService<T>() where T : class
+        {
+            return _serviceProvider.GetRequiredService<T>();
+        }
         private void ConfigurarServicios(IServiceCollection services)
         {
             ConexionDBSQLServer _instanciaSQLServer = new ConexionDBSQLServer();
@@ -24,25 +31,25 @@ namespace WPFApp1
 
             if (configuracionServer.ConexionValida && !string.IsNullOrEmpty(configuracionServer.CadenaConexion))
             {
-                services.AddScoped<WPFApp1.IProductosAccesoDatos, WPFApp1.SQLServerAccesoProductos>(provider =>
+                services.AddScoped<IProductosAccesoDatos, SQLServerAccesoProductos>(provider =>
                 {
-                    return new WPFApp1.SQLServerAccesoProductos(configuracionServer.CadenaConexion);
+                    return new WPFApp1.Servicios.SQLServerAccesoProductos(configuracionServer.CadenaConexion);
                 });
                 Console.WriteLine("Servicio de acceso a datos registrado para SQL Server.");
             }
             else
             {
-                services.AddScoped<WPFApp1.IProductosAccesoDatos, WPFApp1.SQLiteAccesoProductos>(provider =>
+                services.AddScoped<IProductosAccesoDatos, SQLiteAccesoProductos>(provider =>
                 {
                     string sqliteConnectionString = @"Data Source=.\datos\base.db;Version=3;";
-                    return new WPFApp1.SQLiteAccesoProductos(sqliteConnectionString);
+                    return new WPFApp1.Servicios.SQLiteAccesoProductos(sqliteConnectionString);
                 });
                 Console.WriteLine("Sevicio de acceso a datos registrado para SQLite");
             }
 
             // Registrar ViewModels
-            services.AddScoped<WPFApp1.MainWindowViewModel>();
-            services.AddScoped<WPFApp1.AniadirProductoViewModel>();
+            services.AddScoped<MainWindowViewModel>();
+            services.AddTransient<AniadirProductoViewModel>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {

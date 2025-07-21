@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Servicios;
 
-namespace WPFApp1
+namespace WPFApp1.ViewModels
 {
     public enum VistaElegida
     {
@@ -71,8 +72,8 @@ namespace WPFApp1
 
         public CatalogoViewModel()
         {
-            this._mostrarVistaTabular = false;
-            this._mostrarVistaGaleria = true;
+            _mostrarVistaTabular = false;
+            _mostrarVistaGaleria = true;
             ColeccionProductos = new ObservableCollection<Productos>();
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
@@ -86,26 +87,26 @@ namespace WPFApp1
 
         public async Task CargarEstadoInicialAsync()
         {
-            this.Procesando = true;
+            Procesando = true;
             VistaElegida vista = PersistenciaConfiguracion.LeerUltimaVista();
             switch(vista)
             {
                 case VistaElegida.Ninguna:
                 case VistaElegida.Galeria:
-                    this.MostrarVistaGaleria = true;
-                    this.MostrarVistaTabular = false;
+                    MostrarVistaGaleria = true;
+                    MostrarVistaTabular = false;
                     break;
                 case VistaElegida.Tabla:
-                    this.MostrarVistaGaleria = false;
-                    this.MostrarVistaTabular = true;
+                    MostrarVistaGaleria = false;
+                    MostrarVistaTabular = true;
                     break;
             }
-            this.Procesando = false;
+            Procesando = false;
         }
 
         public async Task AlternarFormatoVista()
         {
-            this.Procesando = true;
+            Procesando = true;
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
         }
 
@@ -114,29 +115,29 @@ namespace WPFApp1
             VistaElegida vista = new VistaElegida();
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                if (this.MostrarVistaGaleria)
+                if (MostrarVistaGaleria)
                 {
                     vista = VistaElegida.Tabla;
-                    this.MostrarVistaGaleria = false;
-                    this.MostrarVistaTabular = true;
+                    MostrarVistaGaleria = false;
+                    MostrarVistaTabular = true;
                 }
                 else
                 {
                     vista = VistaElegida.Galeria;
-                    this.MostrarVistaGaleria = true;
-                    this.MostrarVistaTabular = false;
+                    MostrarVistaGaleria = true;
+                    MostrarVistaTabular = false;
                 }
                 PersistenciaConfiguracion.GuardarUltimaVista(vista);
             });
-            this.Procesando = false;
+            Procesando = false;
         }
         public void MostrarAniadirProducto(object parameter)
         {
             if (AniadirProducto.Instancias < 1)
             {
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
-                this.MostrarVentanaAniadirProducto = true;
-                AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
+                MostrarVentanaAniadirProducto = true;
+                var _viewModel = App.GetService<AniadirProductoViewModel>();
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
                 AniadirProductoInstanciado.Show();
             }
@@ -154,7 +155,7 @@ namespace WPFApp1
                 {
                     ColeccionProductos.Add(producto);
                 }
-                this.Procesando = false;
+                Procesando = false;
             });
         }
         /// <summary>
@@ -169,7 +170,8 @@ namespace WPFApp1
             }
             if (ProductoClickeado is Productos producto)
             {
-                AniadirProductoViewModel _viewModel = new AniadirProductoViewModel();
+                Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
+                var _viewModel = App.GetService<AniadirProductoViewModel>();
                 _viewModel.ConfigurarEdicionDeProducto(producto);
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
                 AniadirProductoInstanciado.Show();

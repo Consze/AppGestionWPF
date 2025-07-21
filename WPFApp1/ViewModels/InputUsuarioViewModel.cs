@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 
-namespace WPFApp1
+namespace WPFApp1.ViewModels
 {
     public class InputUsuarioViewModel : INotifyPropertyChanged
     {
@@ -23,19 +23,19 @@ namespace WPFApp1
         public ICommand CancelarEntradaCommand { get; private set; }
         public InputUsuarioViewModel(string tituloHint) 
         {
-            this.TituloHint = tituloHint;
+            TituloHint = tituloHint;
             AceptarEntradaCommand = new RelayCommand<object>(PresentarEntrada);
             CancelarEntradaCommand = new RelayCommand<object>(PresentarEntrada);
         }
 
         public void CancelarEntrada(object parameter)
         {
-            this.Entrada = null;
+            Entrada = null;
             CerrarVista(false);
         }
         public void PresentarEntrada(object parameter)
         {
-            this.Entrada = EntradaTextoUsuario;
+            Entrada = EntradaTextoUsuario;
             CerrarVista(true);
         }
         public void CerrarVista(bool resultado)

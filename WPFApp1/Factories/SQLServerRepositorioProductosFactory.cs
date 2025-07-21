@@ -1,8 +1,9 @@
-﻿using WPFApp1;
+﻿using WPFApp1.Interfaces;
+using WPFApp1.Servicios;
 
 namespace WPFApp1.Factories
 {
-    public class SqlServerRepositorioProductosFactory : IRepositorioProductosFactory
+    public class SqlServerRepositorioProductosFactory : IProductosFactory
     {
         private readonly string _cadenaConexion;
 
