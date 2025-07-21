@@ -2,8 +2,9 @@
 using System.Data.SQLite;
 using System.IO;
 using System.Text.Json;
+using WPFApp1.ViewModels;
 
-namespace WPFApp1
+namespace WPFApp1.Servicios
 {
     public class ConfiguracionSQLServer()
     {
@@ -16,11 +17,13 @@ namespace WPFApp1
     {
         public string CadenaConexion { get; set; }
         public bool ConexionValida { get; set; }
-        private string rutaArchivoConfiguracion { get; set; }
+        private string rutaArchivoConfiguracion;
+        private string rutaConfiguracionManual; 
         public string ExcepcionSQL { get; set; } 
         public ConexionDBSQLServer()
         {
             this.rutaArchivoConfiguracion = @".\datos\configuracionSQLServer.json";
+            this.rutaConfiguracionManual = @".\datos\estadoServidor.json";
         }
         public ConfiguracionSQLServer LeerArchivoConfiguracion()
         {
@@ -46,18 +49,17 @@ namespace WPFApp1
         }
         public void GuardarEstadoConexion()
         {
-            var configuracion = new ConfiguracionSQLServer {CadenaConexion = this.CadenaConexion, ConexionValida = this.ConexionValida, Excepcion = this.ExcepcionSQL, FechaHora = DateTime.Now };
+            var configuracion = new ConfiguracionSQLServer {CadenaConexion = CadenaConexion, ConexionValida = ConexionValida, Excepcion = ExcepcionSQL, FechaHora = DateTime.Now };
             string jsonString = JsonSerializer.Serialize(configuracion);
             try
             {
-                File.WriteAllText(this.rutaArchivoConfiguracion, jsonString);
+                File.WriteAllText(rutaArchivoConfiguracion, jsonString);
             }
             catch(Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-
         public bool ProbarConexion(string ruta)
         {
             using (SqlConnection conexion = new SqlConnection(ruta))
@@ -65,16 +67,58 @@ namespace WPFApp1
                 try
                 {
                     conexion.Open();
-                    this.ConexionValida = true;
-                    this.ExcepcionSQL = null;
+                    ConexionValida = true;
+                    ExcepcionSQL = null;
                     return true;
                 }
                 catch (SqlException ex)
                 {
-                    this.ConexionValida = false;
-                    this.ExcepcionSQL = ex.Message;
+                    ConexionValida = false;
+                    ExcepcionSQL = ex.Message;
                     return false;
                 }
+            }
+        }
+        public bool GuardarConfiguracionManual(bool entrada)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(rutaConfiguracionManual));
+            var configuracion = new EstadoSQLServer { ServidorActivo = entrada };
+            string jsonString = JsonSerializer.Serialize(configuracion);
+            try
+            {
+                File.WriteAllText(rutaConfiguracionManual, jsonString);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al guardar la configuración: {ex.Message}");
+                return false;
+            }
+        }
+        public bool LeerConfiguracionManual()
+        {
+            try
+            {
+                if (File.Exists(this.rutaConfiguracionManual))
+                {
+                    string jsonString = File.ReadAllText(rutaConfiguracionManual);
+                    var configuracion = JsonSerializer.Deserialize<EstadoSQLServer>(jsonString);
+                    if (string.IsNullOrEmpty(jsonString) || configuracion == null)
+                    {
+                        return false;
+                    }
+                    return configuracion.ServidorActivo;
+                }
+                else
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(rutaConfiguracionManual));
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error {ex.Message}");
+                return false;
             }
         }
     }

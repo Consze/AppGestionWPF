@@ -1,5 +1,6 @@
 ﻿using System.Data.SQLite;
 using WPFApp1.DTOS;
+using WPFApp1.Servicios;
 
 namespace WPFApp1
 {

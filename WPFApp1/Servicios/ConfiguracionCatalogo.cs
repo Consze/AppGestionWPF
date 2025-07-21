@@ -2,7 +2,7 @@
 using System.Text.Json;
 using WPFApp1.ViewModels;
 
-namespace WPFApp1
+namespace WPFApp1.Servicios
 {
     public class ConfiguracionCatalogo
     {

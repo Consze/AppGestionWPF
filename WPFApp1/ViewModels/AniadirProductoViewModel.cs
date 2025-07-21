@@ -7,6 +7,7 @@ using WPFApp1.DTOS;
 using WPFApp1.Factories;
 using WPFApp1.Interfaces;
 using WPFApp1.Servicios;
+using WPFApp1.Mensajes;
 
 namespace WPFApp1.ViewModels
 {
@@ -21,7 +22,7 @@ namespace WPFApp1.ViewModels
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
         private readonly IProductosFactory _repositorioFactory;
-        private readonly IProductosAccesoDatos _productoService;
+        private readonly IProductoServicio _productoService;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -114,7 +115,7 @@ namespace WPFApp1.ViewModels
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
-        public AniadirProductoViewModel(IProductosAccesoDatos productoServicio)
+        public AniadirProductoViewModel(IProductoServicio productoServicio)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -233,7 +234,7 @@ namespace WPFApp1.ViewModels
             //validar imagen
             Productos ProductoModificado = new Productos(IDProducto, NombreProducto, CategoriaProducto, PrecioProducto, RutaImagenSeleccionada);
 
-            if (ProductosRepository.ModificarProducto(ProductoModificado))
+            if (_productoService.ActualizarProducto(ProductoModificado))
             {
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);

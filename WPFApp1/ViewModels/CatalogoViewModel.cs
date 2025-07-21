@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels

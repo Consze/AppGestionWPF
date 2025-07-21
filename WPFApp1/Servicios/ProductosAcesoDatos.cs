@@ -51,7 +51,7 @@ namespace WPFApp1.Servicios
             ConexionDBSQLite Instancia = new ConexionDBSQLite();
             Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
 
-            if (ProductoVigente.ID > 0) // Validar registro
+            if (ProductoVigente.ID > 0 && ProductoVigente != null) // Validar registro
             {
                 FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
 
@@ -230,7 +230,7 @@ namespace WPFApp1.Servicios
         }
         public Productos RecuperarProductoPorID(int producto_id)
         {
-            string consulta = "SELECT * FROM Productos WHERE productos_id = @id;";
+            string consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
             Productos registro = new Productos(0, "", "", 0, "");
             try
             {
@@ -238,7 +238,8 @@ namespace WPFApp1.Servicios
                 {
                     conexion.Open();
                     using (SqlCommand comando = new SqlCommand(consulta, conexion))
-                    {    
+                    {
+                        comando.Parameters.AddWithValue("@id", producto_id);
                         SqlDataReader Lector = comando.ExecuteReader();
                         while (Lector.Read())
                         {
@@ -263,7 +264,7 @@ namespace WPFApp1.Servicios
         {
             string Consulta = "UPDATE Productos SET";
             Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
-            if(ProductoVigente != null)
+            if(ProductoVigente != null && ProductoVigente.ID > 0)
             {
                 FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
 

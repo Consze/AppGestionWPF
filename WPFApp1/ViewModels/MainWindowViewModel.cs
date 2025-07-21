@@ -16,6 +16,7 @@ namespace WPFApp1.ViewModels
         public ICommand AniadirProductoCommand { get; }
         public ICommand VerExportarProductosCommand { get; }
         public ICommand ConfigurarServidorCommand { get; }
+        public ICommand AbrirConfiguracionesCommand { get; }
         public ICommand CambiarVistaCommand { get; }
         private bool _procesando;
         public bool Procesando
@@ -94,6 +95,7 @@ namespace WPFApp1.ViewModels
             AniadirPersonaCommand = new RelayCommand<object>(AniadirPersona);
             EliminarPersonaCommand = new RelayCommand<object>(EliminarPersona);
             EditarPersonaCommand = new RelayCommand<object>(EditarPersona);
+            AbrirConfiguracionesCommand = new RelayCommand<object>(AbrirConfiguraciones);
             VerCatalogoCommand = new RelayCommand<object>(async (param) => await VerCatalogoAsync());
             CambiarVistaCommand = new RelayCommand<object>(async (vista) => await CambiarVistaAsync(vista));
             VerExportarProductosCommand = new RelayCommand<object>(VerExportarProductos);
@@ -101,6 +103,21 @@ namespace WPFApp1.ViewModels
 
             Messenger.Default.Subscribir<AbrirVistaAniadirProductoMensaje>(OnAbrirAniadirProducto);
             Messenger.Default.Subscribir<CerrarVistaAniadirProductoMensaje>(OnCerrarAniadirProducto);
+        }
+        private void AbrirConfiguraciones(object parameter)
+        {
+            if(VistaActual is Configuraciones)
+            {
+                TituloActivo = "Menú";
+                this.VistaActual = null;
+            }
+            else
+            {
+                TituloActivo = "Configuración";
+                ConfiguracionesViewModel viewModel = new ConfiguracionesViewModel();
+                Configuraciones vista = new Configuraciones(viewModel);
+                CambiarVistaAsync(vista);
+            }
         }
         private void VerExportarProductos(object parameter)
         {
@@ -126,8 +143,8 @@ namespace WPFApp1.ViewModels
         {
             if(VistaActual is ConfigurarSQLServer)
             {
-                VistaActual = null;
                 TituloActivo = "Menú";
+                this.VistaActual = null;
             }
             else
             {

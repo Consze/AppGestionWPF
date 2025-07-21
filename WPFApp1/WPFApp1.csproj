@@ -13,6 +13,7 @@
   <ItemGroup>
     <None Remove="datos\base.db" />
     <None Remove="Fonts\Nunito-Regular.ttf" />
+    <None Remove="Fonts\Roboto-Regular.ttf" />
     <None Remove="Fonts\Roboto\Roboto-Regular.ttf" />
     <None Remove="ico128.ico" />
     <None Remove="iconos\aniadir-registro.png" />
@@ -27,6 +28,12 @@
     <Content Include="datos\base.db">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Fonts\Nunito-Regular.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Roboto-Regular.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Content Include="ico128.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -62,12 +69,6 @@
     <Resource Include="ico128.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Fonts\Roboto-Regular.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

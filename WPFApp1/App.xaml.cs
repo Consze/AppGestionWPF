@@ -26,26 +26,24 @@ namespace WPFApp1
         }
         private void ConfigurarServicios(IServiceCollection services)
         {
-            ConexionDBSQLServer _instanciaSQLServer = new ConexionDBSQLServer();
-            ConfiguracionSQLServer configuracionServer = _instanciaSQLServer.LeerArchivoConfiguracion();
+            services.AddTransient<Factories.SqliteRepositorioProductosFactory>(provider =>
+            {
+                string sqliteConnectionString = @"Data Source=.\datos\base.db;Version=3;";
+                return new Factories.SqliteRepositorioProductosFactory(sqliteConnectionString);
+            });
 
-            if (configuracionServer.ConexionValida && !string.IsNullOrEmpty(configuracionServer.CadenaConexion))
+            services.AddTransient<Factories.SqlServerRepositorioProductosFactory>(provider =>
             {
-                services.AddScoped<IProductosAccesoDatos, SQLServerAccesoProductos>(provider =>
+                ConexionDBSQLServer _instancia = new ConexionDBSQLServer();
+                ConfiguracionSQLServer configuracionServer = _instancia.LeerArchivoConfiguracion();
+                if (configuracionServer.ConexionValida && configuracionServer.CadenaConexion != null)
                 {
-                    return new WPFApp1.Servicios.SQLServerAccesoProductos(configuracionServer.CadenaConexion);
-                });
-                Console.WriteLine("Servicio de acceso a datos registrado para SQL Server.");
-            }
-            else
-            {
-                services.AddScoped<IProductosAccesoDatos, SQLiteAccesoProductos>(provider =>
-                {
-                    string sqliteConnectionString = @"Data Source=.\datos\base.db;Version=3;";
-                    return new WPFApp1.Servicios.SQLiteAccesoProductos(sqliteConnectionString);
-                });
-                Console.WriteLine("Sevicio de acceso a datos registrado para SQLite");
-            }
+                    return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
+                }
+                return null;
+            });
+
+            services.AddScoped<WPFApp1.Interfaces.IProductoServicio, WPFApp1.Servicios.ProductoServicio>();
 
             // Registrar ViewModels
             services.AddScoped<MainWindowViewModel>();

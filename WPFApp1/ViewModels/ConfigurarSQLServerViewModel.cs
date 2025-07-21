@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
 {
