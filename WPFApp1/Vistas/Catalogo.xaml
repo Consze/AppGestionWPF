@@ -92,13 +92,13 @@
                 <Button.Background>
                     <SolidColorBrush Color="Transparent"/>
                 </Button.Background>
-                <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png"/>
+                <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png" Style="{StaticResource ImagenHover}"/>
             </Button>
             <Button x:Name="Ordenar" Margin="0,0,10,0" BorderThickness="0">
                 <Button.Background>
                     <SolidColorBrush Color="Transparent"/>
                 </Button.Background>
-                <Image Width="24" Height="24" Source="/iconos/ascending-sort.png"/>
+                    <Image Width="24" Height="24" Source="/iconos/ascending-sort.png" Style="{StaticResource ImagenHover}"/>
             </Button>
         </StackPanel>
         </Grid>

@@ -13,6 +13,10 @@ namespace WPFApp1.Servicios
         public DateTime FechaHora { get; set; }
         public string Excepcion { get; set; }
     }
+    public class EstadoSQLServer()
+    {
+        public bool ServidorActivo { get; set; }
+    }
     public class ConexionDBSQLServer
     {
         public string CadenaConexion { get; set; }

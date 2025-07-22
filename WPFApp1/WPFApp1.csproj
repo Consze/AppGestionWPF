@@ -20,6 +20,7 @@
     <None Remove="iconos\ascending-sort.png" />
     <None Remove="iconos\configuracion.png" />
     <None Remove="iconos\exportar_xlsx.png" />
+    <None Remove="iconos\notificaciones.png" />
     <None Remove="iconos\Server.png" />
     <None Remove="iconos\Stack.png" />
   </ItemGroup>
@@ -27,6 +28,9 @@
   <ItemGroup>
     <Content Include="datos\base.db">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\notificaciones.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\Nunito-Regular.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

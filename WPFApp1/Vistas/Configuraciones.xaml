@@ -34,8 +34,6 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-
-            <Button Content="{Binding Descripcion}" Grid.Column="0" Grid.Row="0" Command="{Binding CambiarEstadoServidorCommand}"/>
         </Grid>
     </Grid>
 </UserControl>

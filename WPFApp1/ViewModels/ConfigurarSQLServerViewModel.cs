@@ -11,6 +11,22 @@ namespace WPFApp1.ViewModels
         public ICommand AceptarEntradaCommand { get; private set; }
         public ICommand CancelarEntradaCommand { get; private set; }
         public ICommand CambiarModoAutenticacionCommand { get; private set; }
+        public ICommand CambiarEstadoServidorCommand { get; }
+        private string _descripcion;
+        public string Descripcion
+        {
+            get { return _descripcion; }
+            set
+            {
+                if (_descripcion != value)
+                {
+                    _descripcion = value;
+                    OnPropertyChanged(nameof(Descripcion));
+                }
+            }
+        }
+        public bool Seleccion { get; set; }
+        private ConexionDBSQLServer _repositorioServidor;
         private string _nombreComputadora;
         public string NombreComputadora
         {
@@ -133,15 +149,43 @@ namespace WPFApp1.ViewModels
 
         public ConfigurarSQLServerViewModel()
         {
+            //Configuración inicial de toggle
+            _repositorioServidor = new ConexionDBSQLServer();
+            this.Seleccion = _repositorioServidor.LeerConfiguracionManual();
+            if (this.Seleccion)
+            {
+                this.Descripcion = "Cambiar a SQLite";
+            }
+            else
+            {
+                this.Descripcion = "Cambiar a SQLServer";
+            }
+
             _botonesActivos = true;
             _procesando = false;
             CadenaValida = false;
             ToggleActivado = false;
             TextoToggle = "Autenticación Windows";
+            
             AceptarEntradaCommand = new RelayCommand<object>(async (param) => await PresentarEntrada());
             CancelarEntradaCommand = new RelayCommand<object>(CancelarEntrada);
             CambiarModoAutenticacionCommand = new RelayCommand<object>(CambiarModoAutenticacion);
+            CambiarEstadoServidorCommand = new RelayCommand<object>(async (param) => await CambiarEstadoServidorAsync());
         }
+        private async Task CambiarEstadoServidorAsync()
+        {
+            this.Seleccion = !this.Seleccion;
+            if (this.Seleccion)
+            {
+                this.Descripcion = "Cambiar a SQLite";
+            }
+            else
+            {
+                this.Descripcion = "Cambiar a SQLServer";
+            }
+            _repositorioServidor.GuardarConfiguracionManual(this.Seleccion);
+        }
+        
         public void CambiarModoAutenticacion(object parameter)
         {
             ToggleActivado = !ToggleActivado;

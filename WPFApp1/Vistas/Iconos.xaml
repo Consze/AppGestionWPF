@@ -151,6 +151,41 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ImagenHover" TargetType="Image">
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                 To="1.2" Duration="0:0:0.2"
+                                 EasingFunction="{StaticResource SmoothEase}"/>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                     To="1.2" Duration="0:0:0.2"
+                                     EasingFunction="{StaticResource SmoothEase}"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                 To="1.0" Duration="0:0:0:1" EasingFunction="{StaticResource SmoothEase}"/>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                         To="1.0" Duration="0:0:0.1" BeginTime="0:0:0.1" EasingFunction="{StaticResource SmoothEase}"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
+
     <Style TargetType="Border" x:Key="EstiloBorderConAnimacion">
         <Setter Property="Background" Value="White"/>
         <Style.Triggers>
