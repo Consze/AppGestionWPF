@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using WPFApp1.DTOS;
+using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -175,14 +177,19 @@ namespace WPFApp1.ViewModels
         private async Task CambiarEstadoServidorAsync()
         {
             this.Seleccion = !this.Seleccion;
+            string DBMSElegido = string.Empty;
             if (this.Seleccion)
             {
                 this.Descripcion = "Cambiar a SQLite";
+                DBMSElegido = "Los operaciones se realizaran de manera local.";
             }
             else
             {
                 this.Descripcion = "Cambiar a SQLServer";
+                DBMSElegido = "Las operaciones se realizaran en el servidor.";
             }
+            Notificacion _notificacion = new Notificacion { Mensaje = DBMSElegido, Titulo = "Cambio de DBMS", Urgencia = MatrizEisenhower.C1 };
+            Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             _repositorioServidor.GuardarConfiguracionManual(this.Seleccion);
         }
         

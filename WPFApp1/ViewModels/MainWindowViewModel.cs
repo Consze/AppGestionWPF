@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -70,7 +71,33 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _esPopupVisible;
+        public bool EsPopupVisible
+        {
+            get { return _esPopupVisible; }
+            set
+            {
+                if (_esPopupVisible != value)
+                {
+                    _esPopupVisible = value;
+                    OnPropertyChanged(nameof(EsPopupVisible));
+                }
+            }
+        }
         private string _tituloActivo;
+        private UCNotificacionViewModel _notificacionViewModel;
+        public UCNotificacionViewModel NotificacionViewModel
+        {
+            get { return _notificacionViewModel; }
+            set
+            {
+                if (_notificacionViewModel != value)
+                {
+                    _notificacionViewModel = value;
+                    OnPropertyChanged(nameof(NotificacionViewModel));
+                }
+            }
+        }
         public string TituloActivo
         {
             get { return _tituloActivo; }
@@ -91,6 +118,8 @@ namespace WPFApp1.ViewModels
             _vistaActual = null;
             _procesando = false;
             _cargandoVista = false;
+            _esPopupVisible = false;
+            this.NotificacionViewModel = new UCNotificacionViewModel();
             VerListaCommand = new RelayCommand<object>(VerLista);
             AniadirPersonaCommand = new RelayCommand<object>(AniadirPersona);
             EliminarPersonaCommand = new RelayCommand<object>(EliminarPersona);
@@ -103,6 +132,7 @@ namespace WPFApp1.ViewModels
 
             Messenger.Default.Subscribir<AbrirVistaAniadirProductoMensaje>(OnAbrirAniadirProducto);
             Messenger.Default.Subscribir<CerrarVistaAniadirProductoMensaje>(OnCerrarAniadirProducto);
+            Messenger.Default.Subscribir<NotificacionEmergente>(OnNotificacionEmergenteAsync);
         }
         private void AbrirConfiguraciones(object parameter)
         {
@@ -211,6 +241,17 @@ namespace WPFApp1.ViewModels
                     return;
                 }
                 
+            }
+        }
+        private async void OnNotificacionEmergenteAsync(NotificacionEmergente Notificacion)
+        {
+            if(Notificacion?.NuevaNotificacion != null)
+            {
+                this.NotificacionViewModel.Titulo = Notificacion.NuevaNotificacion.Titulo;
+                this.NotificacionViewModel.Cuerpo = Notificacion.NuevaNotificacion.Mensaje;
+                this.EsPopupVisible = true;
+                await Task.Delay(5000);
+                this.EsPopupVisible = false;
             }
         }
         private void OnAbrirAniadirProducto(AbrirVistaAniadirProductoMensaje mensaje)

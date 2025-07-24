@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1"
-        mc:Ignorable="d" FontSize = "18" FontWeight="Light" FontFamily="Roboto"
+        xmlns:vistas="clr-namespace:WPFApp1.Vistas" mc:Ignorable="d"
+        FontSize = "18" FontWeight="Light" FontFamily="Roboto"
         Title="Aplicación" Height="720" Width="1280" Closing="Window_Closing" WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
@@ -68,13 +69,16 @@
                     <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10"
-              ShadowDepth="0.1"
-              Direction="0"
-              Opacity="0.1"/>
+                                  ShadowDepth="0.1"
+                                  Direction="0"
+                                  Opacity="0.1"/>
                         </Border.Effect>
+                        <Border.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding VerCatalogoCommand}" />
+                        </Border.InputBindings>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding VerCatalogoCommand}" />
+                                <MouseBinding Gesture="LeftClick"/>
                             </StackPanel.InputBindings>
                             <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerCatalogoCommand}">
                                 <Image Source="/iconos/Stack.png" Width="35" Height="35" HorizontalAlignment="Left"/>
@@ -101,9 +105,12 @@
               Direction="0"
               Opacity="0.1"/>
                         </Border.Effect>
+                        <Border.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding ConfigurarServidorCommand}" />
+                        </Border.InputBindings>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding ConfigurarServidorCommand}" />
+                                <MouseBinding Gesture="LeftClick"/>
                             </StackPanel.InputBindings>
                             <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding ConfigurarServidorCommand}">
                                 <Image Source="/iconos/Server.png" Width="35" Height="35"/>
@@ -130,9 +137,12 @@
               Direction="0"
               Opacity="0.1"/>
                         </Border.Effect>
+                        <Border.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding VerExportarProductosCommand}" />
+                        </Border.InputBindings>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding VerExportarProductosCommand}" />
+                                <MouseBinding Gesture="LeftClick"/>
                             </StackPanel.InputBindings>
                             <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding VerExportarProductosCommand}">
                                 <Image Source="/iconos/exportar_xlsx.png" Width="35" Height="35"/>
@@ -159,9 +169,12 @@
                           Direction="0"
                           Opacity="0.1"/>
                         </Border.Effect>
+                        <Border.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding AbrirConfiguracionesCommand}" />
+                        </Border.InputBindings>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding AbrirConfiguracionesCommand}"/>
+                                <MouseBinding Gesture="LeftClick"/>
                             </StackPanel.InputBindings>
                             <Button Style="{StaticResource BotonSinEstilo}" Margin="10" Command="{Binding AbrirConfiguracionesCommand}">
                                 <Image Source="/iconos/configuracion.png" Width="35" Height="35"/>
@@ -178,7 +191,7 @@
                         -->
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" x:Name="PanelNotificacion">
 
                     <Button x:Name="Ordenar" Margin="15" BorderThickness="0" >
                         <Button.Background>
@@ -200,5 +213,12 @@
                 CornerRadius="10"/>
             </Grid>
         </Border>
-    </Grid> 
+
+        <Popup x:Name="PopupNotificacion" IsOpen="{Binding EsPopupVisible}" Placement="Center" PlacementTarget="{Binding ElementName=PanelNotificacion}" VerticalOffset="-20">
+            <Border Background="Gray" BorderBrush="Black" BorderThickness="0.25" Style="{StaticResource BorderPopupWrapper}">
+                <vistas:UCNotificacion DataContext="{Binding NotificacionViewModel}"/>
+            </Border>
+        </Popup>
+    </Grid>
+    
 </Window>

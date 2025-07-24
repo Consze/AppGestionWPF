@@ -15,6 +15,7 @@
 
     <CubicEase x:Key="SmoothEase" EasingMode="EaseInOut"/>
     <EllipseGeometry x:Key="ThrobberSimple" Center="10,10" RadiusX="10" RadiusY="10" />
+    
     <Style x:Key="ThrobberSimpleEstilo" TargetType="Path">
         <Setter Property="Data" Value="{StaticResource ThrobberSimple}"/>
         <Setter Property="Fill" Value="OrangeRed"/>
@@ -79,6 +80,41 @@
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BorderPopupWrapper" TargetType="Border">
+        <Setter Property="Opacity" Value="0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EsPopupVisible}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                         From="0" To="1" Duration="0:0:0.3"
+                                         EasingFunction="{StaticResource SmoothEase}"/>
+
+                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
+                                         From="300" To="0" Duration="0:0:0.4" EasingFunction="{StaticResource SmoothEase}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EsPopupVisible}" Value="False">
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                         From="1" To="0" Duration="0:0:0.6"
+                                         EasingFunction="{StaticResource SmoothEase}"/>
+
+                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
+                                         From="0" To="300" Duration="0:0:0.4"
+                                         EasingFunction="{StaticResource SmoothEase}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 
