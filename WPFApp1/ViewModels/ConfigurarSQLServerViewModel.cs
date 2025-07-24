@@ -181,12 +181,12 @@ namespace WPFApp1.ViewModels
             if (this.Seleccion)
             {
                 this.Descripcion = "Cambiar a SQLite";
-                DBMSElegido = "Los operaciones se realizaran de manera local.";
+                DBMSElegido = "Las operaciones se realizaran en el servidor.";
             }
             else
             {
                 this.Descripcion = "Cambiar a SQLServer";
-                DBMSElegido = "Las operaciones se realizaran en el servidor.";
+                DBMSElegido = "Los operaciones se realizaran de manera local.";
             }
             Notificacion _notificacion = new Notificacion { Mensaje = DBMSElegido, Titulo = "Cambio de DBMS", Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
