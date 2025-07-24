@@ -91,26 +91,17 @@
                     <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                         From="0" To="1" Duration="0:0:0.3"
-                                         EasingFunction="{StaticResource SmoothEase}"/>
-
-                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
-                                         From="300" To="0" Duration="0:0:0.4" EasingFunction="{StaticResource SmoothEase}"/>
+                                     From="0" To="1" Duration="0:0:0.3"
+                                     EasingFunction="{StaticResource SmoothEase}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </DataTrigger.EnterActions>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding EsPopupVisible}" Value="False">
                 <DataTrigger.ExitActions>
                     <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                         From="1" To="0" Duration="0:0:0.6"
-                                         EasingFunction="{StaticResource SmoothEase}"/>
-
-                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
-                                         From="0" To="300" Duration="0:0:0.4"
-                                         EasingFunction="{StaticResource SmoothEase}"/>
+                             From="1" To="0" Duration="0:0:0.2"
+                             EasingFunction="{StaticResource SmoothEase}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </DataTrigger.ExitActions>
