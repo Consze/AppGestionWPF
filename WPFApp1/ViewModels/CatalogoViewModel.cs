@@ -70,6 +70,7 @@ namespace WPFApp1.ViewModels
         public ICommand ItemDoubleClickCommand { get; private set; }
         public ICommand AniadirProductoCommand { get; private set; }
         public ICommand AlternarFormatoVistaCommand { get; private set; }
+        public ICommand BuscarTituloCommand { get; }
 
         public CatalogoViewModel()
         {
@@ -79,6 +80,7 @@ namespace WPFApp1.ViewModels
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
+            BuscarTituloCommand = new RelayCommand<object>(BuscarTitulo);
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             
@@ -110,7 +112,18 @@ namespace WPFApp1.ViewModels
             Procesando = true;
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
         }
-
+        private void BuscarTitulo(object parameter)
+        {
+            Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
+            InputUsuarioViewModel viewModel = new InputUsuarioViewModel("Ingrese el titulo a buscar");
+            InputUsuario dialogo = new InputUsuario(viewModel);
+            bool? resultado = dialogo.ShowDialog();
+            Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
+            if (resultado == true)
+            {
+                string titulo = viewModel.Entrada;
+            }
+        }
         public async Task AlternarFormatoVistaAsync()
         {
             VistaElegida vista = new VistaElegida();

@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using WPFApp1.Interfaces;
+using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 using WPFApp1.ViewModels;
 using Forms = System.Windows.Forms;
@@ -44,6 +45,9 @@ namespace WPFApp1
             });
 
             services.AddScoped<WPFApp1.Interfaces.IProductoServicio, WPFApp1.Servicios.ProductoServicio>();
+            services.AddSingleton<ConexionDBSQLite>();
+            services.AddTransient<IndexadorProductosRepositorio>();
+            services.AddTransient<IndexadorProductoService>();
 
             // Registrar ViewModels
             services.AddScoped<MainWindowViewModel>();

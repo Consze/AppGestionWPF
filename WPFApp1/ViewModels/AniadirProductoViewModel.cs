@@ -23,6 +23,7 @@ namespace WPFApp1.ViewModels
     {
         private readonly IProductosFactory _repositorioFactory;
         private readonly IProductoServicio _productoService;
+        private readonly IndexadorProductoService _indexadorProductoService;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -115,7 +116,7 @@ namespace WPFApp1.ViewModels
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
-        public AniadirProductoViewModel(IProductoServicio productoServicio)
+        public AniadirProductoViewModel(IProductoServicio productoServicio, IndexadorProductoService indexadorProductoService)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -139,6 +140,7 @@ namespace WPFApp1.ViewModels
 
             //Repositorio de entidad
             _productoService = productoServicio;
+            _indexadorProductoService = indexadorProductoService;
             //_repositorioFactory = repositorioFactory;
             //_productosRepositorio = _repositorioFactory.CrearRepositorio();
         }
@@ -236,6 +238,7 @@ namespace WPFApp1.ViewModels
 
             if (_productoService.ActualizarProducto(ProductoModificado))
             {
+                _indexadorProductoService.IndexarProducto(ProductoModificado.Nombre, ProductoModificado.ID);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue editado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -399,7 +402,8 @@ namespace WPFApp1.ViewModels
             if (Resultado > -1 )
             {
                 _nuevoProducto.ID = Convert.ToInt32(Resultado);
-                _nuevoProducto.RutaImagen = Path.GetFullPath(_nuevoProducto.RutaImagen); 
+                _nuevoProducto.RutaImagen = Path.GetFullPath(_nuevoProducto.RutaImagen);
+                _indexadorProductoService.IndexarProducto(_nuevoProducto.Nombre, _nuevoProducto.ID);
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);
                 System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);

@@ -1,6 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
+using System.Printing;
 using System.Text.Json;
 using WPFApp1.ViewModels;
 
@@ -145,14 +146,22 @@ namespace WPFApp1.Servicios
             try
             {
                 Conexion.Open();
+
+                using (SQLiteCommand command = new SQLiteCommand("PRAGMA foreign_keys = ON;", Conexion))
+                {
+                    command.ExecuteNonQuery();
+                    Console.WriteLine("Claves foraneas habilitadas.");
+                }
+
                 if (_BanderaCrearTablas)
                 {
                     CrearTablaPersonas(Conexion);
                     CrearTablaProductos(Conexion);
+                    CrearTablaProductosTitulos(Conexion);
                 }
                 else
                 {
-                    string _PruebaConexion = "SELECT * FROM Personas";
+                    string _PruebaConexion = "SELECT * FROM Personas;";
                     using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
                     {
                         try
@@ -172,8 +181,9 @@ namespace WPFApp1.Servicios
                         }
 
                     }
-                    _PruebaConexion = "SELECT * FROM Productos";
-                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
+
+                    string _PruebaConexionProductos = "SELECT * FROM Productos;";
+                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexionProductos, Conexion))
                     {
                         try
                         {
@@ -192,11 +202,34 @@ namespace WPFApp1.Servicios
                         }
 
                     }
+
+                    string _PruebaConexionTitulos = "SELECT * FROM Productos_titulos;";
+                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexionTitulos, Conexion))
+                    {
+                        try
+                        {
+                            using (SQLiteDataReader Lector = comando.ExecuteReader())
+                            {
+                                Console.WriteLine("La tabla de indexacion de titulos existe y es accesible");
+                            }
+                        }
+                        catch (SQLiteException ex)
+                        {
+                            if (ex.Message.Contains("no such table"))
+                            {
+                                CrearTablaProductosTitulos(Conexion);
+                                Console.WriteLine("La tabla de indexación de titulos no existia y fue creada nuevamente");
+                            }
+                        }
+
+                    }
                 }
             }
             catch (SQLiteException ex)
             {
                 Console.WriteLine($"Error en la conexion a la base de datos {ex.Message}");
+                Conexion.Close();
+                throw;
             }
         }
 
@@ -248,6 +281,46 @@ namespace WPFApp1.Servicios
                 return false;
             }
         }
+
+        public static bool CrearTablaProductosTitulos(SQLiteConnection Conexion)
+        {
+            try
+            {
+                string consulta = "CREATE TABLE IF NOT EXISTS Productos_titulos (" +
+                    "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "producto_id INTEGER NOT NULL," +
+                    "palabra TEXT NOT NULL COLLATE NOCASE," +
+                    "FOREIGN KEY(producto_id) REFERENCES Productos(producto_id));" ;
+
+                using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
+                {
+                    comando.ExecuteNonQuery();
+                    Console.WriteLine("Tabla 'Productos_titulos' creada");
+                }
+
+                try
+                {
+                    consulta = "CREATE INDEX idx_palabras ON Productos_titulos (" +
+                    "producto_id, palabra);";
+                    using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
+                    {
+                        comando.ExecuteNonQuery();
+                    }
+                    return true;
+                }
+                catch(SQLiteException ex)
+                {
+                    Console.WriteLine($"Error {ex.Message}");
+                    return false;
+                }
+            }
+            catch (SQLiteException ex)
+            {
+                Console.WriteLine($"Error al crear tabla productos {ex.Message}");
+                return false;
+            }
+        }
+
         public void CerrarConexionDB()
         {
             if (Conexion != null && Conexion.State == System.Data.ConnectionState.Open)

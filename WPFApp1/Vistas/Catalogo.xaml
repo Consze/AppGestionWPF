@@ -71,36 +71,39 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="2">
-            <Border Margin="10,5,0,5">
-                <Canvas Width="20" Height="20">
-                    <ContentControl Content="{StaticResource IconoTresLineas}" />
-                </Canvas>
-            </Border>
-            <Button Style="{StaticResource BotonSinEstilo}" Margin="10,2,10,0" 
-            HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AlternarFormatoVistaCommand}">
-                <Path Style="{StaticResource CuadradoIcono}">
-                    <Path.RenderTransform>
-                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                    </Path.RenderTransform>
-                    <Path.RenderTransformOrigin>
-                        <Point X="0.5" Y="0.5"/>
-                    </Path.RenderTransformOrigin>
-                </Path>
-            </Button>
+                <Button x:Name="Busqueda" Margin="0,0,0,0" BorderThickness="0" Command="{Binding BuscarTituloCommand}">
+                    <Button.Background>
+                        <SolidColorBrush Color="Transparent"/>
+                    </Button.Background>
+                    <Image Width="20" Height="20" Source="/iconos/busqueda1.png" Style="{StaticResource ImagenHover}"/>
+                </Button>
 
-            <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0" Command="{Binding AniadirProductoCommand}">
-                <Button.Background>
-                    <SolidColorBrush Color="Transparent"/>
-                </Button.Background>
-                <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png" Style="{StaticResource ImagenHover}"/>
-            </Button>
-            <Button x:Name="Ordenar" Margin="0,0,10,0" BorderThickness="0">
-                <Button.Background>
-                    <SolidColorBrush Color="Transparent"/>
-                </Button.Background>
-                    <Image Width="24" Height="24" Source="/iconos/ascending-sort.png" Style="{StaticResource ImagenHover}"/>
-            </Button>
-        </StackPanel>
+                <Button Style="{StaticResource BotonSinEstilo}" Margin="10,2,10,0" 
+                HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AlternarFormatoVistaCommand}">
+                    <Path Style="{StaticResource CuadradoIcono}">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                        </Path.RenderTransform>
+                        <Path.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5"/>
+                        </Path.RenderTransformOrigin>
+                    </Path>
+                </Button>
+
+                <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0" Command="{Binding AniadirProductoCommand}">
+                    <Button.Background>
+                        <SolidColorBrush Color="Transparent"/>
+                    </Button.Background>
+                    <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png" Style="{StaticResource ImagenHover}"/>
+                </Button>
+                
+                <Button x:Name="Ordenar" Margin="0,0,10,0" BorderThickness="0">
+                    <Button.Background>
+                        <SolidColorBrush Color="Transparent"/>
+                    </Button.Background>
+                        <Image Width="24" Height="24" Source="/iconos/ascending-sort.png" Style="{StaticResource ImagenHover}"/>
+                </Button>
+            </StackPanel>
         </Grid>
         
         <!--Vista tabular-->

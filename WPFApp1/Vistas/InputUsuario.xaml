@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         mc:Ignorable="d" FontFamily="Roboto" FontSize="18"
-        Title="InputUsuario" Height="200" Width="455">
+        Title="" Height="100" Width="300">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,23 +15,29 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
-            <TextBlock Text="{Binding TituloHint}"  FontSize="48" Margin="5"/>
-            <TextBox x:Name="Entrada"  Margin="5" Height="40" Text="{Binding EntradaTextoUsuario}"/>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="Aceptar" Width="200" Margin="0,0,5,0" Command="{Binding AceptarEntradaCommand}"/>
-                <Button Content="Cancelar" Width="200" Style="{StaticResource BotonSinEstilo}" Command="{Binding CancelarEntradaCommand}"/>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{Binding TituloHint}"  FontSize="48" Margin="5" Grid.Row="0"/>
+            <TextBox x:Name="Entrada"  Margin="5" Height="40" Text="{Binding EntradaTextoUsuario}" Grid.Row="1"/>
+            <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="2">
+                <Button Content="Aceptar" Margin="0,0,5,0" Command="{Binding AceptarEntradaCommand}"/>
+                <Button Content="Cancelar" Style="{StaticResource BotonSinEstilo}" Command="{Binding CancelarEntradaCommand}"/>
             </StackPanel>
-        </StackPanel>
+        </Grid>
     </Grid>
 </Window>
