@@ -30,7 +30,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -48,7 +47,7 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <TextBlock FontSize="36" FontWeight="Bold" Text="Catálogo"/>
@@ -69,7 +68,6 @@
                     </ContentControl>
                 </Border>
             </StackPanel>
-
             <StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Button x:Name="Busqueda" Margin="0,0,0,0" BorderThickness="0" Command="{Binding BuscarTituloCommand}">
                     <Button.Background>
@@ -107,7 +105,7 @@
         </Grid>
         
         <!--Vista tabular-->
-        <DataGrid x:Name="Tabla"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ColeccionProductos}"
+        <DataGrid x:Name="Tabla"  Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ColeccionProductos}"
               Visibility="{Binding MostrarVistaTabular, Converter={StaticResource BooleanToVisibility}}" FontSize="18"
               FontFamily="Monserrat" AutoGenerateColumns="False" Background="Transparent" GridLinesVisibility="None" 
               BorderBrush="Transparent" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column">
@@ -134,7 +132,7 @@
         </DataGrid>
 
         <!--Vista Galeria con Imagenes-->
-        <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding MostrarVistaGaleria, Converter={StaticResource BooleanToVisibility}}">
+        <ScrollViewer Grid.Row="2" Grid.Column="1" Visibility="{Binding MostrarVistaGaleria, Converter={StaticResource BooleanToVisibility}}">
             <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionProductos}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -100,8 +100,8 @@
                     <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                             From="1" To="0" Duration="0:0:0.2"
-                             EasingFunction="{StaticResource SmoothEase}"/>
+                                 From="1" To="0" Duration="0:0:0.2"
+                                 EasingFunction="{StaticResource SmoothEase}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </DataTrigger.ExitActions>
@@ -211,8 +211,33 @@
             </EventTrigger>
         </Style.Triggers>
     </Style>
-    
 
+    <Style x:Key="NotificationItemEnterAnimation" TargetType="ContentPresenter">
+        <Setter Property="Opacity" Value="0"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TranslateTransform Y="50"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation
+                        Storyboard.TargetProperty="Opacity"
+                        From="0" To="1" Duration="0:0:0.3" />
+
+                        <DoubleAnimation
+                        Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.Y)"
+                        From="50" To="0" Duration="0:0:0.4"
+                        EasingFunction="{StaticResource SmoothEase}" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
     <Style TargetType="Border" x:Key="EstiloBorderConAnimacion">
         <Setter Property="Background" Value="White"/>
         <Style.Triggers>

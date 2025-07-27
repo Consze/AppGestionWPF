@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
-        mc:Ignorable="d" FontFamily="Roboto" FontSize="18"
+        mc:Ignorable="d" FontFamily="Roboto" FontSize="16"
         Title="" Height="100" Width="300">
     <Window.Resources>
         <ResourceDictionary>
@@ -32,11 +32,11 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="{Binding TituloHint}"  FontSize="48" Margin="5" Grid.Row="0"/>
+            <TextBlock Text="{Binding TituloHint}"  FontSize="26" Margin="5" Grid.Row="0"/>
             <TextBox x:Name="Entrada"  Margin="5" Height="40" Text="{Binding EntradaTextoUsuario}" Grid.Row="1"/>
             <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="2">
                 <Button Content="Aceptar" Margin="0,0,5,0" Command="{Binding AceptarEntradaCommand}"/>
-                <Button Content="Cancelar" Style="{StaticResource BotonSinEstilo}" Command="{Binding CancelarEntradaCommand}"/>
+                <Button Content="Cancelar" Style="{StaticResource BotonSinEstilo}" Command="{Binding CancelarEntradaCommand}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
     </Grid>

@@ -165,7 +165,7 @@ namespace WPFApp1.ViewModels
             List<Productos> registros = await Task.Run(() => ProductosRepository.LeerProductos());
             System.Windows.Application.Current.Dispatcher.Invoke(() => 
             {
-            foreach (var producto in registros)
+                foreach (var producto in registros)
                 {
                     ColeccionProductos.Add(producto);
                 }

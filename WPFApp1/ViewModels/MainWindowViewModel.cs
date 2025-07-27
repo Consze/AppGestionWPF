@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
@@ -98,6 +99,7 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        public ObservableCollection<Notificacion> ColeccionNotificaciones { get; set; }
         public string TituloActivo
         {
             get { return _tituloActivo; }
@@ -119,6 +121,10 @@ namespace WPFApp1.ViewModels
             _procesando = false;
             _cargandoVista = false;
             _esPopupVisible = false;
+
+            // Notificaciones
+            ColeccionNotificaciones = new ObservableCollection<Notificacion>();
+
             this.NotificacionViewModel = new UCNotificacionViewModel();
             VerListaCommand = new RelayCommand<object>(VerLista);
             AniadirPersonaCommand = new RelayCommand<object>(AniadirPersona);
@@ -247,11 +253,10 @@ namespace WPFApp1.ViewModels
         {
             if(Notificacion?.NuevaNotificacion != null)
             {
-                this.NotificacionViewModel.Titulo = Notificacion.NuevaNotificacion.Titulo;
-                this.NotificacionViewModel.Cuerpo = Notificacion.NuevaNotificacion.Mensaje;
-                this.EsPopupVisible = true;
+                // agregar notificación
+                this.ColeccionNotificaciones.Add(Notificacion.NuevaNotificacion);
                 await Task.Delay(5000);
-                this.EsPopupVisible = false;
+                this.ColeccionNotificaciones.Clear();
             }
         }
         private void OnAbrirAniadirProducto(AbrirVistaAniadirProductoMensaje mensaje)
