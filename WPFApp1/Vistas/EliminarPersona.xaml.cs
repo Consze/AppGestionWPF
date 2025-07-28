@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1
 {

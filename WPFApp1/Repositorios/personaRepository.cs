@@ -2,7 +2,7 @@
 using WPFApp1.DTOS;
 using WPFApp1.Servicios;
 
-namespace WPFApp1
+namespace WPFApp1.Repositorios
 {
     public class personaRepository
     {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1"
         xmlns:vistas="clr-namespace:WPFApp1.Vistas" mc:Ignorable="d"
-        FontSize = "18" FontWeight="Light" FontFamily="Roboto"
+        FontSize = "18" FontWeight="Light" FontFamily="Roboto" UseLayoutRounding="True"
         Title="Aplicación" Height="720" Width="1280" Closing="Window_Closing" WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
@@ -39,6 +39,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
+                
                 <StackPanel Grid.Row="0" Grid.Column="0">
                     <StackPanel Margin="12,20,0,0" Orientation="Horizontal">
                         <Image Source="/ico128.ico" Width="15" Height="15" Margin="3,0,3,0"/>
@@ -47,11 +48,11 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="36" Text="{Binding TituloActivo}" FontWeight="Regular" Margin="10,0,10,0"/>
                         <!--Throbber-->
-                        <Border Margin="5" Grid.Row="1" Grid.Column="1">
+                        <Border Margin="4,0,0,0">
                             <ContentControl x:Name="Throbber" Visibility="{Binding Procesando, Converter={StaticResource BooleanToVisibility}}">
                                 <ContentControl.Content >
                                     <Path Style="{StaticResource ThrobberSimpleEstilo}"
-                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                                         </Path.RenderTransform>
@@ -190,7 +191,7 @@
                         -->
                 </StackPanel>
 
-                <ItemsControl x:Name="PanelNotificaciones" ItemsSource="{Binding ColeccionNotificaciones}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                <ItemsControl x:Name="PanelNotificaciones" ItemsSource="{Binding ColeccionNotificaciones}" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Vertical"/>
@@ -217,12 +218,12 @@
                                 </Border.Effect>
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel  Orientation="Horizontal" Margin="2">
-                                        <Border Width="15" Height="15">
-                                            <Image Source="/iconos/notificaciones.png"/>
+                                        <Border Width="15" Height="15" Margin="0,0,5,0">
+                                            <Image Source="{Binding Path=IconoRuta}"/>
                                         </Border>
                                         <TextBlock FontWeight="Bold" Text="{Binding Path=Titulo}"/>
                                     </StackPanel>
-                                    <TextBlock FontSize="14" Text="{Binding Path=Mensaje}"/>
+                                    <TextBlock FontSize="14" Text="{Binding Path=Mensaje}" FontWeight="Regular"/>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -252,11 +253,11 @@
             </Grid>
         </Border>
 
-        <Popup x:Name="PopupNotificacion" IsOpen="{Binding EsPopupVisible}" Placement="Center" PlacementTarget="{Binding ElementName=PanelNotificacion}" VerticalOffset="-20">
+        <!--<Popup x:Name="PopupNotificacion" IsOpen="{Binding EsPopupVisible}" Placement="Center" PlacementTarget="{Binding ElementName=PanelNotificacion}" VerticalOffset="-20">
             <Border Background="Gray" BorderBrush="Black" BorderThickness="0.25" Style="{StaticResource BorderPopupWrapper}">
                 <vistas:UCNotificacion DataContext="{Binding NotificacionViewModel}"/>
             </Border>
-        </Popup>
+        </Popup>-->
     </Grid>
     
 </Window>

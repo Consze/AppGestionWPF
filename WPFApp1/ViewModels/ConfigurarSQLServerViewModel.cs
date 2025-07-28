@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
@@ -186,9 +187,10 @@ namespace WPFApp1.ViewModels
             else
             {
                 this.Descripcion = "Cambiar a SQLServer";
-                DBMSElegido = "Los operaciones se realizaran de manera local.";
+                DBMSElegido = "Las operaciones se realizaran de manera local.";
             }
-            Notificacion _notificacion = new Notificacion { Mensaje = DBMSElegido, Titulo = "Cambio de DBMS", Urgencia = MatrizEisenhower.C1 };
+            ServicioSFX.Confirmar();
+            Notificacion _notificacion = new Notificacion { Mensaje = DBMSElegido, Titulo = "Cambio de DBMS", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             _repositorioServidor.GuardarConfiguracionManual(this.Seleccion);
         }

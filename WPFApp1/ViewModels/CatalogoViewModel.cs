@@ -1,8 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Media;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
+using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -16,6 +20,19 @@ namespace WPFApp1.ViewModels
     public class CatalogoViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Productos> ColeccionProductos { get; set; }
+        public bool _mostrarBotonRegresar;
+        public bool MostrarBotonRegresar
+        {
+            get { return _mostrarBotonRegresar; }
+            set
+            {
+                if (_mostrarBotonRegresar != value)
+                {
+                    _mostrarBotonRegresar = value;
+                    OnPropertyChanged(nameof(MostrarBotonRegresar));
+                }
+            }
+        }
         private bool _mostrarVentanaAniadirProducto;
         public bool MostrarVentanaAniadirProducto
         {
@@ -30,6 +47,19 @@ namespace WPFApp1.ViewModels
             }
         }
         private bool _mostrarVistaTabular;
+        private string _tituloVista;
+        public string TituloVista
+        {
+            get { return _tituloVista; }
+            set
+            {
+                if (_tituloVista != value)
+                {
+                    _tituloVista = value;
+                    OnPropertyChanged(nameof(TituloVista));
+                }
+            }
+        }
         public bool MostrarVistaTabular 
         {
             get { return _mostrarVistaTabular; }
@@ -70,22 +100,26 @@ namespace WPFApp1.ViewModels
         public ICommand ItemDoubleClickCommand { get; private set; }
         public ICommand AniadirProductoCommand { get; private set; }
         public ICommand AlternarFormatoVistaCommand { get; private set; }
-        public ICommand BuscarTituloCommand { get; }
-
+        public ICommand BuscarTituloCommand { get; private set; }
+        public ICommand LimpiarBusquedaCommand { get; private set; }
         public CatalogoViewModel()
         {
+            _tituloVista = "Catálogo";
+            _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
             ColeccionProductos = new ObservableCollection<Productos>();
+            LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
-            BuscarTituloCommand = new RelayCommand<object>(BuscarTitulo);
+            BuscarTituloCommand = new RelayCommand<object>(async (param) => await BuscarTitulo());
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             
             Task.Run(async () => await CargarEstadoInicialAsync());
             Task.Run(async () => await CargarProductosAsync());
+            Procesando = false;
         }
 
         public async Task CargarEstadoInicialAsync()
@@ -112,20 +146,73 @@ namespace WPFApp1.ViewModels
             Procesando = true;
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
         }
-        private void BuscarTitulo(object parameter)
+        private async Task BuscarTitulo()
         {
             Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
             InputUsuarioViewModel viewModel = new InputUsuarioViewModel("Ingrese el titulo a buscar");
             InputUsuario dialogo = new InputUsuario(viewModel);
             bool? resultado = dialogo.ShowDialog();
             Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
-            if (resultado == true)
+            if (resultado == true && !(string.IsNullOrWhiteSpace(viewModel.Entrada)))
             {
+                this.Procesando = true;
                 string titulo = viewModel.Entrada;
+                await Task.Run(() => BuscarProductosTitulos(titulo));
+                this.Procesando = false;
+                string cuerpoNotificacion = string.Empty;
+                string IconoAUtilizar = string.Empty;
+
+                if (ColeccionProductos.Count < 1)
+                {
+                    ServicioSFX.Suspenso();
+                    cuerpoNotificacion = "No se hallaron resultados para la busqueda...";
+                    IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
+                    TituloVista = "Sin coincidencias...";
+                }
+                else
+                {
+                    ServicioSFX.Confirmar();
+                    cuerpoNotificacion = $"Se hallaron {ColeccionProductos.Count} coincidencias!";
+                    IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
+                    TituloVista = "Resultados de Busqueda";
+                }
+                
+                MostrarBotonRegresar = true;
+                Notificacion _notificacion = new Notificacion { Mensaje = cuerpoNotificacion, Titulo = "Operación Completada", IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
+        }
+        
+        private async Task BuscarProductosTitulos(string Titulo)
+        {
+            var indexadorService = App.GetService<IndexadorProductoService>();
+            List<CoincidenciasBusqueda> coincidencias = await Task.Run(() => indexadorService.RecuperarRegistros(Titulo));
+            List<Productos> registros = await Task.Run(() => indexadorService.RecuperarProductos(coincidencias));
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                ColeccionProductos.Clear();
+                foreach (var producto in registros)
+                {
+                    producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
+                    ColeccionProductos.Add(producto);
+                }
+            });
+        }
+        private async Task LimpiarBusquedaAsync()
+        {
+            this.Procesando = true;
+            ColeccionProductos.Clear();
+            await CargarProductosAsync();
+            this.Procesando = false;
+            //ServicioSFX.Swipe();
+            ServicioSFX.Shuffle();
+            this.MostrarBotonRegresar = false;
+            this.TituloVista = "Catálogo";
         }
         public async Task AlternarFormatoVistaAsync()
         {
+            ServicioSFX.Swipe();
             VistaElegida vista = new VistaElegida();
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {

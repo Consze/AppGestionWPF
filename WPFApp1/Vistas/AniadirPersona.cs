@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using WPFApp1.DTOS;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1
 {

@@ -8,6 +8,7 @@ using WPFApp1.Factories;
 using WPFApp1.Interfaces;
 using WPFApp1.Servicios;
 using WPFApp1.Mensajes;
+using System.Data.Entity.Core.Metadata.Edm;
 
 namespace WPFApp1.ViewModels
 {
@@ -131,7 +132,6 @@ namespace WPFApp1.ViewModels
             CategoriaProducto = string.Empty;
             PrecioProducto = 0;
 
-            //this._productosDatos = productosDatos;
             NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
@@ -141,8 +141,6 @@ namespace WPFApp1.ViewModels
             //Repositorio de entidad
             _productoService = productoServicio;
             _indexadorProductoService = indexadorProductoService;
-            //_repositorioFactory = repositorioFactory;
-            //_productosRepositorio = _repositorioFactory.CrearRepositorio();
         }
 
         public void BotonPresionado(object parameter)
@@ -241,14 +239,18 @@ namespace WPFApp1.ViewModels
                 _indexadorProductoService.IndexarProducto(ProductoModificado.Nombre, ProductoModificado.ID);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
-                Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada", Urgencia = MatrizEisenhower.C1 };
+                ServicioSFX.Confirmar();
+                Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada",IconoRuta  = Path.GetFullPath(IconoNotificacion.OK) ,Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                System.Windows.MessageBox.Show("El producto fue editado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                //System.Windows.MessageBox.Show("El producto fue editado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
                 CerrarVistaCommand.Execute(0);
-                System.Windows.MessageBox.Show("Hubo un error al intentar editar el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ServicioSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo editar el Item", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                //System.Windows.MessageBox.Show("Hubo un error al intentar editar el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         public void ElegirImagen(object parameter)
@@ -408,13 +410,17 @@ namespace WPFApp1.ViewModels
                 _indexadorProductoService.IndexarProducto(_nuevoProducto.Nombre, _nuevoProducto.ID);
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);
-                Notificacion _notificacion = new Notificacion { Mensaje = "Item añadido con exito", Titulo = "Operación Completada", Urgencia = MatrizEisenhower.C1 };
+                ServicioSFX.Confirmar();
+                Notificacion _notificacion = new Notificacion { Mensaje = "Item añadido con exito", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                //System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                System.Windows.MessageBox.Show("Hubo un error al intentar añadir el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ServicioSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo añadir el Item", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                //System.Windows.MessageBox.Show("Hubo un error al intentar añadir el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }

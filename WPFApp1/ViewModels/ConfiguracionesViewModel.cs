@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;
@@ -17,7 +18,8 @@ namespace WPFApp1.ViewModels
         }
         public void CrearNotificacion(object parameter)
         {
-            Notificacion _notificacionPrueba = new Notificacion { Mensaje = "Este es el cuerpo de la notificación de prueba", Titulo = "Notificación", Urgencia = MatrizEisenhower.C1 };
+            ServicioSFX.Swipe();
+            Notificacion _notificacionPrueba = new Notificacion { Mensaje = "Este es el cuerpo de la notificación de prueba", Titulo = "Notificación", IconoRuta = Path.GetFullPath(IconoNotificacion.NOTIFICACION), Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacionPrueba });
         }
         protected virtual void OnPropertyChanged(string propertyName)

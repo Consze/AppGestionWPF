@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;
+using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -251,12 +252,19 @@ namespace WPFApp1.ViewModels
         }
         private async void OnNotificacionEmergenteAsync(NotificacionEmergente Notificacion)
         {
-            if(Notificacion?.NuevaNotificacion != null)
+            if(Notificacion?.NuevaNotificacion != null) // Agregar notificacion
             {
-                // agregar notificación
                 this.ColeccionNotificaciones.Add(Notificacion.NuevaNotificacion);
-                await Task.Delay(5000);
-                this.ColeccionNotificaciones.Clear();
+                string[] palabras = Notificacion.NuevaNotificacion.Mensaje.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                int cantidadPalabras = palabras.Length;
+                double segundosCalculados = Math.Ceiling(cantidadPalabras / 3.0);
+                int segundosDisplay = (int)Math.Max(segundosCalculados, 5.0);
+                await Task.Delay(TimeSpan.FromSeconds(segundosDisplay));
+
+                if (this.ColeccionNotificaciones.Contains(Notificacion.NuevaNotificacion))
+                {
+                    this.ColeccionNotificaciones.Remove(Notificacion.NuevaNotificacion);
+                }
             }
         }
         private void OnAbrirAniadirProducto(AbrirVistaAniadirProductoMensaje mensaje)

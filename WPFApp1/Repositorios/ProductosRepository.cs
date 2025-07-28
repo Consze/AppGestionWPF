@@ -5,7 +5,7 @@ using NPOI.XSSF.UserModel;
 using WPFApp1.DTOS;
 using WPFApp1.Servicios;
 
-namespace WPFApp1
+namespace WPFApp1.Repositorios
 {
     public class ProductosRepository
     {
@@ -57,7 +57,7 @@ namespace WPFApp1
                         string Nombre = Lector["Nombre"].ToString();
                         string Categoria = Lector["Categoria"].ToString();
                         string RutaImagen = Lector["ruta_imagen"].ToString();
-                        if (!string.IsNullOrWhiteSpace(RutaImagen)) { RutaImagen = System.IO.Path.GetFullPath(RutaImagen); }
+                        if (!string.IsNullOrWhiteSpace(RutaImagen)) { RutaImagen = Path.GetFullPath(RutaImagen); }
                         Productos _registroActual = new Productos(ProductoID,Nombre, Categoria, Precio, RutaImagen);
                         ListaProductos.Add(_registroActual);
                     }
@@ -269,7 +269,7 @@ namespace WPFApp1
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"Error {ex.Message}");
+                Console.WriteLine($"Error {ex.Message}");
                 return false;
             }
         }

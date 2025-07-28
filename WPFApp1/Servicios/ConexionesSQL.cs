@@ -290,6 +290,7 @@ namespace WPFApp1.Servicios
                     "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "producto_id INTEGER NOT NULL," +
                     "palabra TEXT NOT NULL COLLATE NOCASE," +
+                    "UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,"+
                     "FOREIGN KEY(producto_id) REFERENCES Productos(producto_id));" ;
 
                 using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
@@ -297,26 +298,11 @@ namespace WPFApp1.Servicios
                     comando.ExecuteNonQuery();
                     Console.WriteLine("Tabla 'Productos_titulos' creada");
                 }
-
-                try
-                {
-                    consulta = "CREATE INDEX idx_palabras ON Productos_titulos (" +
-                    "producto_id, palabra);";
-                    using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
-                    {
-                        comando.ExecuteNonQuery();
-                    }
-                    return true;
-                }
-                catch(SQLiteException ex)
-                {
-                    Console.WriteLine($"Error {ex.Message}");
-                    return false;
-                }
+                return true;
             }
             catch (SQLiteException ex)
             {
-                Console.WriteLine($"Error al crear tabla productos {ex.Message}");
+                Console.WriteLine($"Error al crear tabla productos: {ex.Message}");
                 return false;
             }
         }

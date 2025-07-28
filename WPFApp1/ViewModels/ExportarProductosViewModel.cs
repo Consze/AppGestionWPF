@@ -2,6 +2,10 @@
 using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Mensajes;
+using WPFApp1.Repositorios;
+using WPFApp1.Servicios;
+using System.IO;
 
 namespace WPFApp1.ViewModels
 {
@@ -35,6 +39,9 @@ namespace WPFApp1.ViewModels
         }
         public async Task ExportarXLSXAsync()
         {
+            ServicioSFX.Swipe();
+            Notificacion _notificacion = new Notificacion { Mensaje = "Exportando catalogo...", Titulo = "Procesando", IconoRuta = Path.GetFullPath(IconoNotificacion.NOTIFICACION), Urgencia = MatrizEisenhower.C1 };
+            Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             if (!_procesando) 
             {
                 Procesando = true;
@@ -42,14 +49,26 @@ namespace WPFApp1.ViewModels
                     List <Productos> Productos = await Task.Run(() => ProductosRepository.LeerProductos());
                     bool resultado = await Task.Run(() => ProductosRepository.CrearLibro(Productos));
                     Procesando = false;
+                    string CuerpoNotificacion = string.Empty;
+                    string TituloNotificacion = string.Empty;
+                    string IconoAUtilizar = string.Empty;
                     if (resultado)
                     {
-                        System.Windows.MessageBox.Show("Se exportaron los productos.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ServicioSFX.Confirmar();
+                        TituloNotificacion = "Operación Completada";
+                        CuerpoNotificacion = "Catalogo exportado correctamente!";
+                        IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("Hubo un error al intentar exportar los productos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        ServicioSFX.Suspenso();
+                        TituloNotificacion = "Operación Completada";
+                        CuerpoNotificacion = "Hubo un error al exportar";
+                        IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
                     }
+
+                    Notificacion resultadoExportacion = new Notificacion { Mensaje = CuerpoNotificacion, Titulo = TituloNotificacion, IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
+                    Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = resultadoExportacion });
                 }
                 finally
                 {

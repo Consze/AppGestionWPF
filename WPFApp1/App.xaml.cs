@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 using WPFApp1.ViewModels;
@@ -71,7 +70,6 @@ namespace WPFApp1
             await Task.Run(() => ValidarIntegridadDirectorios());
 
             // Iniciar el icono en bandeja del sistema
-            _trayIcon = new NotifyIcon();
             _trayIcon.Icon = new System.Drawing.Icon("ico128.ico");
             _trayIcon.Text = "Aplicación";
             _trayIcon.Visible = true;
@@ -139,10 +137,6 @@ namespace WPFApp1
 
         private void MenuItemAbrir_Click(object sender, EventArgs e)
         {
-            if (_mainWindow == null)
-            {
-                _mainWindow = new MainWindow();
-            }
             _mainWindow.Show();
             _mainWindow.WindowState = WindowState.Maximized;
             _mainWindow.Activate();
@@ -156,10 +150,6 @@ namespace WPFApp1
 
         private void TrayIcon_DoubleClick(object sender, EventArgs e)
         {
-            if (_mainWindow == null)
-            {
-                _mainWindow = new MainWindow();
-            }
             _mainWindow.Show();
             _mainWindow.WindowState = WindowState.Maximized;
             _mainWindow.Activate();
