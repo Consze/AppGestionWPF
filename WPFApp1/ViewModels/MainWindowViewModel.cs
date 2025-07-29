@@ -202,7 +202,8 @@ namespace WPFApp1.ViewModels
             else
             {
                 TituloActivo = "Catálogo";
-                CatalogoViewModel _viewModel = await Task.Run(()=> new CatalogoViewModel());
+                var _viewModel = App.GetService<CatalogoViewModel>();
+                //CatalogoViewModel _viewModel = await Task.Run(()=> new CatalogoViewModel());
                 Catalogo vista = new Catalogo(_viewModel);
                 CambiarVistaAsync(vista);
             }

@@ -8,5 +8,6 @@ namespace WPFApp1.Interfaces
         int CrearProducto(Productos producto);
         Productos RecuperarProductoPorID(int producto_id);
         bool EliminarProducto(int producto_id);
+        List<Productos> LeerProductos();
     }
 }

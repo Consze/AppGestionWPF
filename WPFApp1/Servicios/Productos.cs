@@ -15,9 +15,7 @@ namespace WPFApp1.Servicios
             this.RepositorioServidor = new ConexionDBSQLServer();
             _sqliteFactory = sqliteFactory;
             _sqlServerFactory = sqlServerFactory;
-
         }
-
         public int CrearProducto(Productos producto)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
@@ -40,7 +38,6 @@ namespace WPFApp1.Servicios
                 return sqliteRepo.CrearProducto(producto);
             }
         }
-
         public bool ActualizarProducto(Productos producto)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
@@ -63,7 +60,6 @@ namespace WPFApp1.Servicios
                 return sqliteRepo.ActualizarProducto(producto);
             }
         }
-
         public Productos RecuperarProductoPorID(int producto_id)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
@@ -86,7 +82,6 @@ namespace WPFApp1.Servicios
                 return sqliteRepo.RecuperarProductoPorID(producto_id);
             }
         }
-
         public bool EliminarProducto(int producto_id)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
@@ -107,6 +102,28 @@ namespace WPFApp1.Servicios
             {
                 var sqliteRepo = _sqliteFactory.CrearRepositorio();
                 return sqliteRepo.EliminarProducto(producto_id);
+            }
+        }
+        public List<Productos> LeerProductos()
+        {
+            if (RepositorioServidor.LeerConfiguracionManual())
+            {
+                try
+                {
+                    var sqlServerRepo = _sqlServerFactory.CrearRepositorio();
+                    return sqlServerRepo.LeerProductos();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al intentar usar SQL Server (Leer Productos): {ex.Message}. Intentando con SQLite.");
+                    var sqliteRepo = _sqliteFactory.CrearRepositorio();
+                    return sqliteRepo.LeerProductos();
+                }
+            }
+            else
+            {
+                var sqliteRepo = _sqliteFactory.CrearRepositorio();
+                return sqliteRepo.LeerProductos();
             }
         }
     }

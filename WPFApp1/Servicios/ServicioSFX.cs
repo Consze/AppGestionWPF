@@ -25,6 +25,10 @@ namespace WPFApp1.Servicios
         {
             ReproducirEfecto("shutter.wav");
         }
+        public static void Paginacion()
+        {
+            ReproducirEfecto("turning-page1.wav");
+        }
         private static void ReproducirEfecto(string NombreArchivo)
         {
             string rutaSonido = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SFX", NombreArchivo);

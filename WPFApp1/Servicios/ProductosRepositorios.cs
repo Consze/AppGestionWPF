@@ -1,17 +1,21 @@
 ﻿using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Drawing.Design;
 using System.IO;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
+using WPFApp1.ViewModels;
 
 namespace WPFApp1.Servicios
 {
     public class SQLiteAccesoProductos : IProductosAccesoDatos
     {
         private readonly string _conexionCadena;
+        private readonly IndexadorProductoService _indexadorProductoService;
         public SQLiteAccesoProductos(string rutaConexion)
         {
             _conexionCadena = rutaConexion;
+            _indexadorProductoService = App.GetService<IndexadorProductoService>();
         }
         public Productos RecuperarProductoPorID(int producto_id)
         {
@@ -89,7 +93,10 @@ namespace WPFApp1.Servicios
                     Propiedades.PrecioCambiado = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                if (Path.GetFullPath(productoModificado.RutaImagen) != Path.GetFullPath(ProductoVigente.RutaImagen))
+
+                string rutaAbsolutaVigente = string.IsNullOrWhiteSpace(ProductoVigente.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoVigente.RutaImagen);
+                string rutaModificada = string.IsNullOrWhiteSpace(productoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(productoModificado.RutaImagen);
+                if (rutaModificada != rutaAbsolutaVigente)
                 {
                     if (Consulta.Contains(","))
                     {
@@ -115,6 +122,7 @@ namespace WPFApp1.Servicios
                         if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", productoModificado.RutaImagen); }
 
                         int FilasAfectadas = Comando.ExecuteNonQuery();
+                        _indexadorProductoService.IndexarProducto(productoModificado.Nombre, productoModificado.ID);
                         Instancia.CerrarConexionDB();
                         return FilasAfectadas > 0;
                     }
@@ -148,6 +156,7 @@ namespace WPFApp1.Servicios
 
                     Comando.CommandText = "SELECT last_insert_rowid()";
                     nuevoProductoId = Convert.ToInt32(Comando.ExecuteScalar());
+                    _indexadorProductoService.IndexarProducto(producto.Nombre, producto.ID);
 
                     return nuevoProductoId;
                 }
@@ -193,7 +202,7 @@ namespace WPFApp1.Servicios
                 return false;
             }
         }
-        public static List<Productos> LeerProductos()
+        public List<Productos> LeerProductos()
         {
             List<Productos> ListaProductos = new List<Productos>();
             ConexionDBSQLite Instancia = new ConexionDBSQLite();
@@ -262,7 +271,7 @@ namespace WPFApp1.Servicios
         }
         public bool ActualizarProducto(Productos productoModificado)
         {
-            string Consulta = "UPDATE Productos SET";
+            string Consulta = "UPDATE Productos SET ";
             Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
             if(ProductoVigente != null && ProductoVigente.ID > 0)
             {
@@ -300,7 +309,10 @@ namespace WPFApp1.Servicios
                     Propiedades.PrecioCambiado = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                if (Path.GetFullPath(productoModificado.RutaImagen) != Path.GetFullPath(ProductoVigente.RutaImagen))
+
+                string rutaAbsolutaVigente = string.IsNullOrWhiteSpace(ProductoVigente.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoVigente.RutaImagen);
+                string rutaModificada = string.IsNullOrWhiteSpace(productoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(productoModificado.RutaImagen);
+                if (rutaModificada != rutaAbsolutaVigente)
                 {
                     if (Consulta.Contains(","))
                     {
@@ -405,6 +417,41 @@ namespace WPFApp1.Servicios
                 Console.WriteLine($"Error: {ex.Message}");
                 return false;
             }
+        }
+        public List<Productos> LeerProductos()
+        {
+            List<Productos> RegistrosProductos = new List<Productos>();
+            string Consulta = "SELECT * FROM Productos";
+            try
+            {
+                using(SqlConnection conexion = new SqlConnection(_conexionCadena))
+                {
+                    conexion.Open();
+                    using(SqlCommand comando = new SqlCommand(Consulta, conexion))
+                    {
+                        using(SqlDataReader lector = comando.ExecuteReader())
+                        {
+                            while(lector.Read())
+                            {
+                                Productos _registro = new Productos(0, "", "", 0 , "");
+                                _registro.Nombre = lector["Nombre"].ToString();
+                                _registro.ID = Convert.ToInt32(lector["producto_id"]);
+                                _registro.Precio = Convert.ToInt32(lector["precio"]);
+                                _registro.Categoria = lector["categoria"].ToString();
+                                _registro.RutaImagen = string.IsNullOrWhiteSpace(lector["ruta_imagen"].ToString()) ? string.Empty : Path.GetFullPath(lector["ruta_imagen"].ToString());
+
+                                RegistrosProductos.Add(_registro);
+                            }
+                        }
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return RegistrosProductos;
         }
     }
 }

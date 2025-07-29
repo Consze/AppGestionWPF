@@ -32,8 +32,9 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="{Binding TituloHint}"  FontSize="26" Margin="5" Grid.Row="0"/>
-            <TextBox x:Name="Entrada"  Margin="5" Text="{Binding EntradaTextoUsuario}" Grid.Row="1"/>
+            <TextBlock Text="{Binding TituloHint}" FontSize="26" Margin="5" Grid.Row="0"/>
+            <TextBox x:Name="Entrada" Margin="5" Text="{Binding EntradaTextoUsuario}" Grid.Row="1"/>
+            
             <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="2">
                 <Button Content="Aceptar" Margin="0,0,5,0" Command="{Binding AceptarEntradaCommand}"/>
                 <Button Content="Cancelar" Style="{StaticResource BotonSinEstilo}" Command="{Binding CancelarEntradaCommand}" VerticalAlignment="Center" HorizontalAlignment="Center"/>

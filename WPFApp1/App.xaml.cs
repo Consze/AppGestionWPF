@@ -51,6 +51,7 @@ namespace WPFApp1
             // Registrar ViewModels
             services.AddScoped<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
+            services.AddTransient<CatalogoViewModel>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {

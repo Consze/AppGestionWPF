@@ -72,7 +72,7 @@
                     <Button.Background>
                         <SolidColorBrush Color="Transparent"/>
                     </Button.Background>
-                    <Image Width="20" Height="20" Source="/iconos/retroceso1.png" Style="{StaticResource ImagenHover}"/>
+                    <Image Width="25" Height="25" Source="/iconos/retroceso1.png" Style="{StaticResource ImagenHover}"/>
                 </Button>
             </StackPanel>
             

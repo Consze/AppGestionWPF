@@ -4,11 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using WPFApp1.DTOS;
-using WPFApp1.Factories;
 using WPFApp1.Interfaces;
 using WPFApp1.Servicios;
 using WPFApp1.Mensajes;
-using System.Data.Entity.Core.Metadata.Edm;
 
 namespace WPFApp1.ViewModels
 {
@@ -22,9 +20,7 @@ namespace WPFApp1.ViewModels
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductosFactory _repositorioFactory;
         private readonly IProductoServicio _productoService;
-        private readonly IndexadorProductoService _indexadorProductoService;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -69,7 +65,6 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
- 
         private string _nombreProducto;
         public string NombreProducto
         {
@@ -117,7 +112,7 @@ namespace WPFApp1.ViewModels
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
-        public AniadirProductoViewModel(IProductoServicio productoServicio, IndexadorProductoService indexadorProductoService)
+        public AniadirProductoViewModel(IProductoServicio productoServicio)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -140,7 +135,6 @@ namespace WPFApp1.ViewModels
 
             //Repositorio de entidad
             _productoService = productoServicio;
-            _indexadorProductoService = indexadorProductoService;
         }
 
         public void BotonPresionado(object parameter)
@@ -154,7 +148,6 @@ namespace WPFApp1.ViewModels
                 AniadirProducto(0);
             }
         }
-
         public void ConfigurarEdicionDeProducto(Productos Producto)
         {
             // Configurar Bindings
@@ -236,13 +229,12 @@ namespace WPFApp1.ViewModels
 
             if (_productoService.ActualizarProducto(ProductoModificado))
             {
-                _indexadorProductoService.IndexarProducto(ProductoModificado.Nombre, ProductoModificado.ID);
+                ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(ProductoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoModificado.RutaImagen);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
                 ServicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada",IconoRuta  = Path.GetFullPath(IconoNotificacion.OK) ,Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                //System.Windows.MessageBox.Show("El producto fue editado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
@@ -250,7 +242,6 @@ namespace WPFApp1.ViewModels
                 ServicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo editar el Item", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                //System.Windows.MessageBox.Show("Hubo un error al intentar editar el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         public void ElegirImagen(object parameter)
@@ -344,7 +335,6 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-
         public void AniadirProducto(object parameter)
         {
             if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(CategoriaProducto) || PrecioProducto == 0)
@@ -406,30 +396,25 @@ namespace WPFApp1.ViewModels
             if (Resultado > -1 )
             {
                 _nuevoProducto.ID = Convert.ToInt32(Resultado);
-                _nuevoProducto.RutaImagen = Path.GetFullPath(_nuevoProducto.RutaImagen);
-                _indexadorProductoService.IndexarProducto(_nuevoProducto.Nombre, _nuevoProducto.ID);
+                _nuevoProducto.RutaImagen = string.IsNullOrWhiteSpace(_nuevoProducto.RutaImagen)  ? string.Empty : Path.GetFullPath(_nuevoProducto.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);
                 ServicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item añadido con exito", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                //System.Windows.MessageBox.Show("El producto fue añadido.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
                 ServicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo añadir el Item", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                //System.Windows.MessageBox.Show("Hubo un error al intentar añadir el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
-
         public void CerrarVista(object parameter)
         {
             CierreSolicitado?.Invoke(this, EventArgs.Empty);
         }
-
         /// <summary>
         /// Obtiene y almacena las dimensiones de una imagen seleccionada. Se utilizan para reducir la imagen sin alterar su relación de aspecto.
         /// </summary>
@@ -461,7 +446,6 @@ namespace WPFApp1.ViewModels
                 CalculoAlturaMarco = 0;
             }
         }
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

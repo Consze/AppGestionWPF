@@ -19,6 +19,7 @@ namespace WPFApp1.ViewModels
     }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
+        private readonly IProductoServicio _productoServicio;
         public ObservableCollection<Productos> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
         public bool MostrarBotonRegresar
@@ -102,8 +103,12 @@ namespace WPFApp1.ViewModels
         public ICommand AlternarFormatoVistaCommand { get; private set; }
         public ICommand BuscarTituloCommand { get; private set; }
         public ICommand LimpiarBusquedaCommand { get; private set; }
-        public CatalogoViewModel()
+        public CatalogoViewModel(IProductoServicio productoServicio)
         {
+            Procesando = true;
+            _productoServicio = productoServicio;
+            Task.Run(async () => await CargarEstadoInicialAsync());
+            Task.Run(async () => await CargarProductosAsync());
             _tituloVista = "Catálogo";
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
@@ -116,9 +121,6 @@ namespace WPFApp1.ViewModels
             BuscarTituloCommand = new RelayCommand<object>(async (param) => await BuscarTitulo());
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
-            
-            Task.Run(async () => await CargarEstadoInicialAsync());
-            Task.Run(async () => await CargarProductosAsync());
             Procesando = false;
         }
 
@@ -140,7 +142,6 @@ namespace WPFApp1.ViewModels
             }
             Procesando = false;
         }
-
         public async Task AlternarFormatoVista()
         {
             Procesando = true;
@@ -148,6 +149,7 @@ namespace WPFApp1.ViewModels
         }
         private async Task BuscarTitulo()
         {
+            ServicioSFX.Paginacion();
             Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
             InputUsuarioViewModel viewModel = new InputUsuarioViewModel("Ingrese el titulo a buscar");
             InputUsuario dialogo = new InputUsuario(viewModel);
@@ -182,7 +184,6 @@ namespace WPFApp1.ViewModels
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
         }
-        
         private async Task BuscarProductosTitulos(string Titulo)
         {
             var indexadorService = App.GetService<IndexadorProductoService>();
@@ -212,7 +213,7 @@ namespace WPFApp1.ViewModels
         }
         public async Task AlternarFormatoVistaAsync()
         {
-            ServicioSFX.Swipe();
+            ServicioSFX.Shutter();
             VistaElegida vista = new VistaElegida();
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
@@ -236,6 +237,7 @@ namespace WPFApp1.ViewModels
         {
             if (AniadirProducto.Instancias < 1)
             {
+                ServicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 MostrarVentanaAniadirProducto = true;
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
@@ -249,7 +251,8 @@ namespace WPFApp1.ViewModels
         }
         private async Task CargarProductosAsync()
         {
-            List<Productos> registros = await Task.Run(() => ProductosRepository.LeerProductos());
+            List<Productos> registros = await Task.Run(() => _productoServicio.LeerProductos());
+
             System.Windows.Application.Current.Dispatcher.Invoke(() => 
             {
                 foreach (var producto in registros)
@@ -271,6 +274,7 @@ namespace WPFApp1.ViewModels
             }
             if (ProductoClickeado is Productos producto)
             {
+                ServicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
                 _viewModel.ConfigurarEdicionDeProducto(producto);
@@ -291,10 +295,14 @@ namespace WPFApp1.ViewModels
             {
                 Productos ProductoModificado = Mensaje.ProductoModificado;
                 Productos productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
-                productoAEditar.Nombre = ProductoModificado.Nombre;
-                productoAEditar.Precio= ProductoModificado.Precio;
-                productoAEditar.Categoria= ProductoModificado.Categoria;
-                productoAEditar.RutaImagen= System.IO.Path.GetFullPath(ProductoModificado.RutaImagen);
+                if (productoAEditar != null)
+                {
+                    productoAEditar.Nombre = ProductoModificado.Nombre;
+                    productoAEditar.Precio= ProductoModificado.Precio;
+                    productoAEditar.Categoria= ProductoModificado.Categoria;
+                    productoAEditar.RutaImagen= string.IsNullOrWhiteSpace(productoAEditar.RutaImagen) ? string.Empty : System.IO.Path.GetFullPath(ProductoModificado.RutaImagen);
+                }
+                
             }
         }
         protected virtual void OnPropertyChanged(string propertyName)
