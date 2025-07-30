@@ -103,6 +103,7 @@ namespace WPFApp1.ViewModels
         public ICommand AlternarFormatoVistaCommand { get; private set; }
         public ICommand BuscarTituloCommand { get; private set; }
         public ICommand LimpiarBusquedaCommand { get; private set; }
+        public ICommand EliminarItemCommand { get; private set; }
         public CatalogoViewModel(IProductoServicio productoServicio)
         {
             Procesando = true;
@@ -114,6 +115,7 @@ namespace WPFApp1.ViewModels
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
             ColeccionProductos = new ObservableCollection<Productos>();
+            EliminarItemCommand = new RelayCommand<Productos>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
@@ -146,6 +148,17 @@ namespace WPFApp1.ViewModels
         {
             Procesando = true;
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
+        }
+        public void EliminarItem(Productos ProductoEliminar)
+        {
+            if(ProductoEliminar != null)
+            {
+                ColeccionProductos.Remove(ProductoEliminar);
+                _productoServicio.EliminarProducto(ProductoEliminar.ID);
+                ServicioSFX.Confirmar();
+                Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
         }
         private async Task BuscarTitulo()
         {

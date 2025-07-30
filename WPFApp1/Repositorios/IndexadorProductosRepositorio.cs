@@ -15,7 +15,7 @@ namespace WPFApp1.Repositorios
         {
             _dbConexionProvider = dbConexionProvider;
         }
-        public bool InsertarRegistro(string Palabra, int ID)
+        public bool InsertarRegistroLocal(string Palabra, int ID)
         {
             string consulta = "INSERT INTO Productos_titulos (producto_id, palabra) VALUES (@producto_id, @palabra);";
             try
@@ -34,7 +34,7 @@ namespace WPFApp1.Repositorios
                 return false;
             }
         }
-        public List<PalabrasTitulosProductos> BuscarPalabra(string Palabra)
+        public List<PalabrasTitulosProductos> BuscarPalabraLocal(string Palabra)
         {
             List<PalabrasTitulosProductos> palabraColeccionTitulos = new List<PalabrasTitulosProductos>();
             string Consulta = "SELECT * FROM Productos_titulos WHERE palabra = @palabra COLLATE NOCASE;";

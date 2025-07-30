@@ -156,8 +156,7 @@ namespace WPFApp1.Servicios
 
                     Comando.CommandText = "SELECT last_insert_rowid()";
                     nuevoProductoId = Convert.ToInt32(Comando.ExecuteScalar());
-                    _indexadorProductoService.IndexarProducto(producto.Nombre, producto.ID);
-
+                    _indexadorProductoService.IndexarProducto(producto.Nombre, nuevoProductoId);
                     return nuevoProductoId;
                 }
             }

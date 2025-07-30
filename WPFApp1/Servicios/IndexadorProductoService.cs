@@ -68,7 +68,7 @@ namespace WPFApp1.Servicios
                 
                 foreach(string palabra in TituloPalabras)
                 {
-                    _repositorio.InsertarRegistro(palabra, ID);
+                    _repositorio.InsertarRegistroLocal(palabra, ID);
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace WPFApp1.Servicios
 
             foreach (string palabra in TituloPalabras) // 1 - Buscar cada palabra del titulo
             {
-                List<PalabrasTitulosProductos> palabraCoincidencias = _repositorio.BuscarPalabra(palabra); // 2 - Recuperar los registros donde se encuentre la palabra
+                List<PalabrasTitulosProductos> palabraCoincidencias = _repositorio.BuscarPalabraLocal(palabra); // 2 - Recuperar los registros donde se encuentre la palabra
                 foreach (PalabrasTitulosProductos coincidencia in palabraCoincidencias)
                 {
                     if (resultadosPorProductoId.TryGetValue(coincidencia.producto_id, out CoincidenciasBusqueda productoEncontrado))
