@@ -132,7 +132,7 @@
             </DataGrid.RowStyle>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Visibility="Visible"/>
+                <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Visibility="Visible" Width="*"/>
                 <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria}" Visibility="Visible"/>
                 <DataGridTextColumn Header="Precio" Binding="{Binding Precio}" Visibility="Visible" />
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" Visibility="Visible" />

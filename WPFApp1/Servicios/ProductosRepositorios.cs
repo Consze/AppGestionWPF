@@ -1,6 +1,5 @@
 ﻿using System.Data.SqlClient;
 using System.Data.SQLite;
-using System.Drawing.Design;
 using System.IO;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
@@ -69,7 +68,7 @@ namespace WPFApp1.Servicios
                 }
                 if (productoModificado.Categoria != ProductoVigente.Categoria)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", Categoria = @Categoria";
                     }
@@ -82,7 +81,7 @@ namespace WPFApp1.Servicios
                 }
                 if (productoModificado.Precio != ProductoVigente.Precio)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", Precio = @Precio";
                     }
@@ -98,7 +97,7 @@ namespace WPFApp1.Servicios
                 string rutaModificada = string.IsNullOrWhiteSpace(productoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(productoModificado.RutaImagen);
                 if (rutaModificada != rutaAbsolutaVigente)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", ruta_imagen = @ruta_imagen";
                     }
@@ -284,7 +283,7 @@ namespace WPFApp1.Servicios
                 }
                 if (productoModificado.Categoria != ProductoVigente.Categoria)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", Categoria = @Categoria";
                     }
@@ -297,7 +296,7 @@ namespace WPFApp1.Servicios
                 }
                 if (productoModificado.Precio != ProductoVigente.Precio)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", Precio = @Precio";
                     }
@@ -313,7 +312,7 @@ namespace WPFApp1.Servicios
                 string rutaModificada = string.IsNullOrWhiteSpace(productoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(productoModificado.RutaImagen);
                 if (rutaModificada != rutaAbsolutaVigente)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", ruta_imagen = @ruta_imagen";
                     }

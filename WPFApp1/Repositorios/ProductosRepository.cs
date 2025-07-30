@@ -85,7 +85,7 @@ namespace WPFApp1.Repositorios
                 }
                 if (RegistroModificado.Categoria != ProductoVigente.Categoria)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", Categoria = @Categoria";
                     }
@@ -98,7 +98,7 @@ namespace WPFApp1.Repositorios
                 }
                 if(RegistroModificado.Precio != ProductoVigente.Precio)
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", Precio = @Precio";
                     }
@@ -111,7 +111,7 @@ namespace WPFApp1.Repositorios
                 }
                 if (Path.GetFullPath(RegistroModificado.RutaImagen) != Path.GetFullPath(ProductoVigente.RutaImagen))
                 {
-                    if (Consulta.Contains(","))
+                    if (Propiedades.ContadorCambios > 0)
                     {
                         Consulta += ", ruta_imagen = @ruta_imagen";
                     }
