@@ -104,6 +104,7 @@ namespace WPFApp1.ViewModels
         public ICommand BuscarTituloCommand { get; private set; }
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
+        private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductoServicio productoServicio)
         {
             Procesando = true;
@@ -124,6 +125,7 @@ namespace WPFApp1.ViewModels
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             Procesando = false;
+            _servicioSFX = new ServicioSFX();
         }
 
         public async Task CargarEstadoInicialAsync()
@@ -155,14 +157,14 @@ namespace WPFApp1.ViewModels
             {
                 ColeccionProductos.Remove(ProductoEliminar);
                 _productoServicio.EliminarProducto(ProductoEliminar.ID);
-                ServicioSFX.Confirmar();
+                _servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
         }
         private async Task BuscarTitulo()
         {
-            ServicioSFX.Paginacion();
+            _servicioSFX.Paginacion();
             Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
             InputUsuarioViewModel viewModel = new InputUsuarioViewModel("Ingrese el titulo a buscar");
             InputUsuario dialogo = new InputUsuario(viewModel);
@@ -179,14 +181,14 @@ namespace WPFApp1.ViewModels
 
                 if (ColeccionProductos.Count < 1)
                 {
-                    ServicioSFX.Suspenso();
+                    _servicioSFX.Suspenso();
                     cuerpoNotificacion = "No se hallaron resultados para la busqueda...";
                     IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
                     TituloVista = "Sin coincidencias...";
                 }
                 else
                 {
-                    ServicioSFX.Confirmar();
+                    _servicioSFX.Confirmar();
                     cuerpoNotificacion = $"Se hallaron {ColeccionProductos.Count} coincidencias!";
                     IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
                     TituloVista = "Resultados de Busqueda";
@@ -219,14 +221,13 @@ namespace WPFApp1.ViewModels
             ColeccionProductos.Clear();
             await CargarProductosAsync();
             this.Procesando = false;
-            //ServicioSFX.Swipe();
-            ServicioSFX.Shuffle();
+            _servicioSFX.Shuffle();
             this.MostrarBotonRegresar = false;
             this.TituloVista = "Catálogo";
         }
         public async Task AlternarFormatoVistaAsync()
         {
-            ServicioSFX.Shutter();
+            _servicioSFX.Shutter();
             VistaElegida vista = new VistaElegida();
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
@@ -250,7 +251,7 @@ namespace WPFApp1.ViewModels
         {
             if (AniadirProducto.Instancias < 1)
             {
-                ServicioSFX.Paginacion();
+                _servicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 MostrarVentanaAniadirProducto = true;
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
@@ -287,7 +288,7 @@ namespace WPFApp1.ViewModels
             }
             if (ProductoClickeado is Productos producto)
             {
-                ServicioSFX.Paginacion();
+                _servicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
                 _viewModel.ConfigurarEdicionDeProducto(producto);

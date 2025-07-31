@@ -24,11 +24,13 @@ namespace WPFApp1.ViewModels
             }
         }
         public ICommand ExportarXLSXCommand { get; }
+        private ServicioSFX _servicioSFX { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         //constructor
         public ExportarProductosViewModel()
         {
+            _servicioSFX = new ServicioSFX();
             ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX());
             _procesando = false;
         }
@@ -39,7 +41,7 @@ namespace WPFApp1.ViewModels
         }
         public async Task ExportarXLSXAsync()
         {
-            ServicioSFX.Swipe();
+            _servicioSFX.Swipe();
             Notificacion _notificacion = new Notificacion { Mensaje = "Exportando catalogo...", Titulo = "Procesando", IconoRuta = Path.GetFullPath(IconoNotificacion.NOTIFICACION), Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             if (!_procesando) 
@@ -54,14 +56,14 @@ namespace WPFApp1.ViewModels
                     string IconoAUtilizar = string.Empty;
                     if (resultado)
                     {
-                        ServicioSFX.Confirmar();
+                        _servicioSFX.Confirmar();
                         TituloNotificacion = "Operación Completada";
                         CuerpoNotificacion = "Catalogo exportado correctamente!";
                         IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
                     }
                     else
                     {
-                        ServicioSFX.Suspenso();
+                        _servicioSFX.Suspenso();
                         TituloNotificacion = "Operación Completada";
                         CuerpoNotificacion = "Hubo un error al exportar";
                         IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
