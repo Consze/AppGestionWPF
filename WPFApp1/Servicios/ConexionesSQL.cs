@@ -1,9 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
-using System.Printing;
 using System.Text.Json;
-using WPFApp1.ViewModels;
 
 namespace WPFApp1.Servicios
 {
@@ -127,12 +125,121 @@ namespace WPFApp1.Servicios
             }
         }
     }
+    public class TablaEsquema
+    {
+        public string NombreTabla { get; set; }
+        public string DefinicionSQL { get; set; }
+    }
     public class ConexionDBSQLite
     {
         public string CadenaConexion { get; private set; } = @"Data Source=.\datos\base.db;Version=3;";
         private string _rutaArchivo { get; set; } = @".\datos\base.db";
-        public SQLiteConnection Conexion { get; private set; }
+        private string _rutaArchivoEsquemaDB { get; set; } = @".\datos\esquemaDB.json";
+        private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Libros (
+    Nombre TEXT NOT NULL,
+    Autor TEXT NOT NULL,
+    Categoria_id TEXT NOT NULL,
+    Sinopsis TEXT,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME,
+    ID TEXT PRIMARY KEY,
+    FOREIGN KEY(Categoria_id) REFERENCES Categorias(ID)
+);
+    
+CREATE TABLE IF NOT EXISTS Libros_titulos (
+    Palabra TEXT NOT NULL COLLATE NOCASE,
+    Libro_ID TEXT NOT NULL,
+    FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
+    PRIMARY KEY(Palabra, Libro_ID)
+);
 
+CREATE TABLE IF NOT EXISTS Libros_sinopsis (
+    Palabra TEXT NOT NULL COLLATE NOCASE,
+    Libro_ID TEXT NOT NULL,
+    FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
+    PRIMARY KEY(Palabra, Libro_ID)
+);
+
+CREATE TABLE IF NOT EXISTS Editoriales (
+    Nombre TEXT NOT NULL,
+    ID TEXT PRIMARY KEY,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS Categorias (
+    Nombre TEXT NOT NULL,
+    ID TEXT PRIMARY KEY,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS Libros_Ediciones (
+    libro_id TEXT NOT NULL,
+    editorial_id TEXT NOT NULL,
+    ISBN TEXT,
+    anioPublicacion INT,
+    cantidadPaginas INT,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME,
+    ID TEXT PRIMARY KEY,
+    FOREIGN KEY(libro_id) REFERENCES Libros(ID),
+    FOREIGN KEY(editorial_id) REFERENCES Editoriales(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Libros_Stock (
+    Edicion_id TEXT NOT NULL,
+    Haber INT NOT NULL,
+    ColorDorsoID TEXT NOT NULL,
+    RutaImagen TEXT,
+    Ubicacion_Inventario TEXT,
+    FechaCreacion DATETIME,
+    FechaModificacion DATETIME,
+    EsEliminado BOOLEAN DEFAULT False,
+    SeMuestraOnline BOOLEAN DEFAULT FALSE,
+    PrecioPublico BOOLEAN DEFAULT FALSE,
+    Condicion TEXT NOT NULL,
+    Formato TEXT,
+    SKU_Producto TEXT PRIMARY KEY,
+    FOREIGN KEY(Ubicacion_Inventario) REFERENCES Ubicaciones_inventario(ID),
+    FOREIGN KEY(Edicion_id) REFERENCES Libros_Ediciones(ID),
+    FOREIGN KEY (ColorDorsoID) REFERENCES Colores(ID),
+    FOREIGN KEY (Condicion) REFERENCES Condiciones(ID),
+    FOREIGN KEY (Formato) REFERENCES Libros_Formatos(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Condiciones (
+    ID TEXT PRIMARY KEY,
+    Condicion TEXT NOT NULL,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
+    ID TEXT PRIMARY KEY,
+    Descripcion TEXT NOT NULL,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS Libros_Formatos (
+    ID TEXT PRIMARY KEY,
+    Descripcion TEXT,
+    Alto FLOAT NOT NULL,
+    Largo FLOAT NOT NULL,
+    Ancho FLOAT NOT NULL,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS Colores (
+    ID TEXT PRIMARY KEY,
+    Codigo_Hexadecimal TEXT NOT NULL,
+    Nombre TEXT,
+    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    FechaModificacion DATETIME
+);";
+        public SQLiteConnection Conexion { get; private set; }
         public ConexionDBSQLite()
         {
             bool _BanderaCrearTablas = false;
@@ -146,7 +253,6 @@ namespace WPFApp1.Servicios
             try
             {
                 Conexion.Open();
-
                 using (SQLiteCommand command = new SQLiteCommand("PRAGMA foreign_keys = ON;", Conexion))
                 {
                     command.ExecuteNonQuery();
@@ -155,73 +261,60 @@ namespace WPFApp1.Servicios
 
                 if (_BanderaCrearTablas)
                 {
-                    CrearTablaPersonas(Conexion);
-                    CrearTablaProductos(Conexion);
-                    CrearTablaProductosTitulos(Conexion);
+                    CrearTablaPersonas();
+                    CrearTablaProductos();
+                    CrearTablaProductosTitulos();
                 }
                 else
                 {
-                    string _PruebaConexion = "SELECT * FROM Personas;";
-                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
+                    if(!ComprobarExistenciaTabla("Personas"))
                     {
-                        try
-                        {
-                            using (SQLiteDataReader Lector = comando.ExecuteReader())
-                            {
-                                Console.WriteLine("La tabla de personas existe y es accesible");
-                            }
-                        }
-                        catch (SQLiteException ex)
-                        {
-                            if (ex.Message.Contains("no such table"))
-                            {
-                                CrearTablaPersonas(Conexion);
-                                Console.WriteLine("La tabla de personas no existia y fue creada nuevamente");
-                            }
-                        }
-
+                        CrearTablaPersonas();
                     }
 
-                    string _PruebaConexionProductos = "SELECT * FROM Productos;";
-                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexionProductos, Conexion))
+                    if (!ComprobarExistenciaTabla("Productos"))
                     {
-                        try
-                        {
-                            using (SQLiteDataReader Lector = comando.ExecuteReader())
-                            {
-                                Console.WriteLine("La tabla de productos existe y es accesible");
-                            }
-                        }
-                        catch (SQLiteException ex)
-                        {
-                            if (ex.Message.Contains("no such table"))
-                            {
-                                CrearTablaProductos(Conexion);
-                                Console.WriteLine("La tabla de productos no existia y fue creada nuevamente");
-                            }
-                        }
-
+                        CrearTablaProductos();
                     }
 
-                    string _PruebaConexionTitulos = "SELECT * FROM Productos_titulos;";
-                    using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexionTitulos, Conexion))
+                    if (!ComprobarExistenciaTabla("Productos_titulos"))
                     {
-                        try
-                        {
-                            using (SQLiteDataReader Lector = comando.ExecuteReader())
-                            {
-                                Console.WriteLine("La tabla de indexacion de titulos existe y es accesible");
-                            }
-                        }
-                        catch (SQLiteException ex)
-                        {
-                            if (ex.Message.Contains("no such table"))
-                            {
-                                CrearTablaProductosTitulos(Conexion);
-                                Console.WriteLine("La tabla de indexación de titulos no existia y fue creada nuevamente");
-                            }
-                        }
+                        CrearTablaProductosTitulos();
+                    }
 
+                    if (!ComprobarExistenciaTabla("Libros"))
+                    {
+                        CrearTablaLibros();
+                    }
+
+                    if (!ComprobarExistenciaTabla("Editoriales"))
+                    {
+                        CrearTablaEditoriales();
+                    }
+
+                    if (!ComprobarExistenciaTabla("Libros_Stock"))
+                    {
+                        CrearTablaLibrosStock();
+                    }
+
+                    if (!ComprobarExistenciaTabla("Condiciones"))
+                    {
+                        CrearTablaCondiciones();
+                    }
+
+                    if (!ComprobarExistenciaTabla("Ubicaciones_inventario"))
+                    {
+                        CrearTablaUbicaciones();
+                    }
+
+                    if (!ComprobarExistenciaTabla("Libros_Formatos"))
+                    {
+                        CrearTablaFormatos();
+                    }
+
+                    if (!ComprobarExistenciaTabla("Colores"))
+                    {
+                        CrearTablaColores();
                     }
                 }
             }
@@ -232,81 +325,132 @@ namespace WPFApp1.Servicios
                 throw;
             }
         }
-
-        public static bool CrearTablaPersonas(SQLiteConnection Conexion)
+        public void InicializarEsquema()
+        {
+            this.CrearTabla(esquemaDB);
+        }
+        public List<TablaEsquema> LeerArchivoEsquemaTablas()
+        {
+            if (!File.Exists(_rutaArchivoEsquemaDB))
+            {
+                return null; 
+            }
+            string jsonString = File.ReadAllText(_rutaArchivoEsquemaDB);
+            var Esquema = JsonSerializer.Deserialize<List<TablaEsquema>>(jsonString);
+            return Esquema;
+        }
+        public void GuardarArchivoEsquemaTablas(List<TablaEsquema> Esquema)
         {
             try
             {
-                string consulta = "CREATE TABLE IF NOT EXISTS Personas (" +
+                string jsonString = JsonSerializer.Serialize(Esquema, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_rutaArchivoEsquemaDB, jsonString);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+        public bool ComprobarExistenciaTabla(string NombreTabla)
+        {
+            string _PruebaConexion = $"SELECT * FROM {NombreTabla};";
+            using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
+            {
+                try
+                {
+                    using (SQLiteDataReader Lector = comando.ExecuteReader())
+                    {
+                        return true;
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    if (ex.Message.Contains("no such table"))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+            }
+        }
+        public bool CrearTablaPersonas()
+        {
+            string consulta = "CREATE TABLE IF NOT EXISTS Personas (" +
                     "persona_id INTEGER PRIMARY KEY, " +
                     "Nombre TEXT NOT NULL," +
                     "Altura INTEGER NOT NULL," +
                     "Peso INTEGER NOT NULL)";
 
-                using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
-                {
-                    comando.ExecuteNonQuery();
-                    Console.WriteLine("Tabla 'Personas' creada");
-                    return true;
-                }
-            }
-            catch (SQLiteException ex)
+            if (CrearTabla(consulta))
             {
-                Console.WriteLine($"Error al crear tabla personas {ex.Message}");
+                Console.WriteLine("Tabla Personas creada");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Error al crear tabla Personas");
                 return false;
             }
         }
-
-        public static bool CrearTablaProductos(SQLiteConnection Conexion)
+        public bool CrearTablaProductos()
         {
-            try
-            {
-                string consulta = "CREATE TABLE IF NOT EXISTS Productos (" +
+            string consulta = "CREATE TABLE IF NOT EXISTS Productos (" +
                     "producto_id INTEGER PRIMARY KEY, " +
                     "Nombre TEXT NOT NULL," +
                     "Categoria TEXT NOT NULL," +
                     "Precio INTEGER NOT NULL, " +
                     "ruta_imagen VARCHAR);";
 
-                using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
-                {
-                    comando.ExecuteNonQuery();
-                    Console.WriteLine("Tabla 'Productos' creada");
-                    return true;
-                }
-            }
-            catch (SQLiteException ex)
+            if (CrearTabla(consulta))
             {
-                Console.WriteLine($"Error al crear tabla productos {ex.Message}");
+                Console.WriteLine("Tabla productos creada");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Error al crear tabla productos");
                 return false;
             }
         }
+        public bool CrearTablaProductosTitulos()
+        {
+            string consulta = "CREATE TABLE IF NOT EXISTS Productos_titulos (" +
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "producto_id INTEGER NOT NULL," +
+                "palabra TEXT NOT NULL COLLATE NOCASE," +
+                "UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,"+
+                "FOREIGN KEY(producto_id) REFERENCES Productos(producto_id));" ;
 
-        public static bool CrearTablaProductosTitulos(SQLiteConnection Conexion)
+            if(CrearTabla(consulta))
+            {
+                Console.WriteLine("Tabla productos titulos creada");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Error al crear tabla productos titulos");
+                return false;
+            }
+        }
+        public bool CrearTabla(string consulta)
         {
             try
             {
-                string consulta = "CREATE TABLE IF NOT EXISTS Productos_titulos (" +
-                    "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "producto_id INTEGER NOT NULL," +
-                    "palabra TEXT NOT NULL COLLATE NOCASE," +
-                    "UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,"+
-                    "FOREIGN KEY(producto_id) REFERENCES Productos(producto_id));" ;
-
                 using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
                 {
                     comando.ExecuteNonQuery();
-                    Console.WriteLine("Tabla 'Productos_titulos' creada");
                 }
                 return true;
             }
             catch (SQLiteException ex)
             {
-                Console.WriteLine($"Error al crear tabla productos: {ex.Message}");
                 return false;
             }
         }
-
         public void CerrarConexionDB()
         {
             if (Conexion != null && Conexion.State == System.Data.ConnectionState.Open)
