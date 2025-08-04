@@ -4,7 +4,7 @@ using System.Windows.Media;
 namespace WPFApp1.Servicios
 {
     public class ServicioSFX
-    {
+    {   
         private MediaPlayer _mediaPlayer = new MediaPlayer();
         public double VolumenGeneral { get; set; } = 0.3;
         public void Confirmar()

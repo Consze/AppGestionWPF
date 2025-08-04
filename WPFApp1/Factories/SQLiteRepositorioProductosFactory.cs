@@ -6,15 +6,17 @@ namespace WPFApp1.Factories
     public class SqliteRepositorioProductosFactory : IProductosFactory
     {
         private readonly string _cadenaConexion;
-
-        public SqliteRepositorioProductosFactory(string CadenaConexion)
+        private readonly IndexadorProductoService _indexadorProductoService;
+        private readonly ConexionDBSQLite _accesoDB;
+        public SqliteRepositorioProductosFactory(string cadenaConexion, IndexadorProductoService indexadorProductoService, ConexionDBSQLite accesoDB)
         {
-            this._cadenaConexion = CadenaConexion;
+            this._cadenaConexion = cadenaConexion;
+            this._indexadorProductoService = indexadorProductoService;
+            this._accesoDB = accesoDB;
         }
-
         public IProductosAccesoDatos CrearRepositorio()
         {
-            return new SQLiteAccesoProductos(this._cadenaConexion);
+            return new SQLiteAccesoProductos(_cadenaConexion,_indexadorProductoService,_accesoDB);
         }
     }
 }

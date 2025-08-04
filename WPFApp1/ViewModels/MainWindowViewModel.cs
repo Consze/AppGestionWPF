@@ -1,20 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;
-using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        public ICommand VerListaCommand { get; }
-        public ICommand AniadirPersonaCommand { get; }
-        public ICommand EliminarPersonaCommand { get; }
-        public ICommand EditarPersonaCommand { get; }
         public ICommand VerCatalogoCommand{ get; }
         public ICommand AniadirProductoCommand { get; }
         public ICommand VerExportarProductosCommand { get; }
@@ -73,19 +67,6 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private bool _esPopupVisible;
-        public bool EsPopupVisible
-        {
-            get { return _esPopupVisible; }
-            set
-            {
-                if (_esPopupVisible != value)
-                {
-                    _esPopupVisible = value;
-                    OnPropertyChanged(nameof(EsPopupVisible));
-                }
-            }
-        }
         private string _tituloActivo;
         private UCNotificacionViewModel _notificacionViewModel;
         public UCNotificacionViewModel NotificacionViewModel
@@ -121,16 +102,11 @@ namespace WPFApp1.ViewModels
             _vistaActual = null;
             _procesando = false;
             _cargandoVista = false;
-            _esPopupVisible = false;
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();
 
             this.NotificacionViewModel = new UCNotificacionViewModel();
-            VerListaCommand = new RelayCommand<object>(VerLista);
-            AniadirPersonaCommand = new RelayCommand<object>(AniadirPersona);
-            EliminarPersonaCommand = new RelayCommand<object>(EliminarPersona);
-            EditarPersonaCommand = new RelayCommand<object>(EditarPersona);
             AbrirConfiguracionesCommand = new RelayCommand<object>(AbrirConfiguraciones);
             VerCatalogoCommand = new RelayCommand<object>(async (param) => await VerCatalogoAsync());
             CambiarVistaCommand = new RelayCommand<object>(async (vista) => await CambiarVistaAsync(vista));
@@ -171,11 +147,6 @@ namespace WPFApp1.ViewModels
                 CambiarVistaAsync(_vista);
             }
         }
-        private void VerLista(object parameter)
-        {
-            ListaPersonas lista = new ListaPersonas();
-            lista.Show();
-        }
         private void ConfigurarServidor(object parameter)
         {
             if(VistaActual is ConfigurarSQLServer)
@@ -209,47 +180,12 @@ namespace WPFApp1.ViewModels
             }
             Procesando = false;
         }
-        private void AniadirPersona(object parameter)
-        {
-            AniadirPersona _AniadirPersona = new AniadirPersona();
-            _AniadirPersona.Show();
-        }
         private async Task CambiarVistaAsync(object nuevaVista)
         {
             CargandoVista = true;
             await Task.Delay(200);
             VistaActual = nuevaVista;
             CargandoVista = false;
-        }
-        private void EliminarPersona(object parameter)
-        {
-            EliminarPersona _EliminarPersona = new EliminarPersona();
-            _EliminarPersona.Show();
-        }
-        private void EditarPersona(object parameter)
-        {
-            EntradaUsuario ventanaEntrada = new EntradaUsuario();
-            bool? resultado = ventanaEntrada.ShowDialog();
-            if (resultado.HasValue && resultado.Value == true)
-            {
-                if (!int.TryParse(ventanaEntrada.NumeroElegido, out int Numero))
-                {
-                    System.Windows.MessageBox.Show("Debe ingresar un numero.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                Persona _registro = personaRepository.RecuperarRegistro(Numero);
-                if (_registro.id > 0 )
-                {
-                    EditarPersona _EditarPersona = new EditarPersona(_registro);
-                    _EditarPersona.Show();
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("No existe un registro con ese ID.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                
-            }
         }
         private async void OnNotificacionEmergenteAsync(NotificacionEmergente Notificacion)
         {

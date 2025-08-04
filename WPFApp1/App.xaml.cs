@@ -29,7 +29,9 @@ namespace WPFApp1
             services.AddTransient<Factories.SqliteRepositorioProductosFactory>(provider =>
             {
                 string sqliteConnectionString = @"Data Source=.\datos\base.db;Version=3;";
-                return new Factories.SqliteRepositorioProductosFactory(sqliteConnectionString);
+                var indexador = provider.GetRequiredService<IndexadorProductoService>();
+                var conexion = provider.GetRequiredService<ConexionDBSQLite>();
+                return new Factories.SqliteRepositorioProductosFactory(sqliteConnectionString, indexador, conexion);
             });
 
             services.AddTransient<Factories.SqlServerRepositorioProductosFactory>(provider =>

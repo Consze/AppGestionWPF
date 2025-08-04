@@ -136,109 +136,125 @@ namespace WPFApp1.Servicios
         private string _rutaArchivo { get; set; } = @".\datos\base.db";
         private string _rutaArchivoEsquemaDB { get; set; } = @".\datos\esquemaDB.json";
         private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Libros (
-    Nombre TEXT NOT NULL,
-    Autor TEXT NOT NULL,
-    Categoria_id TEXT NOT NULL,
-    Sinopsis TEXT,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME,
-    ID TEXT PRIMARY KEY,
-    FOREIGN KEY(Categoria_id) REFERENCES Categorias(ID)
-);
+            Nombre TEXT NOT NULL,
+            Autor TEXT NOT NULL,
+            Categoria_id TEXT NOT NULL,
+            Sinopsis TEXT,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME,
+            ID TEXT PRIMARY KEY,
+            FOREIGN KEY(Categoria_id) REFERENCES Categorias(ID)
+        );
+
+        CREATE TABLE IF NOT EXISTS Productos (
+            producto_id INTEGER PRIMARY KEY,
+            Nombre TEXT NOT NULL,
+            Categoria TEXT NOT NULL, 
+            Precio INTEGER NOT NULL,  
+            ruta_imagen VARCHAR
+        );
+
+        CREATE TABLE IF NOT EXISTS Productos_titulos (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            producto_id INTEGER NOT NULL,
+            palabra TEXT NOT NULL COLLATE NOCASE,
+            UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,
+            FOREIGN KEY(producto_id) REFERENCES Productos(producto_id)
+        );
     
-CREATE TABLE IF NOT EXISTS Libros_titulos (
-    Palabra TEXT NOT NULL COLLATE NOCASE,
-    Libro_ID TEXT NOT NULL,
-    FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
-    PRIMARY KEY(Palabra, Libro_ID)
-);
+        CREATE TABLE IF NOT EXISTS Libros_titulos (
+            Palabra TEXT NOT NULL COLLATE NOCASE,
+            Libro_ID TEXT NOT NULL,
+            FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
+            PRIMARY KEY(Palabra, Libro_ID)
+        );
 
-CREATE TABLE IF NOT EXISTS Libros_sinopsis (
-    Palabra TEXT NOT NULL COLLATE NOCASE,
-    Libro_ID TEXT NOT NULL,
-    FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
-    PRIMARY KEY(Palabra, Libro_ID)
-);
+        CREATE TABLE IF NOT EXISTS Libros_sinopsis (
+            Palabra TEXT NOT NULL COLLATE NOCASE,
+            Libro_ID TEXT NOT NULL,
+            FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
+            PRIMARY KEY(Palabra, Libro_ID)
+        );
 
-CREATE TABLE IF NOT EXISTS Editoriales (
-    Nombre TEXT NOT NULL,
-    ID TEXT PRIMARY KEY,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME
-);
+        CREATE TABLE IF NOT EXISTS Editoriales (
+            Nombre TEXT NOT NULL,
+            ID TEXT PRIMARY KEY,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME
+        );
 
-CREATE TABLE IF NOT EXISTS Categorias (
-    Nombre TEXT NOT NULL,
-    ID TEXT PRIMARY KEY,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME
-);
+        CREATE TABLE IF NOT EXISTS Categorias (
+            Nombre TEXT NOT NULL,
+            ID TEXT PRIMARY KEY,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME
+        );
 
-CREATE TABLE IF NOT EXISTS Libros_Ediciones (
-    libro_id TEXT NOT NULL,
-    editorial_id TEXT NOT NULL,
-    ISBN TEXT,
-    anioPublicacion INT,
-    cantidadPaginas INT,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME,
-    ID TEXT PRIMARY KEY,
-    FOREIGN KEY(libro_id) REFERENCES Libros(ID),
-    FOREIGN KEY(editorial_id) REFERENCES Editoriales(ID)
-);
+        CREATE TABLE IF NOT EXISTS Libros_Ediciones (
+            libro_id TEXT NOT NULL,
+            editorial_id TEXT NOT NULL,
+            ISBN TEXT,
+            anioPublicacion INT,
+            cantidadPaginas INT,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME,
+            ID TEXT PRIMARY KEY,
+            FOREIGN KEY(libro_id) REFERENCES Libros(ID),
+            FOREIGN KEY(editorial_id) REFERENCES Editoriales(ID)
+        );
 
-CREATE TABLE IF NOT EXISTS Libros_Stock (
-    Edicion_id TEXT NOT NULL,
-    Haber INT NOT NULL,
-    ColorDorsoID TEXT NOT NULL,
-    RutaImagen TEXT,
-    Ubicacion_Inventario TEXT,
-    FechaCreacion DATETIME,
-    FechaModificacion DATETIME,
-    EsEliminado BOOLEAN DEFAULT False,
-    SeMuestraOnline BOOLEAN DEFAULT FALSE,
-    PrecioPublico BOOLEAN DEFAULT FALSE,
-    Condicion TEXT NOT NULL,
-    Formato TEXT,
-    SKU_Producto TEXT PRIMARY KEY,
-    FOREIGN KEY(Ubicacion_Inventario) REFERENCES Ubicaciones_inventario(ID),
-    FOREIGN KEY(Edicion_id) REFERENCES Libros_Ediciones(ID),
-    FOREIGN KEY (ColorDorsoID) REFERENCES Colores(ID),
-    FOREIGN KEY (Condicion) REFERENCES Condiciones(ID),
-    FOREIGN KEY (Formato) REFERENCES Libros_Formatos(ID)
-);
+        CREATE TABLE IF NOT EXISTS Libros_Stock (
+            Edicion_id TEXT NOT NULL,
+            Haber INT NOT NULL,
+            ColorDorsoID TEXT NOT NULL,
+            RutaImagen TEXT,
+            Ubicacion_Inventario TEXT,
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            EsEliminado BOOLEAN DEFAULT False,
+            SeMuestraOnline BOOLEAN DEFAULT FALSE,
+            PrecioPublico BOOLEAN DEFAULT FALSE,
+            Condicion TEXT NOT NULL,
+            Formato TEXT,
+            SKU_Producto TEXT PRIMARY KEY,
+            FOREIGN KEY(Ubicacion_Inventario) REFERENCES Ubicaciones_inventario(ID),
+            FOREIGN KEY(Edicion_id) REFERENCES Libros_Ediciones(ID),
+            FOREIGN KEY (ColorDorsoID) REFERENCES Colores(ID),
+            FOREIGN KEY (Condicion) REFERENCES Condiciones(ID),
+            FOREIGN KEY (Formato) REFERENCES Libros_Formatos(ID)
+        );
 
-CREATE TABLE IF NOT EXISTS Condiciones (
-    ID TEXT PRIMARY KEY,
-    Condicion TEXT NOT NULL,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME
-);
+        CREATE TABLE IF NOT EXISTS Condiciones (
+            ID TEXT PRIMARY KEY,
+            Condicion TEXT NOT NULL,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME
+        );
 
-CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
-    ID TEXT PRIMARY KEY,
-    Descripcion TEXT NOT NULL,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME
-);
+        CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
+            ID TEXT PRIMARY KEY,
+            Descripcion TEXT NOT NULL,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME
+        );
 
-CREATE TABLE IF NOT EXISTS Libros_Formatos (
-    ID TEXT PRIMARY KEY,
-    Descripcion TEXT,
-    Alto FLOAT NOT NULL,
-    Largo FLOAT NOT NULL,
-    Ancho FLOAT NOT NULL,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME
-);
+        CREATE TABLE IF NOT EXISTS Libros_Formatos (
+            ID TEXT PRIMARY KEY,
+            Descripcion TEXT,
+            Alto FLOAT NOT NULL,
+            Largo FLOAT NOT NULL,
+            Ancho FLOAT NOT NULL,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME
+        );
 
-CREATE TABLE IF NOT EXISTS Colores (
-    ID TEXT PRIMARY KEY,
-    Codigo_Hexadecimal TEXT NOT NULL,
-    Nombre TEXT,
-    EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    FechaModificacion DATETIME
-);";
+        CREATE TABLE IF NOT EXISTS Colores (
+            ID TEXT PRIMARY KEY,
+            Codigo_Hexadecimal TEXT NOT NULL,
+            Nombre TEXT,
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME
+        );";
         public SQLiteConnection Conexion { get; private set; }
         public ConexionDBSQLite()
         {
@@ -256,67 +272,8 @@ CREATE TABLE IF NOT EXISTS Colores (
                 using (SQLiteCommand command = new SQLiteCommand("PRAGMA foreign_keys = ON;", Conexion))
                 {
                     command.ExecuteNonQuery();
-                    Console.WriteLine("Claves foraneas habilitadas.");
                 }
-
-                if (_BanderaCrearTablas)
-                {
-                    CrearTablaPersonas();
-                    CrearTablaProductos();
-                    CrearTablaProductosTitulos();
-                }
-                else
-                {
-                    if(!ComprobarExistenciaTabla("Personas"))
-                    {
-                        CrearTablaPersonas();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Productos"))
-                    {
-                        CrearTablaProductos();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Productos_titulos"))
-                    {
-                        CrearTablaProductosTitulos();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Libros"))
-                    {
-                        CrearTablaLibros();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Editoriales"))
-                    {
-                        CrearTablaEditoriales();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Libros_Stock"))
-                    {
-                        CrearTablaLibrosStock();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Condiciones"))
-                    {
-                        CrearTablaCondiciones();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Ubicaciones_inventario"))
-                    {
-                        CrearTablaUbicaciones();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Libros_Formatos"))
-                    {
-                        CrearTablaFormatos();
-                    }
-
-                    if (!ComprobarExistenciaTabla("Colores"))
-                    {
-                        CrearTablaColores();
-                    }
-                }
+                InicializarEsquema();
             }
             catch (SQLiteException ex)
             {
@@ -375,65 +332,6 @@ CREATE TABLE IF NOT EXISTS Colores (
                     }
                 }
 
-            }
-        }
-        public bool CrearTablaPersonas()
-        {
-            string consulta = "CREATE TABLE IF NOT EXISTS Personas (" +
-                    "persona_id INTEGER PRIMARY KEY, " +
-                    "Nombre TEXT NOT NULL," +
-                    "Altura INTEGER NOT NULL," +
-                    "Peso INTEGER NOT NULL)";
-
-            if (CrearTabla(consulta))
-            {
-                Console.WriteLine("Tabla Personas creada");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Error al crear tabla Personas");
-                return false;
-            }
-        }
-        public bool CrearTablaProductos()
-        {
-            string consulta = "CREATE TABLE IF NOT EXISTS Productos (" +
-                    "producto_id INTEGER PRIMARY KEY, " +
-                    "Nombre TEXT NOT NULL," +
-                    "Categoria TEXT NOT NULL," +
-                    "Precio INTEGER NOT NULL, " +
-                    "ruta_imagen VARCHAR);";
-
-            if (CrearTabla(consulta))
-            {
-                Console.WriteLine("Tabla productos creada");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Error al crear tabla productos");
-                return false;
-            }
-        }
-        public bool CrearTablaProductosTitulos()
-        {
-            string consulta = "CREATE TABLE IF NOT EXISTS Productos_titulos (" +
-                "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "producto_id INTEGER NOT NULL," +
-                "palabra TEXT NOT NULL COLLATE NOCASE," +
-                "UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,"+
-                "FOREIGN KEY(producto_id) REFERENCES Productos(producto_id));" ;
-
-            if(CrearTabla(consulta))
-            {
-                Console.WriteLine("Tabla productos titulos creada");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Error al crear tabla productos titulos");
-                return false;
             }
         }
         public bool CrearTabla(string consulta)

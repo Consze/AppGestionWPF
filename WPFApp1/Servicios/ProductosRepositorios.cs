@@ -3,7 +3,6 @@ using System.Data.SQLite;
 using System.IO;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
-using WPFApp1.ViewModels;
 
 namespace WPFApp1.Servicios
 {
@@ -11,19 +10,20 @@ namespace WPFApp1.Servicios
     {
         private readonly string _conexionCadena;
         private readonly IndexadorProductoService _indexadorProductoService;
-        public SQLiteAccesoProductos(string rutaConexion)
+        private readonly ConexionDBSQLite _accesoDB;
+        public SQLiteAccesoProductos(string rutaConexion, IndexadorProductoService indexador, ConexionDBSQLite accesoDB)
         {
             _conexionCadena = rutaConexion;
-            _indexadorProductoService = App.GetService<IndexadorProductoService>();
+            _indexadorProductoService = indexador;
+            _accesoDB = accesoDB;
         }
         public Productos RecuperarProductoPorID(int producto_id)
         {
             Productos Registro = new Productos(0, "", "", 0, "");
-            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string Consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
             try
             {
-                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
                 {
                     Comando.Parameters.AddWithValue("@id", producto_id);
                     using (SQLiteDataReader Lector = Comando.ExecuteReader())
@@ -46,12 +46,11 @@ namespace WPFApp1.Servicios
             }
             finally
             {
-                Instancia.CerrarConexionDB();
+                _accesoDB.CerrarConexionDB();
             }
         }
         public bool ActualizarProducto(Productos productoModificado)
         {
-            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
 
             if (ProductoVigente.ID > 0 && ProductoVigente != null) // Validar registro
@@ -112,7 +111,7 @@ namespace WPFApp1.Servicios
 
                 if (Propiedades.ContadorCambios > 0)
                 {
-                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
                     {
                         Comando.Parameters.AddWithValue("@id", productoModificado.ID);
                         if (Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", productoModificado.Nombre); }
@@ -122,30 +121,29 @@ namespace WPFApp1.Servicios
 
                         int FilasAfectadas = Comando.ExecuteNonQuery();
                         _indexadorProductoService.IndexarProducto(productoModificado.Nombre, productoModificado.ID);
-                        Instancia.CerrarConexionDB();
+                        _accesoDB.CerrarConexionDB();
                         return FilasAfectadas > 0;
                     }
                 }
                 else // No se modifico ninguna propiedad
                 {
-                    Instancia.CerrarConexionDB();
+                    _accesoDB.CerrarConexionDB();
                     return false;
                 }
             }
             else 
             {
-                Instancia.CerrarConexionDB();
+                _accesoDB.CerrarConexionDB();
                 return false;
             }
         }
         public int CrearProducto(Productos producto)
         {
-            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@nombre, @categoria, @precio, @ruta_imagen);";
             int nuevoProductoId = 0;
             try
             {
-                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
                 {
                     Comando.Parameters.AddWithValue("@nombre", producto.Nombre);
                     Comando.Parameters.AddWithValue("@categoria", producto.Categoria);
@@ -166,19 +164,18 @@ namespace WPFApp1.Servicios
             }
             finally
             {
-                Instancia.CerrarConexionDB();
+                _accesoDB.CerrarConexionDB();
             }
         }
         public bool EliminarProducto(int producto_id)
         {
-            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             Productos Registro = RecuperarProductoPorID(producto_id);
             string Consulta = "DELETE FROM Productos WHERE producto_id = @id";
             if (Registro != null)
             {
                 try
                 {
-                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, Instancia.Conexion))
+                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
                     {
                         Comando.Parameters.AddWithValue("@id", Registro.ID);
                         int FilasAfectadas = Comando.ExecuteNonQuery();
@@ -192,7 +189,7 @@ namespace WPFApp1.Servicios
                 }
                 finally
                 {
-                    Instancia.CerrarConexionDB();
+                    _accesoDB.CerrarConexionDB();
                 }
             }
             else
@@ -203,10 +200,9 @@ namespace WPFApp1.Servicios
         public List<Productos> LeerProductos()
         {
             List<Productos> ListaProductos = new List<Productos>();
-            ConexionDBSQLite Instancia = new ConexionDBSQLite();
             string consulta = "SELECT * FROM Productos";
 
-            using (SQLiteCommand Comando = new SQLiteCommand(consulta, Instancia.Conexion))
+            using (SQLiteCommand Comando = new SQLiteCommand(consulta, _accesoDB.Conexion))
             {
                 using (SQLiteDataReader Lector = Comando.ExecuteReader())
                 {
@@ -223,7 +219,7 @@ namespace WPFApp1.Servicios
                     }
                 }
             }
-            Instancia.CerrarConexionDB();
+            _accesoDB.CerrarConexionDB();
             return ListaProductos;
         }
     }
