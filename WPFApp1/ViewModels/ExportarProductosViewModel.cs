@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
-using System.IO;
 
 namespace WPFApp1.ViewModels
 {
@@ -24,17 +25,18 @@ namespace WPFApp1.ViewModels
             }
         }
         public ICommand ExportarXLSXCommand { get; }
+        private readonly IProductoServicio _productoServicio;
         private ServicioSFX _servicioSFX { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         //constructor
-        public ExportarProductosViewModel()
+        public ExportarProductosViewModel(IProductoServicio productoServicio)
         {
+            _productoServicio = productoServicio;
             _servicioSFX = new ServicioSFX();
             ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX());
             _procesando = false;
         }
-
         public async Task ExportarXLSX()
         {
             await ExportarXLSXAsync().ConfigureAwait(false);
@@ -48,8 +50,8 @@ namespace WPFApp1.ViewModels
             {
                 Procesando = true;
                 try { 
-                    List <Productos> Productos = await Task.Run(() => ProductosRepository.LeerProductos());
-                    bool resultado = await Task.Run(() => ProductosRepository.CrearLibro(Productos));
+                    List <Productos> Productos = await Task.Run(() => _productoServicio.LeerProductos());
+                    bool resultado = await Task.Run(() => _productoServicio.CrearLibro(Productos));
                     Procesando = false;
                     string CuerpoNotificacion = string.Empty;
                     string TituloNotificacion = string.Empty;

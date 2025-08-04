@@ -54,6 +54,7 @@ namespace WPFApp1
             services.AddScoped<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<CatalogoViewModel>();
+            services.AddTransient<ExportarProductosViewModel>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {

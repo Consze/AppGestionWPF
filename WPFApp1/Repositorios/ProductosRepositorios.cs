@@ -1,10 +1,13 @@
-﻿using System.Data.SqlClient;
+﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
+using WPFApp1.Servicios;
 
-namespace WPFApp1.Servicios
+namespace WPFApp1.Repositorios
 {
     public class SQLiteAccesoProductos : IProductosAccesoDatos
     {
@@ -23,7 +26,7 @@ namespace WPFApp1.Servicios
             string Consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
             try
             {
-                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
+                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                 {
                     Comando.Parameters.AddWithValue("@id", producto_id);
                     using (SQLiteDataReader Lector = Comando.ExecuteReader())
@@ -111,7 +114,7 @@ namespace WPFApp1.Servicios
 
                 if (Propiedades.ContadorCambios > 0)
                 {
-                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
+                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                     {
                         Comando.Parameters.AddWithValue("@id", productoModificado.ID);
                         if (Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", productoModificado.Nombre); }
@@ -143,7 +146,7 @@ namespace WPFApp1.Servicios
             int nuevoProductoId = 0;
             try
             {
-                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
+                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                 {
                     Comando.Parameters.AddWithValue("@nombre", producto.Nombre);
                     Comando.Parameters.AddWithValue("@categoria", producto.Categoria);
@@ -175,7 +178,7 @@ namespace WPFApp1.Servicios
             {
                 try
                 {
-                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.Conexion))
+                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                     {
                         Comando.Parameters.AddWithValue("@id", Registro.ID);
                         int FilasAfectadas = Comando.ExecuteNonQuery();
@@ -202,7 +205,7 @@ namespace WPFApp1.Servicios
             List<Productos> ListaProductos = new List<Productos>();
             string consulta = "SELECT * FROM Productos";
 
-            using (SQLiteCommand Comando = new SQLiteCommand(consulta, _accesoDB.Conexion))
+            using (SQLiteCommand Comando = new SQLiteCommand(consulta, _accesoDB.ObtenerConexionDB()))
             {
                 using (SQLiteDataReader Lector = Comando.ExecuteReader())
                 {
@@ -221,6 +224,53 @@ namespace WPFApp1.Servicios
             }
             _accesoDB.CerrarConexionDB();
             return ListaProductos;
+        }
+        public bool CrearLibro(List<Productos> Productos)
+        {
+            XSSFWorkbook WorkBook = new XSSFWorkbook();
+            ISheet Hoja;
+            Hoja = WorkBook.CreateSheet("Productos");
+
+            // Crear Filas
+            IRow EncabezadoFila = Hoja.CreateRow(0);
+            EncabezadoFila.CreateCell(0).SetCellValue("Nombre de Producto");
+            EncabezadoFila.CreateCell(1).SetCellValue("Categoría");
+            EncabezadoFila.CreateCell(2).SetCellValue("Precio");
+            EncabezadoFila.CreateCell(3).SetCellValue("ID");
+
+            // Escribir datos
+            int NumeroDeFila = 1;
+            for (int i = 0; i < Productos.Count; i++)
+            {
+                IRow Fila = Hoja.CreateRow(NumeroDeFila++);
+                Fila.CreateCell(0).SetCellValue(Productos[i].Nombre);
+                Fila.CreateCell(1).SetCellValue(Productos[i].Categoria);
+                Fila.CreateCell(2).SetCellValue(Productos[i].Precio.ToString());
+                Fila.CreateCell(3).SetCellValue(Productos[i].ID.ToString());
+            }
+
+            // Crear Archivo XLSX
+            string DestinoArchivo = ".\\Exportaciones\\Productos_Exportados.xlsx";
+            int NumeroIntento = 0;
+
+            while (File.Exists(DestinoArchivo))
+            {
+                DestinoArchivo = $".\\Exportaciones\\Productos_Exportados{NumeroIntento++}.xlsx";
+            }
+
+            try
+            {
+                using (FileStream file = new FileStream(DestinoArchivo, FileMode.Create, FileAccess.Write))
+                {
+                    WorkBook.Write(file);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error {ex.Message}");
+                return false;
+            }
         }
     }
 
@@ -446,6 +496,53 @@ namespace WPFApp1.Servicios
             }
 
             return RegistrosProductos;
+        }
+        public bool CrearLibro(List<Productos> Productos)
+        {
+            XSSFWorkbook WorkBook = new XSSFWorkbook();
+            ISheet Hoja;
+            Hoja = WorkBook.CreateSheet("Productos");
+
+            // Crear Filas
+            IRow EncabezadoFila = Hoja.CreateRow(0);
+            EncabezadoFila.CreateCell(0).SetCellValue("Nombre de Producto");
+            EncabezadoFila.CreateCell(1).SetCellValue("Categoría");
+            EncabezadoFila.CreateCell(2).SetCellValue("Precio");
+            EncabezadoFila.CreateCell(3).SetCellValue("ID");
+
+            // Escribir datos
+            int NumeroDeFila = 1;
+            for (int i = 0; i < Productos.Count; i++)
+            {
+                IRow Fila = Hoja.CreateRow(NumeroDeFila++);
+                Fila.CreateCell(0).SetCellValue(Productos[i].Nombre);
+                Fila.CreateCell(1).SetCellValue(Productos[i].Categoria);
+                Fila.CreateCell(2).SetCellValue(Productos[i].Precio.ToString());
+                Fila.CreateCell(3).SetCellValue(Productos[i].ID.ToString());
+            }
+
+            // Crear Archivo XLSX
+            string DestinoArchivo = ".\\Exportaciones\\Productos_Exportados.xlsx";
+            int NumeroIntento = 0;
+
+            while (File.Exists(DestinoArchivo))
+            {
+                DestinoArchivo = $".\\Exportaciones\\Productos_Exportados{NumeroIntento++}.xlsx";
+            }
+
+            try
+            {
+                using (FileStream file = new FileStream(DestinoArchivo, FileMode.Create, FileAccess.Write))
+                {
+                    WorkBook.Write(file);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error {ex.Message}");
+                return false;
+            }
         }
     }
 }

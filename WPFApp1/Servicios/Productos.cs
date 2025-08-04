@@ -126,5 +126,27 @@ namespace WPFApp1.Servicios
                 return sqliteRepo.LeerProductos();
             }
         }
+        public bool CrearLibro(List<Productos> Productos)
+        {
+            if (RepositorioServidor.LeerConfiguracionManual())
+            {
+                try
+                {
+                    var sqlServerRepo = _sqlServerFactory.CrearRepositorio();
+                    return sqlServerRepo.CrearLibro(Productos);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al intentar usar SQL Server (Crear XLSX): {ex.Message}. Intentando con SQLite.");
+                    var sqliteRepo = _sqliteFactory.CrearRepositorio();
+                    return sqliteRepo.CrearLibro(Productos);
+                }
+            }
+            else
+            {
+                var sqliteRepo = _sqliteFactory.CrearRepositorio();
+                return sqliteRepo.CrearLibro(Productos);
+            }
+        }
     }
 }

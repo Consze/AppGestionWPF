@@ -1,5 +1,5 @@
 ﻿using WPFApp1.Interfaces;
-using WPFApp1.Servicios;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1.Factories
 {

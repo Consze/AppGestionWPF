@@ -265,21 +265,21 @@ namespace WPFApp1.Servicios
                 Console.WriteLine($"Archivo de base de datos local no encontrado en : {_rutaArchivo}");
             }
 
-            Conexion = new SQLiteConnection(CadenaConexion);
-            try
+            using (SQLiteConnection conexion = ObtenerConexionDB())
             {
-                Conexion.Open();
-                using (SQLiteCommand command = new SQLiteCommand("PRAGMA foreign_keys = ON;", Conexion))
+                try
                 {
-                    command.ExecuteNonQuery();
+                    using (SQLiteCommand command = new SQLiteCommand("PRAGMA foreign_keys = ON;", conexion))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    InicializarEsquema();
                 }
-                InicializarEsquema();
-            }
-            catch (SQLiteException ex)
-            {
-                Console.WriteLine($"Error en la conexion a la base de datos {ex.Message}");
-                Conexion.Close();
-                throw;
+                catch (SQLiteException ex)
+                {
+                    Console.WriteLine($"Error en la conexion a la base de datos {ex.Message}");
+                    throw;
+                }
             }
         }
         public void InicializarEsquema()
@@ -310,44 +310,57 @@ namespace WPFApp1.Servicios
         }
         public bool ComprobarExistenciaTabla(string NombreTabla)
         {
-            string _PruebaConexion = $"SELECT * FROM {NombreTabla};";
-            using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, Conexion))
+            using (SQLiteConnection conexion = ObtenerConexionDB())
             {
-                try
+                string _PruebaConexion = $"SELECT * FROM {NombreTabla};";
+                using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, conexion))
                 {
-                    using (SQLiteDataReader Lector = comando.ExecuteReader())
+                    try
                     {
-                        return true;
+                        using (SQLiteDataReader Lector = comando.ExecuteReader())
+                        {
+                            return true;
+                        }
                     }
-                }
-                catch (SQLiteException ex)
-                {
-                    if (ex.Message.Contains("no such table"))
+                    catch (SQLiteException ex)
                     {
-                        return false;
+                        if (ex.Message.Contains("no such table"))
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
-                    else
-                    {
-                        throw;
-                    }
-                }
 
+                }
             }
         }
         public bool CrearTabla(string consulta)
         {
-            try
+            using (SQLiteConnection conexion = ObtenerConexionDB())
             {
-                using (SQLiteCommand comando = new SQLiteCommand(consulta, Conexion))
+                try
                 {
-                    comando.ExecuteNonQuery();
+                    using (SQLiteCommand comando = new SQLiteCommand(consulta, conexion))
+                    {
+                        comando.ExecuteNonQuery();
+                    }
+                    return true;
                 }
-                return true;
+                catch (SQLiteException ex)
+                {
+                    return false;
+                }
             }
-            catch (SQLiteException ex)
-            {
-                return false;
-            }
+            
+        }
+        public SQLiteConnection ObtenerConexionDB()
+        {
+            SQLiteConnection conexion = new SQLiteConnection(this.CadenaConexion);
+            conexion.Open();
+            return conexion;
         }
         public void CerrarConexionDB()
         {

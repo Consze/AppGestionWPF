@@ -1,12 +1,14 @@
 ﻿using System.Text.RegularExpressions;
 using WPFApp1.DTOS;
 using WPFApp1.Repositorios;
+using WPFApp1.Interfaces;
 
 namespace WPFApp1.Servicios
 {
     public class IndexadorProductoService
     {
         private readonly IndexadorProductosRepositorio _repositorio;
+        private readonly IProductoServicio _productoServicio;
 
         private static readonly char[] Delimitadores = new char[]
         {
@@ -106,7 +108,7 @@ namespace WPFApp1.Servicios
 
             foreach (CoincidenciasBusqueda Coincidencia in CoincidenciasProductos)
             {
-                Productos registro = ProductosRepository.RecuperarRegistro(Coincidencia.producto_id);
+                Productos registro = _productoServicio.RecuperarProductoPorID(Coincidencia.producto_id);
                 if (registro != null && registro.ID != 0)
                 {
                     ProductosCoincidentes.Add(registro);

@@ -142,7 +142,7 @@ namespace WPFApp1.ViewModels
             else
             {
                 TituloActivo = "Exportar Productos";
-                ExportarProductosViewModel _viewModel = new ExportarProductosViewModel();
+                var _viewModel = App.GetService<ExportarProductosViewModel>();
                 ExportarProductos _vista = new ExportarProductos(_viewModel);
                 CambiarVistaAsync(_vista);
             }
