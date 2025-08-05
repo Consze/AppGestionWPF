@@ -7,9 +7,7 @@ namespace WPFApp1.Servicios
 {
     public class IndexadorProductoService
     {
-        private readonly IndexadorProductosRepositorio _repositorio;
-        private readonly IProductoServicio _productoServicio;
-
+        private readonly IndexadorProductoSQLite _repositorio;
         private static readonly char[] Delimitadores = new char[]
         {
             ' ', ',', '.', ';', ':', '(', ')', '[', ']', '{', '}', '-', '_',
@@ -20,7 +18,7 @@ namespace WPFApp1.Servicios
         {
             "EL", "LA", "LOS", "LAS", "UN", "UNA", "UNOS", "UNAS", "DE", "DEL", "Y", "O", "PARA", "CON", "EN", "POR", "SE"
         };
-        public IndexadorProductoService(IndexadorProductosRepositorio repositorio)
+        public IndexadorProductoService(IndexadorProductoSQLite repositorio)
         {
             _repositorio = repositorio ?? throw new ArgumentNullException(nameof(repositorio));
         }
@@ -70,7 +68,7 @@ namespace WPFApp1.Servicios
                 
                 foreach(string palabra in TituloPalabras)
                 {
-                    _repositorio.InsertarRegistroLocal(palabra, ID);
+                    _repositorio.InsertarRegistro(palabra, ID);
                 }
             }
         }
@@ -81,7 +79,7 @@ namespace WPFApp1.Servicios
 
             foreach (string palabra in TituloPalabras) // 1 - Buscar cada palabra del titulo
             {
-                List<PalabrasTitulosProductos> palabraCoincidencias = _repositorio.BuscarPalabraLocal(palabra); // 2 - Recuperar los registros donde se encuentre la palabra
+                List<PalabrasTitulosProductos> palabraCoincidencias = _repositorio.BuscarPalabra(palabra); // 2 - Recuperar los registros donde se encuentre la palabra
                 foreach (PalabrasTitulosProductos coincidencia in palabraCoincidencias)
                 {
                     if (resultadosPorProductoId.TryGetValue(coincidencia.producto_id, out CoincidenciasBusqueda productoEncontrado))

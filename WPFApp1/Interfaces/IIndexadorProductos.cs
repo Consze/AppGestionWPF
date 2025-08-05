@@ -4,6 +4,7 @@ namespace WPFApp1.Interfaces
 {
     public interface IIndexadorProductos
     {
-        List<Productos> BuscarTitulo(string Titulo);
+        List<PalabrasTitulosProductos> BuscarPalabra(string Palabra);
+        bool InsertarRegistro(string Palabra, int ID);
     }
 }

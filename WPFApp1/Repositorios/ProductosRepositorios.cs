@@ -11,13 +11,9 @@ namespace WPFApp1.Repositorios
 {
     public class SQLiteAccesoProductos : IProductosAccesoDatos
     {
-        private readonly string _conexionCadena;
-        private readonly IndexadorProductoService _indexadorProductoService;
         private readonly ConexionDBSQLite _accesoDB;
-        public SQLiteAccesoProductos(string rutaConexion, IndexadorProductoService indexador, ConexionDBSQLite accesoDB)
+        public SQLiteAccesoProductos(ConexionDBSQLite accesoDB)
         {
-            _conexionCadena = rutaConexion;
-            _indexadorProductoService = indexador;
             _accesoDB = accesoDB;
         }
         public Productos RecuperarProductoPorID(int producto_id)
@@ -123,20 +119,18 @@ namespace WPFApp1.Repositorios
                         if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", productoModificado.RutaImagen); }
 
                         int FilasAfectadas = Comando.ExecuteNonQuery();
-                        _indexadorProductoService.IndexarProducto(productoModificado.Nombre, productoModificado.ID);
+                        //_indexadorProductoService.IndexarProducto(productoModificado.Nombre, productoModificado.ID);
                         _accesoDB.CerrarConexionDB();
                         return FilasAfectadas > 0;
                     }
                 }
                 else // No se modifico ninguna propiedad
                 {
-                    _accesoDB.CerrarConexionDB();
                     return false;
                 }
             }
             else 
             {
-                _accesoDB.CerrarConexionDB();
                 return false;
             }
         }
@@ -156,7 +150,7 @@ namespace WPFApp1.Repositorios
 
                     Comando.CommandText = "SELECT last_insert_rowid()";
                     nuevoProductoId = Convert.ToInt32(Comando.ExecuteScalar());
-                    _indexadorProductoService.IndexarProducto(producto.Nombre, nuevoProductoId);
+                    //_indexadorProductoService.IndexarProducto(producto.Nombre, nuevoProductoId);
                     return nuevoProductoId;
                 }
             }
@@ -190,10 +184,6 @@ namespace WPFApp1.Repositorios
                     Console.WriteLine($"Error {ex.Message}");
                     return false;
                 }
-                finally
-                {
-                    _accesoDB.CerrarConexionDB();
-                }
             }
             else
             {
@@ -222,7 +212,6 @@ namespace WPFApp1.Repositorios
                     }
                 }
             }
-            _accesoDB.CerrarConexionDB();
             return ListaProductos;
         }
         public bool CrearLibro(List<Productos> Productos)
@@ -271,6 +260,10 @@ namespace WPFApp1.Repositorios
                 Console.WriteLine($"Error {ex.Message}");
                 return false;
             }
+        }
+        public bool IndexarProducto(Productos producto)
+        {
+            return true;
         }
     }
 
@@ -543,6 +536,10 @@ namespace WPFApp1.Repositorios
                 Console.WriteLine($"Error {ex.Message}");
                 return false;
             }
+        }
+        public bool IndexarProducto(Productos producto)
+        {
+            return true;
         }
     }
 }

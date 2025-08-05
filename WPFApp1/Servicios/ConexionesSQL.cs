@@ -50,6 +50,25 @@ namespace WPFApp1.Servicios
                 return null;
             }
         }
+        public bool EjecutarConsultaNoQuery(string Consulta)
+        {
+            try
+            {
+                using(SqlConnection conexion = ObtenerConexionDB())
+                {
+                    using (SqlCommand comando = new SqlCommand(Consulta,conexion))
+                    {
+                        comando.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                throw;
+            }
+            
+        }
         public void GuardarEstadoConexion()
         {
             var configuracion = new ConfiguracionSQLServer {CadenaConexion = CadenaConexion, ConexionValida = ConexionValida, Excepcion = ExcepcionSQL, FechaHora = DateTime.Now };
@@ -123,6 +142,17 @@ namespace WPFApp1.Servicios
                 Console.WriteLine($"Error {ex.Message}");
                 return false;
             }
+        }
+        public SqlConnection ObtenerConexionDB()
+        {
+            ConfiguracionSQLServer configuracionServer = LeerArchivoConfiguracion();
+            if (!ProbarConexion(configuracionServer.CadenaConexion))
+            {
+                throw new InvalidOperationException("No se pudo establecer una conexión válida para SQL Server.");
+            }
+            SqlConnection Conexion = new SqlConnection(configuracionServer.CadenaConexion);
+            Conexion.Open();
+            return Conexion;
         }
     }
     public class TablaEsquema
@@ -273,6 +303,7 @@ namespace WPFApp1.Servicios
                     {
                         command.ExecuteNonQuery();
                     }
+                    conexion.Close();
                     InicializarEsquema();
                 }
                 catch (SQLiteException ex)

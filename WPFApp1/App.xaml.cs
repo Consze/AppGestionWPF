@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using WPFApp1.Conmutadores;
+using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 using WPFApp1.ViewModels;
@@ -26,14 +28,32 @@ namespace WPFApp1
         }
         private void ConfigurarServicios(IServiceCollection services)
         {
+            services.AddTransient<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>();
+            services.AddTransient<ConexionDBSQLite>();
+            services.AddTransient<ConexionDBSQLServer>();
+            services.AddTransient<IIndexadorProductos, IndexadorProductoSQLite>();
+            services.AddTransient<IIndexadorProductos, IndexadorProductoSQLServer>();
+            services.AddTransient<IndexadorProductoService>();
+
+            // Registrar ViewModels
+            services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<AniadirProductoViewModel>();
+            services.AddTransient<CatalogoViewModel>();
+            services.AddTransient<ExportarProductosViewModel>();
+
+            services.AddTransient<IIndexadorProductos, ConmutadorIndexadorProductos>(provider =>
+            {
+                // Aquí el DI resuelve las dependencias del conmutador.
+                var repositorioLocal = new IndexadorProductoSQLite(provider.GetRequiredService<ConexionDBSQLite>());
+                var repositorioRemoto = new IndexadorProductoSQLServer(provider.GetRequiredService<ConexionDBSQLServer>());
+                var conexionSqlServer = provider.GetRequiredService<ConexionDBSQLServer>();
+                return new ConmutadorIndexadorProductos(repositorioLocal, repositorioRemoto, conexionSqlServer);
+            });
             services.AddTransient<Factories.SqliteRepositorioProductosFactory>(provider =>
             {
-                string sqliteConnectionString = @"Data Source=.\datos\base.db;Version=3;";
-                var indexador = provider.GetRequiredService<IndexadorProductoService>();
                 var conexion = provider.GetRequiredService<ConexionDBSQLite>();
-                return new Factories.SqliteRepositorioProductosFactory(sqliteConnectionString, indexador, conexion);
+                return new Factories.SqliteRepositorioProductosFactory(conexion);
             });
-
             services.AddTransient<Factories.SqlServerRepositorioProductosFactory>(provider =>
             {
                 ConexionDBSQLServer _instancia = new ConexionDBSQLServer();
@@ -43,18 +63,7 @@ namespace WPFApp1
                     return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
                 }
                 return null;
-            });
-
-            services.AddScoped<WPFApp1.Interfaces.IProductoServicio, WPFApp1.Servicios.ProductoServicio>();
-            services.AddSingleton<ConexionDBSQLite>();
-            services.AddTransient<IndexadorProductosRepositorio>();
-            services.AddTransient<IndexadorProductoService>();
-
-            // Registrar ViewModels
-            services.AddScoped<MainWindowViewModel>();
-            services.AddTransient<AniadirProductoViewModel>();
-            services.AddTransient<CatalogoViewModel>();
-            services.AddTransient<ExportarProductosViewModel>();
+            });   
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
