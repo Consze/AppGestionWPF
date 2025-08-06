@@ -98,7 +98,7 @@ namespace WPFApp1.Repositorios
         public List<PalabrasTitulosProductos> BuscarPalabra(string Palabra)
         {
             List<PalabrasTitulosProductos> palabraColeccionTitulos = new List<PalabrasTitulosProductos>();
-            string Consulta = "SELECT * FROM Productos_titulos WHERE palabra = @palabra COLLATE NOCASE;";
+            string Consulta = "SELECT * FROM Productos_titulos WHERE palabra = @palabra;";
             try
             {
                 using (SqlCommand comand = new SqlCommand(Consulta, _dbSQLServer.ObtenerConexionDB()))

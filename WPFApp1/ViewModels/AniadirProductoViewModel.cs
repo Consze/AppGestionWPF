@@ -21,6 +21,7 @@ namespace WPFApp1.ViewModels
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
         private readonly IProductoServicio _productoService;
+        private readonly ServicioIndexacionProductos _servicioIndexacion;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -113,7 +114,7 @@ namespace WPFApp1.ViewModels
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
 
-        public AniadirProductoViewModel(IProductoServicio productoServicio)
+        public AniadirProductoViewModel(IProductoServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -137,6 +138,7 @@ namespace WPFApp1.ViewModels
             //Servicios
             _productoService = productoServicio;
             _servicioSFX = new ServicioSFX();
+            _servicioIndexacion = ServicioIndexacion;
         }
 
         public void BotonPresionado(object parameter)
@@ -231,6 +233,7 @@ namespace WPFApp1.ViewModels
 
             if (_productoService.ActualizarProducto(ProductoModificado))
             {
+                _servicioIndexacion.IndexarProducto(ProductoModificado);
                 ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(ProductoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoModificado.RutaImagen);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
@@ -397,6 +400,7 @@ namespace WPFApp1.ViewModels
             int Resultado = _productoService.CrearProducto(_nuevoProducto);
             if (Resultado > -1 )
             {
+                _servicioIndexacion.IndexarProducto(_nuevoProducto);
                 _nuevoProducto.ID = Convert.ToInt32(Resultado);
                 _nuevoProducto.RutaImagen = string.IsNullOrWhiteSpace(_nuevoProducto.RutaImagen)  ? string.Empty : Path.GetFullPath(_nuevoProducto.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
