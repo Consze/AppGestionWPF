@@ -28,27 +28,40 @@ namespace WPFApp1
         }
         private void ConfigurarServicios(IServiceCollection services)
         {
-            services.AddTransient<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>();
+
             services.AddTransient<ConexionDBSQLite>();
             services.AddTransient<ConexionDBSQLServer>();
-            services.AddTransient<IIndexadorProductos, IndexadorProductoSQLite>();
-            services.AddTransient<IIndexadorProductos, IndexadorProductoSQLServer>();
-            services.AddTransient<IndexadorProductoService>();
 
-            // Registrar ViewModels
-            services.AddTransient<MainWindowViewModel>();
-            services.AddTransient<AniadirProductoViewModel>();
-            services.AddTransient<CatalogoViewModel>();
-            services.AddTransient<ExportarProductosViewModel>();
+            services.AddTransient<IndexadorGenericoService>();
 
-            services.AddTransient<IIndexadorProductos, ConmutadorIndexadorProductos>(provider =>
+            services.AddTransient<IProductoServicio, ProductoServicio>();
+            services.AddTransient<IndexadorProductoSQLite>();
+            services.AddTransient<IndexadorProductoSQLServer>();
+
+            services.AddTransient<IIndexadorProductosRepositorio, IndexadorProductos>(provider =>
             {
-                // Aquí el DI resuelve las dependencias del conmutador.
-                var repositorioLocal = new IndexadorProductoSQLite(provider.GetRequiredService<ConexionDBSQLite>());
-                var repositorioRemoto = new IndexadorProductoSQLServer(provider.GetRequiredService<ConexionDBSQLServer>());
+                var repositorioLocal = provider.GetRequiredService<IndexadorProductoSQLite>();
+                var repositorioRemoto = provider.GetRequiredService<IndexadorProductoSQLServer>();
                 var conexionSqlServer = provider.GetRequiredService<ConexionDBSQLServer>();
-                return new ConmutadorIndexadorProductos(repositorioLocal, repositorioRemoto, conexionSqlServer);
+                return new IndexadorProductos(conexionSqlServer, repositorioLocal, repositorioRemoto);
             });
+
+            services.AddTransient<ServicioIndexacionProductos>(provider =>
+            {
+                var indexadorGenerico = provider.GetRequiredService<IndexadorGenericoService>();
+                var indexadorRepositorioConmutador = provider.GetRequiredService<IIndexadorProductosRepositorio>();
+
+                // Fabrica diferida
+                Func<IProductoServicio> productoServicioFactory = () => provider.GetRequiredService<IProductoServicio>();
+
+                return new ServicioIndexacionProductos(
+                    indexadorGenerico,
+                    indexadorRepositorioConmutador,
+                    productoServicioFactory
+                );
+            });
+
+            // Factories
             services.AddTransient<Factories.SqliteRepositorioProductosFactory>(provider =>
             {
                 var conexion = provider.GetRequiredService<ConexionDBSQLite>();
@@ -56,14 +69,35 @@ namespace WPFApp1
             });
             services.AddTransient<Factories.SqlServerRepositorioProductosFactory>(provider =>
             {
-                ConexionDBSQLServer _instancia = new ConexionDBSQLServer();
-                ConfiguracionSQLServer configuracionServer = _instancia.LeerArchivoConfiguracion();
+                var instanciaConexionSqlServer = provider.GetRequiredService<ConexionDBSQLServer>();
+                ConfiguracionSQLServer configuracionServer = instanciaConexionSqlServer.LeerArchivoConfiguracion();
                 if (configuracionServer.ConexionValida && configuracionServer.CadenaConexion != null)
                 {
                     return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
                 }
-                return null;
-            });   
+                throw new InvalidOperationException("La configuración de SQL Server no es valida para la fabrica de repositorios.");
+            });
+
+            services.AddTransient<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>(provider =>
+            {
+                var sqliteFactory = provider.GetRequiredService<Factories.SqliteRepositorioProductosFactory>();
+                var sqlServerFactory = provider.GetRequiredService<Factories.SqlServerRepositorioProductosFactory>();
+                var conexionServidor = provider.GetRequiredService<ConexionDBSQLServer>();
+                var servicioIndexacionProductos = provider.GetRequiredService<ServicioIndexacionProductos>();
+
+                return new ProductoServicio(
+                    sqliteFactory,
+                    sqlServerFactory,
+                    conexionServidor
+                );
+            });
+
+            // Registrar ViewModels
+            services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<AniadirProductoViewModel>();
+            services.AddTransient<CatalogoViewModel>();
+            services.AddTransient<ExportarProductosViewModel>();
+            services.AddSingleton<MainWindow>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -78,11 +112,11 @@ namespace WPFApp1
 
             _splashScreen = new SplashScreen();
             _splashScreen.Show();
-            _mainWindow = new MainWindow();
+            _mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
 
             await Task.Run(() => ValidarIntegridadDirectorios());
 
-            // Iniciar el icono en bandeja del sistema
+            // Iniciar icono en bandeja de Sistema
             _trayIcon.Icon = new System.Drawing.Icon("ico128.ico");
             _trayIcon.Text = "Aplicación";
             _trayIcon.Visible = true;

@@ -19,6 +19,7 @@ namespace WPFApp1.ViewModels
     public class CatalogoViewModel : INotifyPropertyChanged
     {
         private readonly IProductoServicio _productoServicio;
+        private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<Productos> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
         public bool MostrarBotonRegresar
@@ -104,8 +105,9 @@ namespace WPFApp1.ViewModels
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
         private ServicioSFX _servicioSFX { get; set; }
-        public CatalogoViewModel(IProductoServicio productoServicio)
+        public CatalogoViewModel(IProductoServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
         {
+            _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
             _productoServicio = productoServicio;
             Task.Run(async () => await CargarEstadoInicialAsync());
@@ -200,9 +202,7 @@ namespace WPFApp1.ViewModels
         }
         private async Task BuscarProductosTitulos(string Titulo)
         {
-            var indexadorService = App.GetService<IndexadorProductoService>();
-            List<CoincidenciasBusqueda> coincidencias = await Task.Run(() => indexadorService.RecuperarRegistros(Titulo));
-            List<Productos> registros = await Task.Run(() => indexadorService.RecuperarProductos(coincidencias));
+            List<Productos> registros = await Task.Run(() => _servicioIndexacion.BuscarTituloProductos(Titulo));
 
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {

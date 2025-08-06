@@ -2,7 +2,7 @@
 
 namespace WPFApp1.Interfaces
 {
-    public interface IIndexadorProductos
+    public interface IIndexadorProductosRepositorio
     {
         List<PalabrasTitulosProductos> BuscarPalabra(string Palabra);
         bool InsertarRegistro(string Palabra, int ID);

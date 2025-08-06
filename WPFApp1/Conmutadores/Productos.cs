@@ -10,7 +10,6 @@ namespace WPFApp1.Conmutadores
         private readonly SqliteRepositorioProductosFactory _sqliteFactory;
         private readonly SqlServerRepositorioProductosFactory _sqlServerFactory;
         private ConexionDBSQLServer RepositorioServidor;
-
         public ProductoServicio(SqliteRepositorioProductosFactory sqliteFactory, SqlServerRepositorioProductosFactory sqlServerFactory, ConexionDBSQLServer ConexionServidor)
         {
             RepositorioServidor = ConexionServidor;
@@ -147,27 +146,6 @@ namespace WPFApp1.Conmutadores
             {
                 var sqliteRepo = _sqliteFactory.CrearRepositorio();
                 return sqliteRepo.CrearLibro(Productos);
-            }
-        }
-        public bool IndexarProducto(Productos producto)
-        {
-            if (RepositorioServidor.LeerConfiguracionManual())
-            {
-                try
-                {
-                    var sqlServerRepo = _sqlServerFactory.CrearRepositorio();
-                    return sqlServerRepo.IndexarProducto(producto);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error al intentar usar SQL Server (INDEXAR PRODUCTO): {ex.Message}. Intentando con SQLite.");
-                    return false;
-                }
-            }
-            else
-            {
-                var sqliteRepo = _sqliteFactory.CrearRepositorio();
-                return sqliteRepo.IndexarProducto(producto);
             }
         }
     }
