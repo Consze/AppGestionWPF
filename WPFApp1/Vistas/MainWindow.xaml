@@ -204,13 +204,13 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" Style="{StaticResource EstiloBorderConAnimacion}" CornerRadius="10" Background="White">
-                                <!--<Border.InputBindings>
-                    <MouseBinding MouseAction="LeftDoubleClick"
-                            Command="{Binding DataContext.ItemDoubleClickCommand,
-                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                            CommandParameter="{Binding}"/>
-                </Border.InputBindings>-->
-                                <Border.Effect>
+                                 <Border.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
+                                    Command="{Binding DataContext.DobleClickNotificacionCommand,
+                                            RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"/>
+                                    </Border.InputBindings>
+                                    <Border.Effect>
                                     <DropShadowEffect BlurRadius="10"
                                        ShadowDepth="0.1"
                                        Direction="0"

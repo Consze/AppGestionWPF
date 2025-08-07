@@ -15,6 +15,7 @@ namespace WPFApp1.ViewModels
         public ICommand ConfigurarServidorCommand { get; }
         public ICommand AbrirConfiguracionesCommand { get; }
         public ICommand CambiarVistaCommand { get; }
+        public ICommand DobleClickNotificacionCommand { get; }
         private bool _procesando;
         public bool Procesando
         {
@@ -112,10 +113,27 @@ namespace WPFApp1.ViewModels
             CambiarVistaCommand = new RelayCommand<object>(async (vista) => await CambiarVistaAsync(vista));
             VerExportarProductosCommand = new RelayCommand<object>(VerExportarProductos);
             ConfigurarServidorCommand = new RelayCommand<object>(ConfigurarServidor);
+            DobleClickNotificacionCommand = new RelayCommand<object>(InspeccionarNotificacion);
 
             Messenger.Default.Subscribir<AbrirVistaAniadirProductoMensaje>(OnAbrirAniadirProducto);
             Messenger.Default.Subscribir<CerrarVistaAniadirProductoMensaje>(OnCerrarAniadirProducto);
             Messenger.Default.Subscribir<NotificacionEmergente>(OnNotificacionEmergenteAsync);
+        }
+        private void InspeccionarNotificacion(object NotificacionClickeada)
+        {
+            //TODO: Implentación de accesos directos segun clasificacion de urgencia-importancia y contenido de notificación
+            if(NotificacionClickeada is Notificacion _notificacion)
+            {
+                switch(_notificacion.Urgencia)
+                {
+                    case MatrizEisenhower.C1:
+                        break;
+                    case MatrizEisenhower.C2:
+                        break;
+                    case MatrizEisenhower.C3:
+                        break;
+                }
+            }
         }
         private void AbrirConfiguraciones(object parameter)
         {
