@@ -40,5 +40,27 @@ namespace WPFApp1.Conmutadores
                 return _repositorioLocal.InsertarRegistro(Palabra, ID);
             }
         }
+        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id)
+        {
+            if (_conexionServidor.LeerConfiguracionManual())
+            {
+                return _repositorioRemoto.RecuperarIndicesPorProductoID(producto_id);
+            }
+            else
+            {
+                return _repositorioLocal.RecuperarIndicesPorProductoID(producto_id);
+            }
+        }
+        public bool EliminarIndicesPorID(List<int> indicesID)
+        {
+            if (_conexionServidor.LeerConfiguracionManual())
+            {
+                return _repositorioRemoto.EliminarIndicesPorID(indicesID);
+            }
+            else
+            {
+                return _repositorioLocal.EliminarIndicesPorID(indicesID);
+            }
+        }
     }
 }

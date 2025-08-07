@@ -157,7 +157,7 @@ namespace WPFApp1.ViewModels
             else
             {
                 TituloActivo = "Conectarse a Servidor";
-                ConfigurarSQLServerViewModel viewModel = new ConfigurarSQLServerViewModel();
+                ConfigurarSQLServerViewModel viewModel = App.GetService<ConfigurarSQLServerViewModel>();
                 ConfigurarSQLServer vista = new ConfigurarSQLServer(viewModel);
                 CambiarVistaAsync(vista);
             }

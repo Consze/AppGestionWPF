@@ -2,6 +2,8 @@
 using System.Data.SQLite;
 using System.IO;
 using System.Text.Json;
+using WPFApp1.DTOS;
+using WPFApp1.Mensajes;
 
 namespace WPFApp1.Servicios
 {
@@ -22,11 +24,45 @@ namespace WPFApp1.Servicios
         public bool ConexionValida { get; set; }
         private string rutaArchivoConfiguracion;
         private string rutaConfiguracionManual; 
-        public string ExcepcionSQL { get; set; } 
+        public string ExcepcionSQL { get; set; }
+        public string esquemaDB { get; set; } = @"
+            IF OBJECT_ID('dbo.Productos_titulos', 'U') IS NULL 
+            BEGIN
+                CREATE TABLE dbo.Productos_titulos (
+                    ID INT PRIMARY KEY IDENTITY(1,1),
+                    producto_id INT NOT NULL,
+                    palabra NVARCHAR(255) NOT NULL
+                ); 
+            END
+            
+            IF NOT EXISTS (
+                SELECT
+                    1
+                FROM
+                    sys.indexes
+                WHERE
+                    name = 'IX_Productos_Titulos_ProductoId_Palabra'
+                    AND object_id = OBJECT_ID('dbo.Productos_titulos')
+            )
+            BEGIN
+                CREATE UNIQUE NONCLUSTERED INDEX IX_Productos_Titulos_ProductoId_Palabra
+                ON dbo.Productos_titulos (producto_id, palabra);
+            END";
         public ConexionDBSQLServer()
         {
             this.rutaArchivoConfiguracion = @".\datos\configuracionSQLServer.json";
             this.rutaConfiguracionManual = @".\datos\estadoServidor.json";
+            try
+            {
+                InicializarEsquemaDB();
+            }
+            catch(Exception ex)
+            {
+                ServicioSFX sonidoSFX = new ServicioSFX();
+                sonidoSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = $"Error: {ex.Message}", Titulo = "Operación Fallida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
         }
         public ConfiguracionSQLServer LeerArchivoConfiguracion()
         {
@@ -142,6 +178,10 @@ namespace WPFApp1.Servicios
                 Console.WriteLine($"Error {ex.Message}");
                 return false;
             }
+        }
+        public void InicializarEsquemaDB()
+        {
+            EjecutarConsultaNoQuery(esquemaDB);
         }
         public SqlConnection ObtenerConexionDB()
         {

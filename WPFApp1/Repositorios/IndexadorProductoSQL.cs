@@ -68,6 +68,65 @@ namespace WPFApp1.Repositorios
             
             return palabraColeccionTitulos;
         }
+        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id)
+        {
+            List<IDX_Prod_Titulos> registrosIDX = new List<IDX_Prod_Titulos>();
+
+            string consulta = "SELECT * FROM Productos_titulos WHERE producto_id = @id";
+            try
+            {
+                using (SQLiteCommand comando = new SQLiteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
+                {
+                    comando.Parameters.AddWithValue("@id", producto_id);
+                    using (SQLiteDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            int ID = Convert.ToInt32(lector["id"]);
+                            int prod_id = Convert.ToInt32(lector["producto_id"]);
+                            string Palabra = lector["palabra"].ToString();
+                            IDX_Prod_Titulos registro = new IDX_Prod_Titulos
+                            {
+                                ID = ID,
+                                producto_id = prod_id,
+                                palabra = Palabra
+                            };
+                            registrosIDX.Add(registro);
+                        }
+                    }
+                }
+            }
+            catch (SQLiteException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return registrosIDX;
+        }
+        public bool EliminarIndicesPorID(List<int> indicesID)
+        {
+            string parametros = string.Join(", ", Enumerable.Range(0, indicesID.Count).Select(contador => $"@id{contador}"));
+            if (string.IsNullOrEmpty(parametros))
+            {
+                return false;
+            }
+
+            int filasAfectadas = 0;
+
+            string consulta = $"DELETE FROM Productos_titulos WHERE ID IN ({parametros})";
+            using (SQLiteCommand comando = new SQLiteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
+            {
+                int contador = 0;
+                foreach (int ID in indicesID)
+                {
+                    comando.Parameters.AddWithValue($"@id{contador}", ID);
+                    contador++;
+                }
+                filasAfectadas = comando.ExecuteNonQuery();
+            }
+
+            return filasAfectadas > 0;
+        }
     }
     public class IndexadorProductoSQLServer : IIndexadorProductosRepositorio
     {
@@ -126,6 +185,65 @@ namespace WPFApp1.Repositorios
             }
 
             return palabraColeccionTitulos;
+        }
+        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id)
+        {
+            List<IDX_Prod_Titulos> registrosIDX = new List<IDX_Prod_Titulos>();
+
+            string consulta = "SELECT * FROM dbo.Productos_titulos WHERE producto_id = @id";
+            try
+            {
+                using (SqlCommand comando = new SqlCommand(consulta, _dbSQLServer.ObtenerConexionDB()))
+                {
+                    comando.Parameters.AddWithValue("@id", producto_id);
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        while(lector.Read())
+                        {
+                            int ID = Convert.ToInt32(lector["id"]);
+                            int prod_id = Convert.ToInt32(lector["producto_id"]);
+                            string Palabra = lector["palabra"].ToString();
+                            IDX_Prod_Titulos registro = new IDX_Prod_Titulos
+                            {
+                                ID = ID,
+                                producto_id = prod_id,
+                                palabra = Palabra
+                            };
+                            registrosIDX.Add(registro);
+                        }
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return registrosIDX;
+        }
+        public bool EliminarIndicesPorID(List<int> indicesID)
+        {
+            string parametros = string.Join(", ", Enumerable.Range(0, indicesID.Count).Select(contador => $"@id{contador}"));
+            if (string.IsNullOrEmpty(parametros))
+            {
+                return false;
+            }
+
+            int filasAfectadas = 0;
+
+            string consulta = $"DELETE FROM dbo.Productos_titulos WHERE ID IN ({parametros})";
+            using (SqlCommand comando = new SqlCommand(consulta, _dbSQLServer.ObtenerConexionDB()))
+            {
+                int contador = 0;
+                foreach(int ID in indicesID)
+                {
+                    comando.Parameters.AddWithValue($"@id{contador}",ID);
+                    contador++;
+                }
+                filasAfectadas = comando.ExecuteNonQuery();
+            }
+
+            return filasAfectadas > 0;
         }
     }
 }

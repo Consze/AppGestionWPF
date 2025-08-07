@@ -6,5 +6,7 @@ namespace WPFApp1.Interfaces
     {
         List<PalabrasTitulosProductos> BuscarPalabra(string Palabra);
         bool InsertarRegistro(string Palabra, int ID);
+        List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id);
+        bool EliminarIndicesPorID(List<int> indicesID);
     }
 }

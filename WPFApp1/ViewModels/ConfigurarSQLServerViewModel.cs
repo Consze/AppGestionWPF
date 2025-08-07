@@ -151,10 +151,10 @@ namespace WPFApp1.ViewModels
             }
         }
 
-        public ConfigurarSQLServerViewModel()
+        public ConfigurarSQLServerViewModel(ConexionDBSQLServer RepositorioServidor)
         {
             //Configuración inicial de toggle
-            _repositorioServidor = new ConexionDBSQLServer();
+            _repositorioServidor = RepositorioServidor;
             _servicioSFX = new ServicioSFX();
             this.Seleccion = _repositorioServidor.LeerConfiguracionManual();
             if (this.Seleccion)

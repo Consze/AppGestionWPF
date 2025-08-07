@@ -261,10 +261,6 @@ namespace WPFApp1.Repositorios
                 return false;
             }
         }
-        public bool IndexarProducto(Productos producto)
-        {
-            return true;
-        }
     }
 
     public class SQLServerAccesoProductos : IProductosAccesoDatos
@@ -536,10 +532,6 @@ namespace WPFApp1.Repositorios
                 Console.WriteLine($"Error {ex.Message}");
                 return false;
             }
-        }
-        public bool IndexarProducto(Productos producto)
-        {
-            return true;
         }
     }
 }

@@ -73,11 +73,30 @@ namespace WPFApp1.Servicios
             if (!string.IsNullOrWhiteSpace(titulo))
             {
                 List<string> TituloPalabras = _indexadorServicio.ObtenerPalabrasAtomicasFiltradas(titulo);
+                LimpiarReferenciasObsoletas(Producto.ID, TituloPalabras);
 
                 foreach (string palabra in TituloPalabras)
                 {
                     _repositorioIndexacion.InsertarRegistro(palabra, ID);
                 }
+            }
+        }
+        public void LimpiarReferenciasObsoletas(int producto_id, List<string> PalabrasTitulo)
+        {
+            List<IDX_Prod_Titulos> registrosIDX = _repositorioIndexacion.RecuperarIndicesPorProductoID(producto_id);
+            //List<string> palabras = registrosIDX.Select(idx => idx.palabra).ToList();
+            List<int> registrosAEliminar = new List<int>();
+
+            if(registrosIDX.Count > 0)
+            {
+                foreach(IDX_Prod_Titulos registro in registrosIDX)
+                {
+                    if(!PalabrasTitulo.Contains(registro.palabra))
+                    {
+                        registrosAEliminar.Add(registro.ID);
+                    }
+                }
+                _repositorioIndexacion.EliminarIndicesPorID(registrosAEliminar);
             }
         }
     }

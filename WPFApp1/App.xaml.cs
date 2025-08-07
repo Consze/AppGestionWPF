@@ -29,8 +29,8 @@ namespace WPFApp1
         private void ConfigurarServicios(IServiceCollection services)
         {
 
-            services.AddTransient<ConexionDBSQLite>();
-            services.AddTransient<ConexionDBSQLServer>();
+            services.AddSingleton<ConexionDBSQLite>();
+            services.AddSingleton<ConexionDBSQLServer>();
 
             services.AddTransient<IndexadorGenericoService>();
 
@@ -78,7 +78,7 @@ namespace WPFApp1
                 throw new InvalidOperationException("La configuración de SQL Server no es valida para la fabrica de repositorios.");
             });
 
-            services.AddTransient<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>(provider =>
+            services.AddSingleton<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>(provider =>
             {
                 var sqliteFactory = provider.GetRequiredService<Factories.SqliteRepositorioProductosFactory>();
                 var sqlServerFactory = provider.GetRequiredService<Factories.SqlServerRepositorioProductosFactory>();
@@ -95,6 +95,7 @@ namespace WPFApp1
             // Registrar ViewModels
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
+            services.AddTransient<ConfigurarSQLServerViewModel>();
             services.AddTransient<CatalogoViewModel>();
             services.AddTransient<ExportarProductosViewModel>();
             services.AddSingleton<MainWindow>();
