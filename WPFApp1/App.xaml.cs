@@ -71,11 +71,7 @@ namespace WPFApp1
             {
                 var instanciaConexionSqlServer = provider.GetRequiredService<ConexionDBSQLServer>();
                 ConfiguracionSQLServer configuracionServer = instanciaConexionSqlServer.LeerArchivoConfiguracion();
-                if (configuracionServer.ConexionValida && configuracionServer.CadenaConexion != null)
-                {
-                    return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
-                }
-                throw new InvalidOperationException("La configuración de SQL Server no es valida para la fabrica de repositorios.");
+                return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
             });
 
             services.AddSingleton<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>(provider =>

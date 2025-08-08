@@ -1,7 +1,9 @@
 ﻿using WPFApp1.DTOS;
 using WPFApp1.Factories;
 using WPFApp1.Interfaces;
+using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
+using System.IO;
 
 namespace WPFApp1.Conmutadores
 {
@@ -12,7 +14,14 @@ namespace WPFApp1.Conmutadores
         private ConexionDBSQLServer RepositorioServidor;
         public ProductoServicio(SqliteRepositorioProductosFactory sqliteFactory, SqlServerRepositorioProductosFactory sqlServerFactory, ConexionDBSQLServer ConexionServidor)
         {
-            RepositorioServidor = ConexionServidor;
+            try
+            {
+                RepositorioServidor = ConexionServidor;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
             _sqliteFactory = sqliteFactory;
             _sqlServerFactory = sqlServerFactory;
         }
@@ -49,9 +58,8 @@ namespace WPFApp1.Conmutadores
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al intentar usar SQL Server (ActualizarProducto): {ex.Message}. Intentando con SQLite.");
-                    var sqliteRepo = _sqliteFactory.CrearRepositorio();
-                    return sqliteRepo.ActualizarProducto(producto);
+                    Console.WriteLine($"Error al intentar usar SQL Server (ActualizarProducto): {ex.Message}.");
+                    return false;
                 }
             }
             else
@@ -71,9 +79,8 @@ namespace WPFApp1.Conmutadores
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al intentar usar SQL Server (RecuperarProductoPorID): {ex.Message}. Intentando con SQLite.");
-                    var sqliteRepo = _sqliteFactory.CrearRepositorio();
-                    return sqliteRepo.RecuperarProductoPorID(producto_id);
+                    Console.WriteLine($"Error al intentar usar SQL Server (RecuperarProductoPorID): {ex.Message}.");
+                    return null;
                 }
             }
             else
@@ -93,9 +100,8 @@ namespace WPFApp1.Conmutadores
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al intentar usar SQL Server (EliminarProducto): {ex.Message}. Intentando con SQLite.");
-                    var sqliteRepo = _sqliteFactory.CrearRepositorio();
-                    return sqliteRepo.EliminarProducto(producto_id);
+                    Console.WriteLine($"Error al intentar usar SQL Server (EliminarProducto): {ex.Message}.");
+                    return false;
                 }
             }
             else
@@ -115,7 +121,9 @@ namespace WPFApp1.Conmutadores
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al intentar usar SQL Server (Leer Productos): {ex.Message}. Intentando con SQLite.");
+                    Notificacion _notificacion = new Notificacion { Mensaje = $"Error al intentar usar SQL Server (Leer Productos): {ex.Message}. Intentando con SQLite.", Titulo = "Operación Fallida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                    Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                    //Console.WriteLine($"Error al intentar usar SQL Server (Leer Productos): {ex.Message}. Intentando con SQLite.");
                     var sqliteRepo = _sqliteFactory.CrearRepositorio();
                     return sqliteRepo.LeerProductos();
                 }

@@ -29,5 +29,10 @@ namespace WPFApp1
                 }
             }
         }
+
+        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            _viewModel.InicializarAsync();
+        }
     }
 }

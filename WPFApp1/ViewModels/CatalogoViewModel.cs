@@ -110,8 +110,6 @@ namespace WPFApp1.ViewModels
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
             _productoServicio = productoServicio;
-            Task.Run(async () => await CargarEstadoInicialAsync());
-            Task.Run(async () => await CargarProductosAsync());
             _tituloVista = "Catálogo";
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
@@ -128,10 +126,15 @@ namespace WPFApp1.ViewModels
             Procesando = false;
             _servicioSFX = new ServicioSFX();
         }
-
-        public async Task CargarEstadoInicialAsync()
+        public async Task InicializarAsync()
         {
             Procesando = true;
+            await CargarEstadoInicialAsync();
+            await CargarProductosAsync();
+            Procesando = false;
+        }
+        public async Task CargarEstadoInicialAsync()
+        {
             VistaElegida vista = PersistenciaConfiguracion.LeerUltimaVista();
             switch(vista)
             {
@@ -145,22 +148,26 @@ namespace WPFApp1.ViewModels
                     MostrarVistaTabular = true;
                     break;
             }
-            Procesando = false;
         }
         public async Task AlternarFormatoVista()
         {
             Procesando = true;
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
+            Procesando = false;
         }
         public void EliminarItem(Productos ProductoEliminar)
         {
             if(ProductoEliminar != null)
             {
-                ColeccionProductos.Remove(ProductoEliminar);
-                _productoServicio.EliminarProducto(ProductoEliminar.ID);
-                _servicioSFX.Confirmar();
-                Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
-                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                DialogResult eleccionUsuario = MessageBox.Show("¿Eliminar Producto?", "Eliminar Item", MessageBoxButtons.YesNo);
+                if (eleccionUsuario == DialogResult.Yes)
+                {
+                    ColeccionProductos.Remove(ProductoEliminar);
+                    _productoServicio.EliminarProducto(ProductoEliminar.ID);
+                    _servicioSFX.Confirmar();
+                    Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
+                    Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                } 
             }
         }
         private async Task BuscarTitulo()
@@ -204,15 +211,12 @@ namespace WPFApp1.ViewModels
         {
             List<Productos> registros = await Task.Run(() => _servicioIndexacion.BuscarTituloProductos(Titulo));
 
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            ColeccionProductos.Clear();
+            foreach (var producto in registros)
             {
-                ColeccionProductos.Clear();
-                foreach (var producto in registros)
-                {
-                    producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
-                    ColeccionProductos.Add(producto);
-                }
-            });
+                producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
+                ColeccionProductos.Add(producto);
+            }
         }
         private async Task LimpiarBusquedaAsync()
         {
@@ -226,25 +230,21 @@ namespace WPFApp1.ViewModels
         }
         public async Task AlternarFormatoVistaAsync()
         {
-            _servicioSFX.Shutter();
             VistaElegida vista = new VistaElegida();
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            if (MostrarVistaGaleria)
             {
-                if (MostrarVistaGaleria)
-                {
-                    vista = VistaElegida.Tabla;
-                    MostrarVistaGaleria = false;
-                    MostrarVistaTabular = true;
-                }
-                else
-                {
-                    vista = VistaElegida.Galeria;
-                    MostrarVistaGaleria = true;
-                    MostrarVistaTabular = false;
-                }
-                PersistenciaConfiguracion.GuardarUltimaVista(vista);
-            });
-            Procesando = false;
+                vista = VistaElegida.Tabla;
+                MostrarVistaGaleria = false;
+                MostrarVistaTabular = true;
+            }
+            else
+            {
+                vista = VistaElegida.Galeria;
+                MostrarVistaGaleria = true;
+                MostrarVistaTabular = false;
+            }
+            _servicioSFX.Shutter();
+            PersistenciaConfiguracion.GuardarUltimaVista(vista);
         }
         public void MostrarAniadirProducto(object parameter)
         {
@@ -266,14 +266,10 @@ namespace WPFApp1.ViewModels
         {
             List<Productos> registros = await Task.Run(() => _productoServicio.LeerProductos());
 
-            System.Windows.Application.Current.Dispatcher.Invoke(() => 
+            foreach (var producto in registros)
             {
-                foreach (var producto in registros)
-                {
-                    ColeccionProductos.Add(producto);
-                }
-                Procesando = false;
-            });
+                ColeccionProductos.Add(producto);
+            }
         }
         /// <summary>
         /// Inicia la vista de edición de productos

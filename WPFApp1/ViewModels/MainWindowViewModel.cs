@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Entidades;
 using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 
@@ -55,19 +56,6 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private bool _cargandoVista;
-        public bool CargandoVista
-        {
-            get { return _cargandoVista; }
-            set
-            {
-                if (_cargandoVista != value)
-                {
-                    _cargandoVista = value;
-                    OnPropertyChanged(nameof(CargandoVista));
-                }
-            }
-        }
         private string _tituloActivo;
         private UCNotificacionViewModel _notificacionViewModel;
         public UCNotificacionViewModel NotificacionViewModel
@@ -102,7 +90,6 @@ namespace WPFApp1.ViewModels
             _isAniadirProductoActivo = false;
             _vistaActual = null;
             _procesando = false;
-            _cargandoVista = false;
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();
@@ -121,7 +108,7 @@ namespace WPFApp1.ViewModels
         }
         private void InspeccionarNotificacion(object NotificacionClickeada)
         {
-            //TODO: Implentación de accesos directos segun clasificacion de urgencia-importancia y contenido de notificación
+            //TODO: Implementación de accesos directos segun clasificacion de urgencia-importancia y contenido de notificación
             if(NotificacionClickeada is Notificacion _notificacion)
             {
                 switch(_notificacion.Urgencia)
@@ -200,10 +187,10 @@ namespace WPFApp1.ViewModels
         }
         private async Task CambiarVistaAsync(object nuevaVista)
         {
-            CargandoVista = true;
+            Procesando = true;
             await Task.Delay(200);
             VistaActual = nuevaVista;
-            CargandoVista = false;
+            Procesando = false;
         }
         private async void OnNotificacionEmergenteAsync(NotificacionEmergente Notificacion)
         {

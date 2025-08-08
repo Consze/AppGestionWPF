@@ -52,17 +52,6 @@ namespace WPFApp1.Servicios
         {
             this.rutaArchivoConfiguracion = @".\datos\configuracionSQLServer.json";
             this.rutaConfiguracionManual = @".\datos\estadoServidor.json";
-            try
-            {
-                InicializarEsquemaDB();
-            }
-            catch(Exception ex)
-            {
-                ServicioSFX sonidoSFX = new ServicioSFX();
-                sonidoSFX.Suspenso();
-                Notificacion _notificacion = new Notificacion { Mensaje = $"Error: {ex.Message}", Titulo = "Operación Fallida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
-                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-            }
         }
         public ConfiguracionSQLServer LeerArchivoConfiguracion()
         {
@@ -176,6 +165,22 @@ namespace WPFApp1.Servicios
             catch (Exception ex)
             {
                 Console.WriteLine($"Error {ex.Message}");
+                return false;
+            }
+        }
+        public bool ConexionInicial()
+        {
+            try
+            {
+                InicializarEsquemaDB();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ServicioSFX sonidoSFX = new ServicioSFX();
+                sonidoSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = $"Error: {ex.Message}", Titulo = "Operación Fallida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
                 return false;
             }
         }
@@ -352,6 +357,10 @@ namespace WPFApp1.Servicios
                     throw;
                 }
             }
+        }
+        public bool ConexionInicial()
+        {
+            return false;
         }
         public void InicializarEsquema()
         {
