@@ -2,7 +2,6 @@
 using System.Data.SQLite;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
-using WPFApp1.Servicios;
 
 namespace WPFApp1.Repositorios
 {
@@ -17,7 +16,7 @@ namespace WPFApp1.Repositorios
         {
             _dbConexionSQLite = dbConexionLocal;
         }
-        public bool InsertarRegistro(string Palabra, int ID)
+        public bool InsertarRegistro(string Palabra, string ID)
         {
             string consulta = "INSERT INTO Productos_titulos (producto_id, palabra) VALUES (@producto_id, @palabra);";
             try
@@ -51,7 +50,7 @@ namespace WPFApp1.Repositorios
                         {
                             PalabrasTitulosProductos palabraEncontrada = new PalabrasTitulosProductos();
                             palabraEncontrada.palabra = lector["palabra"].ToString();
-                            palabraEncontrada.producto_id = Convert.ToInt32(lector["producto_id"]);
+                            palabraEncontrada.producto_id = lector["producto_id"].ToString();
                             
                             if(palabraEncontrada.palabra != null)
                             {
@@ -68,7 +67,7 @@ namespace WPFApp1.Repositorios
             
             return palabraColeccionTitulos;
         }
-        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id)
+        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(string producto_id)
         {
             List<IDX_Prod_Titulos> registrosIDX = new List<IDX_Prod_Titulos>();
 
@@ -83,7 +82,7 @@ namespace WPFApp1.Repositorios
                         while (lector.Read())
                         {
                             int ID = Convert.ToInt32(lector["id"]);
-                            int prod_id = Convert.ToInt32(lector["producto_id"]);
+                            string prod_id = lector["producto_id"].ToString();
                             string Palabra = lector["palabra"].ToString();
                             IDX_Prod_Titulos registro = new IDX_Prod_Titulos
                             {
@@ -135,7 +134,7 @@ namespace WPFApp1.Repositorios
         {
             _dbSQLServer = dbConexionServer;
         }
-        public bool InsertarRegistro(string Palabra, int ID)
+        public bool InsertarRegistro(string Palabra, string ID)
         {
             string consulta = "INSERT INTO Productos_titulos (producto_id, palabra) VALUES (@producto_id, @palabra);";
             try
@@ -169,7 +168,7 @@ namespace WPFApp1.Repositorios
                         {
                             PalabrasTitulosProductos palabraEncontrada = new PalabrasTitulosProductos();
                             palabraEncontrada.palabra = lector["palabra"].ToString();
-                            palabraEncontrada.producto_id = Convert.ToInt32(lector["producto_id"]);
+                            palabraEncontrada.producto_id = lector["producto_id"].ToString();
 
                             if (palabraEncontrada.palabra != null)
                             {
@@ -186,7 +185,7 @@ namespace WPFApp1.Repositorios
 
             return palabraColeccionTitulos;
         }
-        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id)
+        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(string producto_id)
         {
             List<IDX_Prod_Titulos> registrosIDX = new List<IDX_Prod_Titulos>();
 
@@ -201,7 +200,7 @@ namespace WPFApp1.Repositorios
                         while(lector.Read())
                         {
                             int ID = Convert.ToInt32(lector["id"]);
-                            int prod_id = Convert.ToInt32(lector["producto_id"]);
+                            string prod_id = lector["producto_id"].ToString();
                             string Palabra = lector["palabra"].ToString();
                             IDX_Prod_Titulos registro = new IDX_Prod_Titulos
                             {

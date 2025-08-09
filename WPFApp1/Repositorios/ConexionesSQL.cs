@@ -4,8 +4,9 @@ using System.IO;
 using System.Text.Json;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;
+using WPFApp1.Servicios;
 
-namespace WPFApp1.Servicios
+namespace WPFApp1.Repositorios
 {
     public class ConfiguracionSQLServer()
     {
@@ -50,8 +51,8 @@ namespace WPFApp1.Servicios
             END";
         public ConexionDBSQLServer()
         {
-            this.rutaArchivoConfiguracion = @".\datos\configuracionSQLServer.json";
-            this.rutaConfiguracionManual = @".\datos\estadoServidor.json";
+            rutaArchivoConfiguracion = @".\datos\configuracionSQLServer.json";
+            rutaConfiguracionManual = @".\datos\estadoServidor.json";
         }
         public ConfiguracionSQLServer LeerArchivoConfiguracion()
         {
@@ -146,7 +147,7 @@ namespace WPFApp1.Servicios
         {
             try
             {
-                if (File.Exists(this.rutaConfiguracionManual))
+                if (File.Exists(rutaConfiguracionManual))
                 {
                     string jsonString = File.ReadAllText(rutaConfiguracionManual);
                     var configuracion = JsonSerializer.Deserialize<EstadoSQLServer>(jsonString);
@@ -217,14 +218,15 @@ namespace WPFApp1.Servicios
             Sinopsis TEXT,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
             ID TEXT PRIMARY KEY,
             FOREIGN KEY(Categoria_id) REFERENCES Categorias(ID)
         );
 
         CREATE TABLE IF NOT EXISTS Productos (
-            producto_id INTEGER PRIMARY KEY,
-            Nombre TEXT NOT NULL,
-            Categoria TEXT NOT NULL, 
+            id NVARCHAR(MAX) PRIMARY KEY,
+            Nombre VARCHAR(255) NOT NULL,
+            Categoria VARCHAR(255) NOT NULL, 
             Precio INTEGER NOT NULL,  
             ruta_imagen VARCHAR
         );
@@ -232,7 +234,7 @@ namespace WPFApp1.Servicios
         CREATE TABLE IF NOT EXISTS Productos_titulos (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             producto_id INTEGER NOT NULL,
-            palabra TEXT NOT NULL COLLATE NOCASE,
+            palabra VARCHAR NOT NULL COLLATE NOCASE,
             UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,
             FOREIGN KEY(producto_id) REFERENCES Productos(producto_id)
         );
@@ -255,14 +257,16 @@ namespace WPFApp1.Servicios
             Nombre TEXT NOT NULL,
             ID TEXT PRIMARY KEY,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
         );
 
         CREATE TABLE IF NOT EXISTS Categorias (
             Nombre TEXT NOT NULL,
             ID TEXT PRIMARY KEY,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
         );
 
         CREATE TABLE IF NOT EXISTS Libros_Ediciones (
@@ -273,6 +277,7 @@ namespace WPFApp1.Servicios
             cantidadPaginas INT,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
             ID TEXT PRIMARY KEY,
             FOREIGN KEY(libro_id) REFERENCES Libros(ID),
             FOREIGN KEY(editorial_id) REFERENCES Editoriales(ID)
@@ -303,14 +308,16 @@ namespace WPFApp1.Servicios
             ID TEXT PRIMARY KEY,
             Condicion TEXT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
         );
 
         CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
             ID TEXT PRIMARY KEY,
             Descripcion TEXT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
         );
 
         CREATE TABLE IF NOT EXISTS Libros_Formatos (
@@ -320,7 +327,8 @@ namespace WPFApp1.Servicios
             Largo FLOAT NOT NULL,
             Ancho FLOAT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
         );
 
         CREATE TABLE IF NOT EXISTS Colores (
@@ -328,7 +336,8 @@ namespace WPFApp1.Servicios
             Codigo_Hexadecimal TEXT NOT NULL,
             Nombre TEXT,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
         );";
         public SQLiteConnection Conexion { get; private set; }
         public ConexionDBSQLite()
@@ -364,7 +373,7 @@ namespace WPFApp1.Servicios
         }
         public void InicializarEsquema()
         {
-            this.CrearTabla(esquemaDB);
+            CrearTabla(esquemaDB);
         }
         public List<TablaEsquema> LeerArchivoEsquemaTablas()
         {
@@ -438,7 +447,7 @@ namespace WPFApp1.Servicios
         }
         public SQLiteConnection ObtenerConexionDB()
         {
-            SQLiteConnection conexion = new SQLiteConnection(this.CadenaConexion);
+            SQLiteConnection conexion = new SQLiteConnection(CadenaConexion);
             conexion.Open();
             return conexion;
         }

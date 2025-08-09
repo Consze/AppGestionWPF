@@ -4,6 +4,7 @@ using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 using System.IO;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
@@ -25,8 +26,10 @@ namespace WPFApp1.Conmutadores
             _sqliteFactory = sqliteFactory;
             _sqlServerFactory = sqlServerFactory;
         }
-        public int CrearProducto(Productos producto)
+        public string CrearProducto(Productos producto)
         {
+            Guid nuevaID = Guid.NewGuid();
+            producto.ID = nuevaID.ToString();
             if (RepositorioServidor.LeerConfiguracionManual())
             {
                 try
@@ -68,7 +71,7 @@ namespace WPFApp1.Conmutadores
                 return sqliteRepo.ActualizarProducto(producto);
             }
         }
-        public Productos RecuperarProductoPorID(int producto_id)
+        public Productos RecuperarProductoPorID(string producto_id)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
             {
@@ -89,7 +92,7 @@ namespace WPFApp1.Conmutadores
                 return sqliteRepo.RecuperarProductoPorID(producto_id);
             }
         }
-        public bool EliminarProducto(int producto_id)
+        public bool EliminarProducto(string producto_id)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
             {

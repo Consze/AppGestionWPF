@@ -211,12 +211,16 @@ namespace WPFApp1.ViewModels
         {
             List<Productos> registros = await Task.Run(() => _servicioIndexacion.BuscarTituloProductos(Titulo));
 
-            ColeccionProductos.Clear();
-            foreach (var producto in registros)
+            App.Current.Dispatcher.Invoke(() =>
             {
-                producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
-                ColeccionProductos.Add(producto);
-            }
+                ColeccionProductos.Clear();
+                foreach (var producto in registros)
+                {
+                    producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
+                    ColeccionProductos.Add(producto);
+                }
+            });
+            
         }
         private async Task LimpiarBusquedaAsync()
         {

@@ -5,7 +5,6 @@ using System.Data.SQLite;
 using System.IO;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
-using WPFApp1.Servicios;
 
 namespace WPFApp1.Repositorios
 {
@@ -16,10 +15,10 @@ namespace WPFApp1.Repositorios
         {
             _accesoDB = accesoDB;
         }
-        public Productos RecuperarProductoPorID(int producto_id)
+        public Productos RecuperarProductoPorID(string producto_id)
         {
-            Productos Registro = new Productos(0, "", "", 0, "");
-            string Consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
+            Productos Registro = new Productos(null, "", "", 0, "");
+            string Consulta = "SELECT * FROM Productos WHERE id = @id;";
             try
             {
                 using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
@@ -29,7 +28,7 @@ namespace WPFApp1.Repositorios
                     {
                         while (Lector.Read())
                         {
-                            Registro.ID = Convert.ToInt32(Lector["producto_id"]);
+                            Registro.ID = Lector["id"].ToString();
                             Registro.Nombre = Lector["Nombre"].ToString();
                             Registro.Categoria = Lector["Categoria"].ToString();
                             Registro.Precio = Convert.ToInt32(Lector["Precio"]);
@@ -52,7 +51,7 @@ namespace WPFApp1.Repositorios
         {
             Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
 
-            if (ProductoVigente.ID > 0 && ProductoVigente != null) // Validar registro
+            if (ProductoVigente != null) // Validar registro
             {
                 FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
 
@@ -106,7 +105,7 @@ namespace WPFApp1.Repositorios
                     Propiedades.RutaImagenCambiada = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                Consulta += " WHERE producto_id = @id;";
+                Consulta += " WHERE id = @id;";
 
                 if (Propiedades.ContadorCambios > 0)
                 {
@@ -119,7 +118,6 @@ namespace WPFApp1.Repositorios
                         if (Propiedades.RutaImagenCambiada) { Comando.Parameters.AddWithValue("@ruta_imagen", productoModificado.RutaImagen); }
 
                         int FilasAfectadas = Comando.ExecuteNonQuery();
-                        //_indexadorProductoService.IndexarProducto(productoModificado.Nombre, productoModificado.ID);
                         _accesoDB.CerrarConexionDB();
                         return FilasAfectadas > 0;
                     }
@@ -134,40 +132,38 @@ namespace WPFApp1.Repositorios
                 return false;
             }
         }
-        public int CrearProducto(Productos producto)
+        public string CrearProducto(Productos producto)
         {
-            string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@nombre, @categoria, @precio, @ruta_imagen);";
-            int nuevoProductoId = 0;
+            string Consulta = "INSERT INTO Productos (ID, Nombre, Categoria, Precio, Ruta_imagen) VALUES (@id, @nombre, @categoria, @precio, @ruta_imagen);";
+            string nuevoProductoId = null;
             try
             {
                 using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                 {
+                    Comando.Parameters.AddWithValue("@id", producto.ID);
                     Comando.Parameters.AddWithValue("@nombre", producto.Nombre);
                     Comando.Parameters.AddWithValue("@categoria", producto.Categoria);
                     Comando.Parameters.AddWithValue("@precio", producto.Precio);
                     Comando.Parameters.AddWithValue("@ruta_imagen", producto.RutaImagen);
                     Comando.ExecuteNonQuery();
 
-                    Comando.CommandText = "SELECT last_insert_rowid()";
-                    nuevoProductoId = Convert.ToInt32(Comando.ExecuteScalar());
-                    //_indexadorProductoService.IndexarProducto(producto.Nombre, nuevoProductoId);
-                    return nuevoProductoId;
+                    return producto.ID;
                 }
             }
             catch (SQLiteException ex)
             {
                 Console.WriteLine($"Error : {ex.Message}");
-                return nuevoProductoId;
+                return producto.ID;
             }
             finally
             {
                 _accesoDB.CerrarConexionDB();
             }
         }
-        public bool EliminarProducto(int producto_id)
+        public bool EliminarProducto(string producto_id)
         {
             Productos Registro = RecuperarProductoPorID(producto_id);
-            string Consulta = "DELETE FROM Productos WHERE producto_id = @id";
+            string Consulta = "DELETE FROM Productos WHERE id = @id";
             if (Registro != null)
             {
                 try
@@ -201,7 +197,7 @@ namespace WPFApp1.Repositorios
                 {
                     while (Lector.Read())
                     {
-                        int ProductoID = Convert.ToInt32(Lector["producto_id"]);
+                        string ProductoID = Lector["id"].ToString();
                         int Precio = Convert.ToInt32(Lector["Precio"]);
                         string Nombre = Lector["Nombre"].ToString();
                         string Categoria = Lector["Categoria"].ToString();
@@ -270,10 +266,10 @@ namespace WPFApp1.Repositorios
         {
             _conexionCadena = rutaConexion;
         }
-        public Productos RecuperarProductoPorID(int producto_id)
+        public Productos RecuperarProductoPorID(string producto_id)
         {
-            string consulta = "SELECT * FROM Productos WHERE producto_id = @id;";
-            Productos registro = new Productos(0, "", "", 0, "");
+            string consulta = "SELECT * FROM Productos WHERE id = @id;";
+            Productos registro = new Productos(null, "", "", 0, "");
             try
             {
                 using (SqlConnection conexion = new SqlConnection(_conexionCadena))
@@ -285,7 +281,7 @@ namespace WPFApp1.Repositorios
                         SqlDataReader Lector = comando.ExecuteReader();
                         while (Lector.Read())
                         {
-                            registro.ID = Convert.ToInt32(Lector["producto_id"]);
+                            registro.ID = Lector["id"].ToString();
                             registro.Nombre = Lector["Nombre"].ToString();
                             registro.Categoria = Lector["Categoria"].ToString();
                             registro.Precio = Convert.ToInt32(Lector["Precio"]);
@@ -306,7 +302,7 @@ namespace WPFApp1.Repositorios
         {
             string Consulta = "UPDATE Productos SET ";
             Productos ProductoVigente = RecuperarProductoPorID(productoModificado.ID);
-            if(ProductoVigente != null && ProductoVigente.ID > 0)
+            if(ProductoVigente != null)
             {
                 FlagsCambiosProductos Propiedades = new FlagsCambiosProductos();
 
@@ -358,7 +354,7 @@ namespace WPFApp1.Repositorios
                     Propiedades.RutaImagenCambiada = true;
                     Propiedades.ContadorCambios += 1;
                 }
-                Consulta += " WHERE producto_id = @id;";
+                Consulta += " WHERE id = @id;";
 
                 if (Propiedades.ContadorCambios > 0)
                 {
@@ -395,9 +391,9 @@ namespace WPFApp1.Repositorios
                 return false;
             }
         }
-        public int CrearProducto(Productos producto)
+        public string CrearProducto(Productos producto)
         {
-            string Consulta = "INSERT INTO Productos (Nombre, Categoria, Precio, Ruta_imagen) VALUES (@Nombre, @Categoria, @Precio, @Ruta_imagen); SELECT SCOPE_IDENTITY();";
+            string Consulta = "INSERT INTO Productos (ID, Nombre, Categoria, Precio, Ruta_imagen) VALUES (@id, @Nombre, @Categoria, @Precio, @Ruta_imagen); SELECT SCOPE_IDENTITY();";
             try
             {
                 using (SqlConnection conexion = new SqlConnection(_conexionCadena))
@@ -405,33 +401,25 @@ namespace WPFApp1.Repositorios
                     conexion.Open();
                     using (SqlCommand comando = new SqlCommand(Consulta, conexion))
                     {
+                        comando.Parameters.AddWithValue("@id", producto.ID);
                         comando.Parameters.AddWithValue("@Nombre", producto.Nombre);
                         comando.Parameters.AddWithValue("@Categoria", producto.Categoria);
                         comando.Parameters.AddWithValue("@Precio", producto.Precio);
                         comando.Parameters.AddWithValue("@Ruta_imagen", producto.RutaImagen);
 
-                        object resultado = comando.ExecuteScalar();
-
-                        if (resultado != null && resultado != DBNull.Value)
-                        {
-                            return Convert.ToInt32(resultado);
-                        }
-                        else
-                        {
-                            return 0;
-                        }
+                        return producto.ID;
                     }
                 }
             }
             catch(SqlException ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                return 0;
+                return null;
             }
         }
-        public bool EliminarProducto(int producto_id)
+        public bool EliminarProducto(string producto_id)
         {
-            string consulta = "DELETE FROM Productos WHERE producto_id = @id;";
+            string consulta = "DELETE FROM Productos WHERE id = @id;";
             try
             {
                 using (SqlConnection conexion = new SqlConnection(_conexionCadena))
@@ -466,10 +454,10 @@ namespace WPFApp1.Repositorios
                         {
                             while(lector.Read())
                             {
-                                Productos _registro = new Productos(0, "", "", 0 , "");
+                                Productos _registro = new Productos(null, "", "", 0 , "");
                                 _registro.Nombre = lector["Nombre"].ToString();
-                                _registro.ID = Convert.ToInt32(lector["producto_id"]);
-                                _registro.Precio = Convert.ToInt32(lector["precio"]);
+                                _registro.ID = lector["id"].ToString();
+                                _registro.Precio = Convert.ToInt32(lector["Precio"]);
                                 _registro.Categoria = lector["categoria"].ToString();
                                 _registro.RutaImagen = string.IsNullOrWhiteSpace(lector["ruta_imagen"].ToString()) ? string.Empty : Path.GetFullPath(lector["ruta_imagen"].ToString());
 

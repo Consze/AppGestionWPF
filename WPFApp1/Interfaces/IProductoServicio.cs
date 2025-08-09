@@ -5,9 +5,9 @@ namespace WPFApp1.Interfaces
     public interface IProductoServicio
     {
         bool ActualizarProducto(Productos producto);
-        int CrearProducto(Productos producto);
-        Productos RecuperarProductoPorID(int producto_id);
-        bool EliminarProducto(int producto_id);
+        string CrearProducto(Productos producto);
+        Productos RecuperarProductoPorID(string producto_id);
+        bool EliminarProducto(string producto_id);
         List<Productos> LeerProductos();
         bool CrearLibro(List<Productos> Productos);
     }

@@ -105,7 +105,7 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        public int IDProducto { get; set; }
+        public string IDProducto { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
         private ServicioSFX _servicioSFX { get; set; }
@@ -122,7 +122,7 @@ namespace WPFApp1.ViewModels
             AltoImagenSeleccionada = 0;
             CalculoAlturaMarco = 0;
             CalculoAnchoMarco = 0;
-            IDProducto = 0;
+            IDProducto = null;
 
             //Entidad
             NombreProducto = string.Empty;
@@ -396,12 +396,12 @@ namespace WPFApp1.ViewModels
                 }
             }
 
-            Productos _nuevoProducto = new Productos(0,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
-            int Resultado = _productoService.CrearProducto(_nuevoProducto);
-            if (Resultado > -1 )
+            Productos _nuevoProducto = new Productos(null,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
+            string Resultado = _productoService.CrearProducto(_nuevoProducto);
+            if (Resultado != null )
             {
                 _servicioIndexacion.IndexarProducto(_nuevoProducto);
-                _nuevoProducto.ID = Convert.ToInt32(Resultado);
+                _nuevoProducto.ID = Resultado.ToString();
                 _nuevoProducto.RutaImagen = string.IsNullOrWhiteSpace(_nuevoProducto.RutaImagen)  ? string.Empty : Path.GetFullPath(_nuevoProducto.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
                 CerrarVistaCommand.Execute(0);

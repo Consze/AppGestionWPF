@@ -17,7 +17,7 @@ namespace WPFApp1.Servicios
         }
         public List<CoincidenciasBusqueda> RecuperarRegistros(string TerminoBusqueda)
         {
-            Dictionary<int, CoincidenciasBusqueda> resultadosPorProductoId = new Dictionary<int, CoincidenciasBusqueda>();
+            Dictionary<string, CoincidenciasBusqueda> resultadosPorProductoId = new Dictionary<string, CoincidenciasBusqueda>();
             List<string> TituloPalabras = _indexadorServicio.ObtenerPalabrasAtomicasFiltradas(TerminoBusqueda);
 
             foreach (string palabra in TituloPalabras)
@@ -52,7 +52,7 @@ namespace WPFApp1.Servicios
             foreach (CoincidenciasBusqueda Coincidencia in CoincidenciasProductos)
             {
                 Productos registro = _productoServicio.RecuperarProductoPorID(Coincidencia.producto_id);
-                if (registro != null && registro.ID != 0)
+                if (registro != null)
                 {
                     ProductosCoincidentes.Add(registro);
                 }
@@ -69,7 +69,7 @@ namespace WPFApp1.Servicios
         public void IndexarProducto(Productos Producto)
         {
             string titulo = Producto.Nombre;
-            int ID = Producto.ID;
+            string ID = Producto.ID;
             if (!string.IsNullOrWhiteSpace(titulo))
             {
                 List<string> TituloPalabras = _indexadorServicio.ObtenerPalabrasAtomicasFiltradas(titulo);
@@ -81,7 +81,7 @@ namespace WPFApp1.Servicios
                 }
             }
         }
-        public void LimpiarReferenciasObsoletas(int producto_id, List<string> PalabrasTitulo)
+        public void LimpiarReferenciasObsoletas(string producto_id, List<string> PalabrasTitulo)
         {
             List<IDX_Prod_Titulos> registrosIDX = _repositorioIndexacion.RecuperarIndicesPorProductoID(producto_id);
             //List<string> palabras = registrosIDX.Select(idx => idx.palabra).ToList();

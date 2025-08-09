@@ -1,6 +1,6 @@
 ﻿using WPFApp1.Interfaces;
-using WPFApp1.Servicios;
 using WPFApp1.DTOS;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
@@ -29,7 +29,7 @@ namespace WPFApp1.Conmutadores
             }
             return Palabras;
         }
-        public bool InsertarRegistro(string Palabra, int ID)
+        public bool InsertarRegistro(string Palabra, string ID)
         {
             if (_conexionServidor.LeerConfiguracionManual())
             {
@@ -40,7 +40,7 @@ namespace WPFApp1.Conmutadores
                 return _repositorioLocal.InsertarRegistro(Palabra, ID);
             }
         }
-        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(int producto_id)
+        public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(string producto_id)
         {
             if (_conexionServidor.LeerConfiguracionManual())
             {

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;
+using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -251,11 +252,10 @@ namespace WPFApp1.ViewModels
             {
                 BotonesActivos = false;
                 string cadenaConexion = CadenaConexionAServidor;
-                ConexionDBSQLServer _configuracionServidor = new ConexionDBSQLServer();
-                _configuracionServidor.CadenaConexion = cadenaConexion;
-                bool conexionExitosa = await Task.Run(() => _configuracionServidor.ProbarConexion(cadenaConexion));
-                _configuracionServidor.ConexionValida = conexionExitosa;
-                await Task.Run(() => _configuracionServidor.GuardarEstadoConexion());
+                _repositorioServidor.CadenaConexion = cadenaConexion;
+                bool conexionExitosa = await Task.Run(() => _repositorioServidor.ProbarConexion(cadenaConexion));
+                _repositorioServidor.ConexionValida = conexionExitosa;
+                await Task.Run(() => _repositorioServidor.GuardarEstadoConexion());
                 Procesando = false;
                 BotonesActivos = true;
                 if (conexionExitosa)

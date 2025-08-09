@@ -2,7 +2,7 @@
 {
     public class PalabrasTitulosProductos
     {
-        public int producto_id { get; set; }
+        public string producto_id { get; set; }
         public string palabra { get; set; }
     }
 }

@@ -4,8 +4,8 @@ namespace WPFApp1.DTOS
 {
     public class Productos : INotifyPropertyChanged
     {
-        private int _id;
-        public int ID
+        private string _id;
+        public string ID
         {
             get { return _id; }
             set { _id = value; OnPropertyChanged(nameof(ID)); }
@@ -36,7 +36,7 @@ namespace WPFApp1.DTOS
             set { _rutaImagen = value; OnPropertyChanged(nameof(RutaImagen)); }
         }
 
-        public Productos(int ProductoID, string NombreDeProducto, string CategoriaDeProducto, int PrecioDeProducto, string RutaAImagen)
+        public Productos(string ProductoID, string NombreDeProducto, string CategoriaDeProducto, int PrecioDeProducto, string RutaAImagen)
         {
             ID = ProductoID;
             Nombre = NombreDeProducto;
