@@ -69,7 +69,7 @@
                         </ContentControl.Content>
                     </ContentControl>
                 </Border>
-
+                
                 <Button x:Name="Retroceso" Margin="5,0,0,0" BorderThickness="0" Command="{Binding LimpiarBusquedaCommand}" Visibility="{Binding MostrarBotonRegresar, Converter={StaticResource BooleanToVisibility}}">
                     <Button.Background>
                         <SolidColorBrush Color="Transparent"/>
@@ -79,12 +79,68 @@
             </StackPanel>
             
             <StackPanel Orientation="Horizontal" Grid.Column="2">
-                <Button x:Name="Busqueda" Margin="0,0,0,0" BorderThickness="0" Command="{Binding BuscarTituloCommand}">
-                    <Button.Background>
-                        <SolidColorBrush Color="Transparent"/>
-                    </Button.Background>
-                    <Image Width="20" Height="20" Source="/iconos/busqueda1.png" Style="{StaticResource ImagenHover}"/>
-                </Button>
+                <Border Background="White"
+                    CornerRadius="10"
+                    Height="30"
+                    Width="250"
+                    HorizontalAlignment="Left"
+                    Margin="0,0,10,0">
+                    <Border.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding BuscarTituloCommand}" />
+                    </Border.InputBindings>
+                    <Grid>
+                        <TextBlock x:Name="Placeholder"
+                       Text="Buscar"
+                       IsHitTestVisible="False"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Margin="40,0,0,0"
+                       Foreground="#A0A0A0"
+                       Width="200"
+                       Height="20"
+                       FontSize="18">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=BusquedaTextbox, Path=Text.IsEmpty}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBox x:Name="BusquedaTextbox" 
+                                 Height="20" 
+                                 HorizontalAlignment="Left" 
+                                 Width="200" 
+                                 Background="Transparent" 
+                                 FontSize="18" 
+                                 TextAlignment="Center" 
+                                 Margin="40,0,0,0" 
+                                 BorderThickness="0"
+                                 Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsKeyboardFocused" Value="True">
+                                            <Setter Property="Foreground" Value="Black"/>
+                                        </Trigger>
+                                        <Trigger Property="Text" Value="">
+                                            <Setter Property="Foreground" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                            </TextBox>
+                            <Button x:Name="Busqueda" Margin="10,0,0,0" BorderThickness="0" Command="{Binding BuscarTituloCommand}" HorizontalAlignment="Left">
+                            <Button.Background>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Button.Background>
+                            <Image Width="20" Height="20" Source="/iconos/busqueda1.png"/>
+                        </Button>
+                    </Grid>
+                </Border>
 
                 <Button Style="{StaticResource BotonSinEstilo}" Margin="10,2,10,0" 
                 HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AlternarFormatoVistaCommand}">

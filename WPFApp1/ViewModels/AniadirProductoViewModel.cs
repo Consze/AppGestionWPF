@@ -4,9 +4,10 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using WPFApp1.DTOS;
+using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
-using WPFApp1.Servicios;
 using WPFApp1.Mensajes;
+using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
 {
@@ -152,7 +153,7 @@ namespace WPFApp1.ViewModels
                 AniadirProducto(0);
             }
         }
-        public void ConfigurarEdicionDeProducto(Productos Producto)
+        public void ConfigurarEdicionDeProducto(ProductoBase Producto)
         {
             // Configurar Bindings
             EsModoEdicion = true;
@@ -228,14 +229,20 @@ namespace WPFApp1.ViewModels
                 }
             }
 
-            //validar imagen
+            // Solicitar cambio a servicio de Productos y mostrar resultado
             Productos ProductoModificado = new Productos(IDProducto, NombreProducto, CategoriaProducto, PrecioProducto, RutaImagenSeleccionada);
+            ProductoBase ProductoMensaje = new ProductoBase { ID = ProductoModificado.ID,
+                Nombre = ProductoModificado.Nombre,
+                Categoria = ProductoModificado.Categoria,
+                Precio = ProductoModificado.Precio,
+                RutaImagen = ProductoModificado.RutaImagen
+            };
 
             if (_productoService.ActualizarProducto(ProductoModificado))
             {
                 _servicioIndexacion.IndexarProducto(ProductoModificado);
-                ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(ProductoModificado.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoModificado.RutaImagen);
-                Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
+                ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen);
+                Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoMensaje });
                 CerrarVistaCommand.Execute(0);
                 _servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada",IconoRuta  = Path.GetFullPath(IconoNotificacion.OK) ,Urgencia = MatrizEisenhower.C1 };
@@ -397,13 +404,22 @@ namespace WPFApp1.ViewModels
             }
 
             Productos _nuevoProducto = new Productos(null,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
+            ProductoBase ProductoMensaje = new ProductoBase
+            {
+                ID = null,
+                Nombre = _nuevoProducto.Nombre,
+                Categoria = _nuevoProducto.Categoria,
+                Precio = _nuevoProducto.Precio,
+                RutaImagen = _nuevoProducto.RutaImagen
+            };
+
             string Resultado = _productoService.CrearProducto(_nuevoProducto);
             if (Resultado != null )
             {
                 _servicioIndexacion.IndexarProducto(_nuevoProducto);
-                _nuevoProducto.ID = Resultado.ToString();
-                _nuevoProducto.RutaImagen = string.IsNullOrWhiteSpace(_nuevoProducto.RutaImagen)  ? string.Empty : Path.GetFullPath(_nuevoProducto.RutaImagen); ;
-                Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = _nuevoProducto});
+                ProductoMensaje.ID = Resultado.ToString();
+                ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen)  ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen); ;
+                Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });
                 CerrarVistaCommand.Execute(0);
                 _servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item añadido con exito", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };

@@ -32,7 +32,7 @@ namespace WPFApp1.Repositorios
                 CREATE TABLE dbo.Productos_titulos (
                     ID INT PRIMARY KEY IDENTITY(1,1),
                     producto_id INT NOT NULL,
-                    palabra NVARCHAR(255) NOT NULL
+                    palabra VARCHAR(255) NOT NULL
                 ); 
             END
             
@@ -224,7 +224,7 @@ namespace WPFApp1.Repositorios
         );
 
         CREATE TABLE IF NOT EXISTS Productos (
-            id NVARCHAR(MAX) PRIMARY KEY,
+            id TEXT PRIMARY KEY,
             Nombre VARCHAR(255) NOT NULL,
             Categoria VARCHAR(255) NOT NULL, 
             Precio INTEGER NOT NULL,  

@@ -1,9 +1,9 @@
-﻿using WPFApp1.DTOS;
+﻿using WPFApp1.Entidades;
 
 namespace WPFApp1.Mensajes
 {
     public class ProductoAniadidoMensaje
     {
-        public Productos NuevoProducto { get; set; }
+        public ProductoBase NuevoProducto { get; set; }
     }
 }
