@@ -3,7 +3,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using NPOI.SS.Formula.Functions;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -269,7 +268,7 @@ namespace WPFApp1.ViewModels
             }
             else
             {
-                ProductoMensaje.MostrarCategoria = false;
+                ProductoMensaje.MostrarCategoria = true;
             }
 
             if (_productoService.ActualizarProducto(ProductoModificado))

@@ -298,6 +298,10 @@ namespace WPFApp1.ViewModels
                 {
                     _registro.MostrarCategoria = true;
                 }
+                else
+                {
+                    _registro.MostrarCategoria = false;
+                }
                 ColeccionProductos.Add(_registro);
             }
         }
@@ -332,8 +336,8 @@ namespace WPFApp1.ViewModels
         {
             if(Mensaje?.ProductoModificado != null)
             {
-                ProductoBase ProductoModificado = Mensaje.ProductoModificado;
-                ProductoBase productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
+                ProductoCatalogo ProductoModificado = Mensaje.ProductoModificado;
+                ProductoCatalogo productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
                 if (productoAEditar != null)
                 {
                     productoAEditar.Nombre = ProductoModificado.Nombre;
