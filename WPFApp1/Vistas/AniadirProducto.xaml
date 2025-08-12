@@ -37,7 +37,7 @@
                     <TextBox x:Name="CampoNombre" Text="{Binding NombreProducto}"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" Margin="5">
+                <StackPanel Orientation="Vertical" Margin="5" Visibility="{Binding ItemConCategoria, Converter={StaticResource BooleanToVisibility}}">
                     <TextBlock Text="Categoria" FontWeight="ExtraLight"/>
                     <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaProducto}"/>
                 </StackPanel>

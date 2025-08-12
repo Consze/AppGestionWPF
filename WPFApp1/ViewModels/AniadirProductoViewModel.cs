@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using NPOI.SS.Formula.Functions;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -106,6 +107,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _itemConCategoria;
+        public bool ItemConCategoria
+        {
+            get { return _itemConCategoria; }
+            set
+            {
+                if (_itemConCategoria != value)
+                {
+                    _itemConCategoria = value;
+                    OnPropertyChanged(nameof(ItemConCategoria));
+                }
+            }
+        }
         public string IDProducto { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
@@ -129,6 +143,7 @@ namespace WPFApp1.ViewModels
             NombreProducto = string.Empty;
             CategoriaProducto = string.Empty;
             PrecioProducto = 0;
+            ItemConCategoria = true;
 
             NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
@@ -164,8 +179,18 @@ namespace WPFApp1.ViewModels
             IDProducto = Producto.ID;
             NombreDeVentana = "Editar Producto";
 
-            // Obtener dimensiones de imagen
-            CargarDimensionesImagen(RutaImagenSeleccionada);
+            //
+            if (Producto is Libro _libro)
+            {
+                ItemConCategoria = true;
+            }
+            else
+            {
+                ItemConCategoria = false;
+            }
+
+                // Obtener dimensiones de imagen
+                CargarDimensionesImagen(RutaImagenSeleccionada);
             LadoMasLargo lado = new LadoMasLargo();
             int UBound = 0;
             int LBound = 0;
@@ -231,12 +256,21 @@ namespace WPFApp1.ViewModels
 
             // Solicitar cambio a servicio de Productos y mostrar resultado
             Productos ProductoModificado = new Productos(IDProducto, NombreProducto, CategoriaProducto, PrecioProducto, RutaImagenSeleccionada);
-            ProductoBase ProductoMensaje = new ProductoBase { ID = ProductoModificado.ID,
+            ProductoCatalogo ProductoMensaje = new ProductoCatalogo
+            { ID = ProductoModificado.ID,
                 Nombre = ProductoModificado.Nombre,
                 Categoria = ProductoModificado.Categoria,
                 Precio = ProductoModificado.Precio,
                 RutaImagen = ProductoModificado.RutaImagen
             };
+            if(string.IsNullOrWhiteSpace(ProductoModificado.Categoria))
+            {
+                ProductoMensaje.MostrarCategoria = false;
+            }
+            else
+            {
+                ProductoMensaje.MostrarCategoria = false;
+            }
 
             if (_productoService.ActualizarProducto(ProductoModificado))
             {
@@ -245,7 +279,7 @@ namespace WPFApp1.ViewModels
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoMensaje });
                 CerrarVistaCommand.Execute(0);
                 _servicioSFX.Confirmar();
-                Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada",IconoRuta  = Path.GetFullPath(IconoNotificacion.OK) ,Urgencia = MatrizEisenhower.C1 };
+                Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
             else
@@ -404,7 +438,7 @@ namespace WPFApp1.ViewModels
             }
 
             Productos _nuevoProducto = new Productos(null,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
-            ProductoBase ProductoMensaje = new ProductoBase
+            ProductoCatalogo ProductoMensaje = new ProductoCatalogo
             {
                 ID = null,
                 Nombre = _nuevoProducto.Nombre,
@@ -412,8 +446,16 @@ namespace WPFApp1.ViewModels
                 Precio = _nuevoProducto.Precio,
                 RutaImagen = _nuevoProducto.RutaImagen
             };
+            if(string.IsNullOrWhiteSpace(_nuevoProducto.Categoria))
+            {
+                ProductoMensaje.MostrarCategoria = false;
+            }
+            else
+            {
+                ProductoMensaje.MostrarCategoria = true;
+            }
 
-            string Resultado = _productoService.CrearProducto(_nuevoProducto);
+                string Resultado = _productoService.CrearProducto(_nuevoProducto);
             if (Resultado != null )
             {
                 _servicioIndexacion.IndexarProducto(_nuevoProducto);

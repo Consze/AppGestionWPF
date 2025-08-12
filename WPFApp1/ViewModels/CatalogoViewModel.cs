@@ -6,11 +6,14 @@ using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
-using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
 {
+    public class ProductoCatalogo : ProductoBase
+    {
+        public bool MostrarCategoria { get; set; }
+    }
     public enum VistaElegida
     {
         Tabla,
@@ -21,7 +24,7 @@ namespace WPFApp1.ViewModels
     {
         private readonly IProductoServicio _productoServicio;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
-        public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
+        public ObservableCollection<ProductoCatalogo> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
         public bool MostrarBotonRegresar
         {
@@ -128,8 +131,8 @@ namespace WPFApp1.ViewModels
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
-            ColeccionProductos = new ObservableCollection<ProductoBase>();
-            EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
+            ColeccionProductos = new ObservableCollection<ProductoCatalogo>();
+            EliminarItemCommand = new RelayCommand<ProductoCatalogo>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
@@ -169,7 +172,7 @@ namespace WPFApp1.ViewModels
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
             Procesando = false;
         }
-        public void EliminarItem(ProductoBase ProductoEliminar)
+        public void EliminarItem(ProductoCatalogo ProductoEliminar)
         {
             if(ProductoEliminar != null)
             {
@@ -226,7 +229,15 @@ namespace WPFApp1.ViewModels
                 foreach (var producto in registros)
                 {
                     producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
-                    ProductoBase _registro = new ProductoBase { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen };
+                    ProductoCatalogo _registro = new ProductoCatalogo { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen };
+                    if (string.IsNullOrEmpty(_registro.Categoria))
+                    {
+                        _registro.MostrarCategoria = false;
+                    }
+                    else
+                    {
+                        _registro.MostrarCategoria = true;
+                    }
                     ColeccionProductos.Add(_registro);
                 }
             });
@@ -282,7 +293,11 @@ namespace WPFApp1.ViewModels
 
             foreach (var producto in registros)
             {
-                ProductoBase _registro = new ProductoBase { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen};
+                ProductoCatalogo _registro = new ProductoCatalogo { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen};
+                if(_registro is Libro) // TODO: Recuperar registros de demas repositorios de entidad
+                {
+                    _registro.MostrarCategoria = true;
+                }
                 ColeccionProductos.Add(_registro);
             }
         }
