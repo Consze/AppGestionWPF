@@ -9,6 +9,7 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
+
 var app = builder.Build();
 app.UseCors("AllowAnyOrigin");
 app.UseStaticFiles();
