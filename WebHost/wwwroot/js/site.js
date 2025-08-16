@@ -1,9 +1,4 @@
-﻿/**const boton = document.getElementById('Boton1');
-
-boton.addEventListener('click', () => {
-    alert('Botón presionado!');
-});*/
-
+﻿
 const formulario = document.getElementById('formularioSubirImagen');
 
 formulario.addEventListener('submit', async (e) => {
