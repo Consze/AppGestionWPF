@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.Sqlite;
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
@@ -21,7 +22,7 @@ namespace WPFApp1.Repositorios
             string consulta = "INSERT INTO Productos_titulos (producto_id, palabra) VALUES (@producto_id, @palabra);";
             try
             {
-                using (SQLiteCommand comando = new SQLiteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
+                using (SqliteCommand comando = new SqliteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
                 {
                     comando.Parameters.AddWithValue("@producto_id", ID);
                     comando.Parameters.AddWithValue("@palabra", Palabra);
@@ -29,7 +30,7 @@ namespace WPFApp1.Repositorios
                     return true;
                 }
             }
-            catch(SQLiteException ex)
+            catch(SqliteException ex)
             {
                 Console.WriteLine($"Error {ex.Message}");
                 return false;

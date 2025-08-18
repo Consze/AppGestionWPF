@@ -1,6 +1,7 @@
 ﻿using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using System.Data.SQLite;
 using System.IO;
 using WPFApp1.DTOS;
@@ -209,6 +210,36 @@ namespace WPFApp1.Repositorios
                 }
             }
             return ListaProductos;
+        }
+        public async IAsyncEnumerable<Productos> LeerProductosAsync()
+        {
+            string consulta = "SELECT id, Nombre, Precio, Categoria, ruta_imagen FROM Productos";
+            using (var conexion = _accesoDB.ObtenerConexionDB())
+            {
+                await conexion.OpenAsync();
+                using (var comando = new SqliteCommand(consulta, conexion))
+                {
+                    using (var lector = await comando.ExecuteReaderAsync())
+                    {
+                        while (await lector.ReadAsync())
+                        {
+                            string productoID = lector["id"].ToString();
+                            int precio = Convert.ToInt32(lector["Precio"]);
+                            string nombre = lector["Nombre"].ToString();
+                            string categoria = lector["Categoria"].ToString();
+                            string rutaImagen = lector["ruta_imagen"].ToString();
+
+                            if (!string.IsNullOrWhiteSpace(rutaImagen))
+                            {
+                                rutaImagen = Path.GetFullPath(rutaImagen);
+                            }
+
+                            var registroActual = new Productos(productoID, nombre, categoria, precio, rutaImagen);
+                            yield return registroActual;
+                        }
+                    }
+                }
+            }
         }
         public bool CrearLibro(List<Productos> Productos)
         {
@@ -473,6 +504,37 @@ namespace WPFApp1.Repositorios
             }
 
             return RegistrosProductos;
+        }
+        public async IAsyncEnumerable<Productos> LeerProductosAsync()
+        {
+            string consulta = "SELECT id, Nombre, Precio, Categoria, ruta_imagen FROM Productos";
+
+            using (var conexion = new SqlConnection(_conexionCadena))
+            {
+                await conexion.OpenAsync();
+                using (var comando = new SqlCommand(consulta, conexion))
+                {
+                    using (var lector = await comando.ExecuteReaderAsync())
+                    {
+                        while (await lector.ReadAsync())
+                        {
+                            string productoID = lector["id"].ToString();
+                            int precio = Convert.ToInt32(lector["Precio"]);
+                            string nombre = lector["Nombre"].ToString();
+                            string categoria = lector["Categoria"].ToString();
+                            string rutaImagen = lector["ruta_imagen"].ToString();
+
+                            if (!string.IsNullOrWhiteSpace(rutaImagen))
+                            {
+                                rutaImagen = Path.GetFullPath(rutaImagen);
+                            }
+
+                            var registroActual = new Productos(productoID, nombre, categoria, precio, rutaImagen);
+                            yield return registroActual;
+                        }
+                    }
+                }
+            }
         }
         public bool CrearLibro(List<Productos> Productos)
         {

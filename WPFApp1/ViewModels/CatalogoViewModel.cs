@@ -289,12 +289,18 @@ namespace WPFApp1.ViewModels
         }
         private async Task CargarProductosAsync()
         {
-            List<Productos> registros = await Task.Run(() => _productoServicio.LeerProductos());
-
-            foreach (var producto in registros)
+            await foreach (var producto in _productoServicio.LeerProductosAsync())
             {
-                ProductoCatalogo _registro = new ProductoCatalogo { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen};
-                if(_registro is Libro) // TODO: Recuperar registros de demas repositorios de entidad
+                ProductoCatalogo _registro = new ProductoCatalogo
+                {
+                    Nombre = producto.Nombre,
+                    ID = producto.ID,
+                    Precio = producto.Precio,
+                    Categoria = producto.Categoria,
+                    RutaImagen = producto.RutaImagen
+                };
+                
+                if (_registro is Libro)
                 {
                     _registro.MostrarCategoria = true;
                 }
@@ -302,6 +308,7 @@ namespace WPFApp1.ViewModels
                 {
                     _registro.MostrarCategoria = false;
                 }
+
                 ColeccionProductos.Add(_registro);
             }
         }

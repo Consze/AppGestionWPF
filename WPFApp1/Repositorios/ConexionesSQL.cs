@@ -1,5 +1,5 @@
-﻿using System.Data.SqlClient;
-using System.Data.SQLite;
+﻿using Microsoft.Data.Sqlite;
+using System.Data.SqlClient;
 using System.IO;
 using System.Text.Json;
 using WPFApp1.DTOS;
@@ -339,7 +339,7 @@ namespace WPFApp1.Repositorios
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
         );";
-        public SQLiteConnection Conexion { get; private set; }
+        public SqliteConnection Conexion { get; private set; }
         public ConexionDBSQLite()
         {
             bool _BanderaCrearTablas = false;
@@ -349,18 +349,18 @@ namespace WPFApp1.Repositorios
                 Console.WriteLine($"Archivo de base de datos local no encontrado en : {_rutaArchivo}");
             }
 
-            using (SQLiteConnection conexion = ObtenerConexionDB())
+            using (SqliteConnection conexion = ObtenerConexionDB())
             {
                 try
                 {
-                    using (SQLiteCommand command = new SQLiteCommand("PRAGMA foreign_keys = ON;", conexion))
+                    using (SqliteCommand command = new SqliteCommand("PRAGMA foreign_keys = ON;", conexion))
                     {
                         command.ExecuteNonQuery();
                     }
                     conexion.Close();
                     InicializarEsquema();
                 }
-                catch (SQLiteException ex)
+                catch (SqliteException ex)
                 {
                     Console.WriteLine($"Error en la conexion a la base de datos {ex.Message}");
                     throw;
@@ -399,19 +399,19 @@ namespace WPFApp1.Repositorios
         }
         public bool ComprobarExistenciaTabla(string NombreTabla)
         {
-            using (SQLiteConnection conexion = ObtenerConexionDB())
+            using (SqliteConnection conexion = ObtenerConexionDB())
             {
                 string _PruebaConexion = $"SELECT * FROM {NombreTabla};";
-                using (SQLiteCommand comando = new SQLiteCommand(_PruebaConexion, conexion))
+                using (SqliteCommand comando = new SqliteCommand(_PruebaConexion, conexion))
                 {
                     try
                     {
-                        using (SQLiteDataReader Lector = comando.ExecuteReader())
+                        using (SqliteDataReader Lector = comando.ExecuteReader())
                         {
                             return true;
                         }
                     }
-                    catch (SQLiteException ex)
+                    catch (SqliteException ex)
                     {
                         if (ex.Message.Contains("no such table"))
                         {
@@ -428,26 +428,26 @@ namespace WPFApp1.Repositorios
         }
         public bool CrearTabla(string consulta)
         {
-            using (SQLiteConnection conexion = ObtenerConexionDB())
+            using (SqliteConnection conexion = ObtenerConexionDB())
             {
                 try
                 {
-                    using (SQLiteCommand comando = new SQLiteCommand(consulta, conexion))
+                    using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                     {
                         comando.ExecuteNonQuery();
                     }
                     return true;
                 }
-                catch (SQLiteException ex)
+                catch (SqliteException ex)
                 {
                     return false;
                 }
             }
             
         }
-        public SQLiteConnection ObtenerConexionDB()
+        public SqliteConnection ObtenerConexionDB()
         {
-            SQLiteConnection conexion = new SQLiteConnection(CadenaConexion);
+            SqliteConnection conexion = new SqliteConnection(CadenaConexion);
             conexion.Open();
             return conexion;
         }

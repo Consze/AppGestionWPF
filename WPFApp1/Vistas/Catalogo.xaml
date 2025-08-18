@@ -206,7 +206,9 @@
 
         <!--Vista Galeria con Imagenes-->
         <ScrollViewer Grid.Row="2" Grid.Column="1" Visibility="{Binding MostrarVistaGaleria, Converter={StaticResource BooleanToVisibility}}">
-            <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionProductos}">
+            <ItemsControl x:Name="CatalogoItems" ItemsSource="{Binding ColeccionProductos}" 
+                VirtualizingStackPanel.IsVirtualizing="True" 
+                VirtualizingStackPanel.VirtualizationMode="Recycling">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal"/>

@@ -137,6 +137,25 @@ namespace WPFApp1.Conmutadores
                 return sqliteRepo.LeerProductos();
             }
         }
+        public async IAsyncEnumerable<Productos> LeerProductosAsync()
+        {
+            if (RepositorioServidor.LeerConfiguracionManual())
+            {
+                var sqlServerRepo = _sqlServerFactory.CrearRepositorio();
+                await foreach (var producto in sqlServerRepo.LeerProductosAsync())
+                {
+                    yield return producto;
+                }
+            }
+            else
+            {
+                var sqliteRepo = _sqliteFactory.CrearRepositorio();
+                await foreach (var producto in sqliteRepo.LeerProductosAsync())
+                {
+                    yield return producto;
+                }
+            }
+        }
         public bool CrearLibro(List<Productos> Productos)
         {
             if (RepositorioServidor.LeerConfiguracionManual())
