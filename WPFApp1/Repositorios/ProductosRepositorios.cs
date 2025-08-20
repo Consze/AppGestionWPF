@@ -2,7 +2,6 @@
 using NPOI.XSSF.UserModel;
 using System.Data.SqlClient;
 using Microsoft.Data.Sqlite;
-using System.Data.SQLite;
 using System.IO;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
@@ -22,10 +21,10 @@ namespace WPFApp1.Repositorios
             string Consulta = "SELECT * FROM Productos WHERE id = @id;";
             try
             {
-                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
+                using (SqliteCommand Comando = new SqliteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                 {
                     Comando.Parameters.AddWithValue("@id", producto_id);
-                    using (SQLiteDataReader Lector = Comando.ExecuteReader())
+                    using (SqliteDataReader Lector = Comando.ExecuteReader())
                     {
                         while (Lector.Read())
                         {
@@ -110,7 +109,7 @@ namespace WPFApp1.Repositorios
 
                 if (Propiedades.ContadorCambios > 0)
                 {
-                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
+                    using (SqliteCommand Comando = new SqliteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                     {
                         Comando.Parameters.AddWithValue("@id", productoModificado.ID);
                         if (Propiedades.NombreCambiado) { Comando.Parameters.AddWithValue("@Nombre", productoModificado.Nombre); }
@@ -139,7 +138,7 @@ namespace WPFApp1.Repositorios
             string nuevoProductoId = null;
             try
             {
-                using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
+                using (SqliteCommand Comando = new SqliteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                 {
                     Comando.Parameters.AddWithValue("@id", producto.ID);
                     Comando.Parameters.AddWithValue("@nombre", producto.Nombre);
@@ -151,7 +150,7 @@ namespace WPFApp1.Repositorios
                     return producto.ID;
                 }
             }
-            catch (SQLiteException ex)
+            catch (SqliteException ex)
             {
                 Console.WriteLine($"Error : {ex.Message}");
                 return producto.ID;
@@ -169,14 +168,14 @@ namespace WPFApp1.Repositorios
             {
                 try
                 {
-                    using (SQLiteCommand Comando = new SQLiteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
+                    using (SqliteCommand Comando = new SqliteCommand(Consulta, _accesoDB.ObtenerConexionDB()))
                     {
                         Comando.Parameters.AddWithValue("@id", Registro.ID);
                         int FilasAfectadas = Comando.ExecuteNonQuery();
                         return FilasAfectadas > 0;
                     }
                 }
-                catch (SQLiteException ex)
+                catch (SqliteException ex)
                 {
                     Console.WriteLine($"Error {ex.Message}");
                     return false;
@@ -192,9 +191,9 @@ namespace WPFApp1.Repositorios
             List<Productos> ListaProductos = new List<Productos>();
             string consulta = "SELECT * FROM Productos";
 
-            using (SQLiteCommand Comando = new SQLiteCommand(consulta, _accesoDB.ObtenerConexionDB()))
+            using (SqliteCommand Comando = new SqliteCommand(consulta, _accesoDB.ObtenerConexionDB()))
             {
-                using (SQLiteDataReader Lector = Comando.ExecuteReader())
+                using (SqliteDataReader Lector = Comando.ExecuteReader())
                 {
                     while (Lector.Read())
                     {

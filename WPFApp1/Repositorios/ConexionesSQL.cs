@@ -208,7 +208,7 @@ namespace WPFApp1.Repositorios
     }
     public class ConexionDBSQLite
     {
-        public string CadenaConexion { get; private set; } = @"Data Source=.\datos\base.db;Version=3;";
+        public string CadenaConexion { get; private set; } = @"Data Source=.\datos\base.db;";
         private string _rutaArchivo { get; set; } = @".\datos\base.db";
         private string _rutaArchivoEsquemaDB { get; set; } = @".\datos\esquemaDB.json";
         private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Libros (

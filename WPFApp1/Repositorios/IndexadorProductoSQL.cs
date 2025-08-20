@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
-using System.Data.SQLite;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 
@@ -42,10 +41,10 @@ namespace WPFApp1.Repositorios
             string Consulta = "SELECT * FROM Productos_titulos WHERE palabra = @palabra COLLATE NOCASE;";
             try
             {
-                using(SQLiteCommand comand = new SQLiteCommand(Consulta, _dbConexionSQLite.ObtenerConexionDB()))
+                using(SqliteCommand comand = new SqliteCommand(Consulta, _dbConexionSQLite.ObtenerConexionDB()))
                 {
                     comand.Parameters.AddWithValue("@palabra", Palabra);
-                    using(SQLiteDataReader lector = comand.ExecuteReader())
+                    using(SqliteDataReader lector = comand.ExecuteReader())
                     {
                         while(lector.Read())
                         {
@@ -61,7 +60,7 @@ namespace WPFApp1.Repositorios
                     }
                 }
             }
-            catch(SQLiteException ex)
+            catch(SqliteException ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
@@ -75,10 +74,10 @@ namespace WPFApp1.Repositorios
             string consulta = "SELECT * FROM Productos_titulos WHERE producto_id = @id";
             try
             {
-                using (SQLiteCommand comando = new SQLiteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
+                using (SqliteCommand comando = new SqliteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
                 {
                     comando.Parameters.AddWithValue("@id", producto_id);
-                    using (SQLiteDataReader lector = comando.ExecuteReader())
+                    using (SqliteDataReader lector = comando.ExecuteReader())
                     {
                         while (lector.Read())
                         {
@@ -96,7 +95,7 @@ namespace WPFApp1.Repositorios
                     }
                 }
             }
-            catch (SQLiteException ex)
+            catch (SqliteException ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
@@ -114,7 +113,7 @@ namespace WPFApp1.Repositorios
             int filasAfectadas = 0;
 
             string consulta = $"DELETE FROM Productos_titulos WHERE ID IN ({parametros})";
-            using (SQLiteCommand comando = new SQLiteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
+            using (SqliteCommand comando = new SqliteCommand(consulta, _dbConexionSQLite.ObtenerConexionDB()))
             {
                 int contador = 0;
                 foreach (int ID in indicesID)

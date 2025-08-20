@@ -291,6 +291,7 @@ namespace WPFApp1.ViewModels
         {
             await foreach (var producto in _productoServicio.LeerProductosAsync())
             {
+                await Task.Delay(1);
                 ProductoCatalogo _registro = new ProductoCatalogo
                 {
                     Nombre = producto.Nombre,
