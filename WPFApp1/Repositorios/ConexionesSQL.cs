@@ -31,7 +31,7 @@ namespace WPFApp1.Repositorios
             BEGIN
                 CREATE TABLE dbo.Productos_titulos (
                     ID INT PRIMARY KEY IDENTITY(1,1),
-                    producto_id INT NOT NULL,
+                    producto_id VARCHAR(36) NOT NULL,
                     palabra VARCHAR(255) NOT NULL
                 ); 
             END
@@ -233,7 +233,7 @@ namespace WPFApp1.Repositorios
 
         CREATE TABLE IF NOT EXISTS Productos_titulos (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            producto_id INTEGER NOT NULL,
+            producto_id VARCHAR(36),
             palabra VARCHAR NOT NULL COLLATE NOCASE,
             UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,
             FOREIGN KEY(producto_id) REFERENCES Productos(producto_id)

@@ -436,7 +436,7 @@ namespace WPFApp1.Repositorios
                         comando.Parameters.AddWithValue("@Categoria", producto.Categoria);
                         comando.Parameters.AddWithValue("@Precio", producto.Precio);
                         comando.Parameters.AddWithValue("@Ruta_imagen", producto.RutaImagen);
-
+                        comando.ExecuteNonQuery();
                         return producto.ID;
                     }
                 }

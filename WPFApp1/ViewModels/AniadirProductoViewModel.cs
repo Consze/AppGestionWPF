@@ -454,7 +454,7 @@ namespace WPFApp1.ViewModels
                 ProductoMensaje.MostrarCategoria = true;
             }
 
-                string Resultado = _productoService.CrearProducto(_nuevoProducto);
+            string Resultado = _productoService.CrearProducto(_nuevoProducto);
             if (Resultado != null )
             {
                 _servicioIndexacion.IndexarProducto(_nuevoProducto);
