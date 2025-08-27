@@ -291,7 +291,6 @@ namespace WPFApp1.ViewModels
         {
             await foreach (var producto in _productoServicio.LeerProductosAsync())
             {
-                await Task.Delay(1);
                 ProductoCatalogo _registro = new ProductoCatalogo
                 {
                     Nombre = producto.Nombre,
@@ -352,8 +351,7 @@ namespace WPFApp1.ViewModels
                     productoAEditar.Precio= ProductoModificado.Precio;
                     productoAEditar.Categoria= ProductoModificado.Categoria;
                     productoAEditar.RutaImagen= string.IsNullOrWhiteSpace(productoAEditar.RutaImagen) ? string.Empty : System.IO.Path.GetFullPath(ProductoModificado.RutaImagen);
-                }
-                
+                }  
             }
         }
         protected virtual void OnPropertyChanged(string propertyName)

@@ -13,11 +13,13 @@
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
 
-            <ContextMenu x:Key="MenuContextual" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-                <MenuItem Header="Editar" Command="{Binding DataContext.ItemDoubleClickCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                  CommandParameter="{Binding}"/>
-                <MenuItem Header="Eliminar" Command="{Binding Path = EliminarItemCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                  CommandParameter="{Binding}"/>
+            <ContextMenu x:Key="MenuContextualGaleria">
+                <MenuItem Header="Editar"
+                    Command="{Binding DataContext.ItemDoubleClickCommand, Source={x:Reference CatalogoItems}}"
+                    CommandParameter="{Binding}" />
+                <MenuItem Header="Eliminar"
+                    Command="{Binding DataContext.EliminarItemCommand, Source={x:Reference CatalogoItems}}"
+                    CommandParameter="{Binding}" />
                 <MenuItem Header="Registrar Venta"/>
                 <Separator/>
                 <MenuItem Header="Duplicar"/>
@@ -26,6 +28,20 @@
                 <MenuItem Header="Exportar"/>
             </ContextMenu>
 
+            <ContextMenu x:Key="MenuContextualTabla">
+                <MenuItem Header="Editar"
+                    Command="{Binding Path=DataContext.ItemDoubleClickCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                    CommandParameter="{Binding}" />
+                <MenuItem Header="Eliminar"
+                    Command="{Binding Path=DataContext.EliminarItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                    CommandParameter="{Binding}" />
+                <MenuItem Header="Registrar Venta"/>
+                <Separator/>
+                <MenuItem Header="Duplicar"/>
+                <MenuItem Header="Reservar"/>
+                <Separator/>
+                <MenuItem Header="Exportar"/>
+            </ContextMenu>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid x:Name="Grilla1">
@@ -191,7 +207,7 @@
             </DataGrid.CellStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="ContextMenu" Value="{StaticResource MenuContextual}"/>
+                    <Setter Property="ContextMenu" Value="{StaticResource MenuContextualTabla}"/>
                     <EventSetter Event="MouseDoubleClick" Handler="Row_MouseDoubleClick"/>
                 </Style>
             </DataGrid.RowStyle>
@@ -214,12 +230,14 @@
                         <WrapPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+
                 <ItemsControl.ItemContainerStyle>
                     <StaticResource ResourceKey="NotificationItemEnterAnimation"/>
                 </ItemsControl.ItemContainerStyle>
+                
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" ContextMenu="{StaticResource MenuContextual}">
+                        <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" ContextMenu="{StaticResource MenuContextualGaleria}">
                             <Border.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding DataContext.ItemDoubleClickCommand,
@@ -267,6 +285,7 @@
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
+                
             </ItemsControl>
         </ScrollViewer>
     </Grid>
