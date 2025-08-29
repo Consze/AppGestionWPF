@@ -23,6 +23,7 @@
             <TextBlock FontSize="36" Text="Configuración" FontWeight="Bold"/>
             
         </StackPanel>
+        
         <Grid Grid.Row="2" Grid.Column="1" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -35,6 +36,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Button Content="Crear Notificación" Grid.Row="0" Grid.Column="0" Margin="10" Command="{Binding CrearNotificacionCommand}"/>
+            <Button Content="Iniciar Servidor" Grid.Row="0" Grid.Column="1" Margin="10" Command="{Binding IniciarServidorCommand}"/>
         </Grid>
     </Grid>
 </UserControl>

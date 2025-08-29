@@ -211,24 +211,19 @@ namespace WPFApp1.Repositorios
         public string CadenaConexion { get; private set; } = @"Data Source=.\datos\base.db;";
         private string _rutaArchivo { get; set; } = @".\datos\base.db";
         private string _rutaArchivoEsquemaDB { get; set; } = @".\datos\esquemaDB.json";
-        private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Libros (
+        private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Productos (
+            id VARCHAR(36) PRIMARY KEY,
+            Nombre VARCHAR(255) NOT NULL,
+            Categoria VARCHAR(255),
+            Marca TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS Productos_categorias (
+            ID VARCHAR(36) PRIMARY KEY,
             Nombre TEXT NOT NULL,
-            Autor TEXT NOT NULL,
-            Categoria_id TEXT NOT NULL,
-            Sinopsis TEXT,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
-            ID TEXT PRIMARY KEY,
-            FOREIGN KEY(Categoria_id) REFERENCES Categorias(ID)
-        );
-
-        CREATE TABLE IF NOT EXISTS Productos (
-            id TEXT PRIMARY KEY,
-            Nombre VARCHAR(255) NOT NULL,
-            Categoria VARCHAR(255) NOT NULL, 
-            Precio INTEGER NOT NULL,  
-            ruta_imagen VARCHAR
         );
 
         CREATE TABLE IF NOT EXISTS Productos_titulos (
@@ -236,105 +231,66 @@ namespace WPFApp1.Repositorios
             producto_id VARCHAR(36),
             palabra VARCHAR NOT NULL COLLATE NOCASE,
             UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,
-            FOREIGN KEY(producto_id) REFERENCES Productos(producto_id)
-        );
-    
-        CREATE TABLE IF NOT EXISTS Libros_titulos (
-            Palabra TEXT NOT NULL COLLATE NOCASE,
-            Libro_ID TEXT NOT NULL,
-            FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
-            PRIMARY KEY(Palabra, Libro_ID)
+            FOREIGN KEY(producto_id) REFERENCES Productos(id)
         );
 
-        CREATE TABLE IF NOT EXISTS Libros_sinopsis (
-            Palabra TEXT NOT NULL COLLATE NOCASE,
-            Libro_ID TEXT NOT NULL,
-            FOREIGN KEY(Libro_ID) REFERENCES Libros(ID),
-            PRIMARY KEY(Palabra, Libro_ID)
+        CREATE TABLE IF NOT EXISTS Productos_descripciones (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Palabra VARCHAR NOT NULL COLLATE NOCASE,
+            producto_id VARCHAR(36) NOT NULL,
+            UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,
+            FOREIGN KEY(producto_id) REFERENCES Productos(id),
         );
 
-        CREATE TABLE IF NOT EXISTS Editoriales (
-            Nombre TEXT NOT NULL,
-            ID TEXT PRIMARY KEY,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+        CREATE TABLE IF NO EXISTS Productos_ediciones (
+            ID VARCHAR(36) PRIMARY KEY,
+            producto_id VARCHAR(36) NOT NULL,
+            EAN VARCHAR(13),
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
+            EsEliminado BOOLEAN DEFAULT FALSE,
+            formato_id VARCHAR(36),
+            FOREIGN KEY(formato_id) REFERENCES Productos_formatos(ID)
+        );
+
+        CREATE TABLE IF NOT EXISTS Productos_formatos (
+            ID VARCHAR(36) PRIMARY KEY,
+            descripcion TEXT,
+            alto FLOAT NOT NULL,
+            ancho FLOAT NOT NULL,
+            largo FLOAT NOT NULL,
+            EsEliminado BOOLEAN DEFAULT FALSE,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
         );
 
-        CREATE TABLE IF NOT EXISTS Categorias (
-            Nombre TEXT NOT NULL,
-            ID TEXT PRIMARY KEY,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
-        );
-
-        CREATE TABLE IF NOT EXISTS Libros_Ediciones (
-            libro_id TEXT NOT NULL,
-            editorial_id TEXT NOT NULL,
-            ISBN TEXT,
-            anioPublicacion INT,
-            cantidadPaginas INT,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
-            ID TEXT PRIMARY KEY,
-            FOREIGN KEY(libro_id) REFERENCES Libros(ID),
-            FOREIGN KEY(editorial_id) REFERENCES Editoriales(ID)
-        );
-
-        CREATE TABLE IF NOT EXISTS Libros_Stock (
-            Edicion_id TEXT NOT NULL,
-            Haber INT NOT NULL,
-            ColorDorsoID TEXT NOT NULL,
-            RutaImagen TEXT,
-            Ubicacion_Inventario TEXT,
-            FechaCreacion DATETIME,
-            FechaModificacion DATETIME,
-            EsEliminado BOOLEAN DEFAULT False,
+        CREATE TABLE IF NOT EXISTS Productos_Stock (
+            SKU_Producto VARCHAR(36) PRIMARY KEY,
+            ubicacion_id VARCHAR(36),
+            producto_edicion_id VARCHAR(36) NOT NULL,
+            Haber INT,
+            Precio FLOAT,
+            Ruta_imagen TEXT,
+            EsEliminado BOOLEAN DEFAULT FALSE,
             SeMuestraOnline BOOLEAN DEFAULT FALSE,
             PrecioPublico BOOLEAN DEFAULT FALSE,
-            Condicion TEXT NOT NULL,
-            Formato TEXT,
-            SKU_Producto TEXT PRIMARY KEY,
-            FOREIGN KEY(Ubicacion_Inventario) REFERENCES Ubicaciones_inventario(ID),
-            FOREIGN KEY(Edicion_id) REFERENCES Libros_Ediciones(ID),
-            FOREIGN KEY (ColorDorsoID) REFERENCES Colores(ID),
-            FOREIGN KEY (Condicion) REFERENCES Condiciones(ID),
-            FOREIGN KEY (Formato) REFERENCES Libros_Formatos(ID)
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
+            FOREIGN KEY(producto_edicion_id) REFERENCES Productos_ediciones(ID),
+            FOREIGN KEY(ubicacion_id) REFERENCES Ubicaciones_inventario(ID)
         );
 
-        CREATE TABLE IF NOT EXISTS Condiciones (
-            ID TEXT PRIMARY KEY,
-            Condicion TEXT NOT NULL,
+        CREATE TABLE IF NOT EXISTS Marcas (
+            ID VARCHAR(36) PRIMARY KEY,
+            Nombre TEXT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
         );
 
         CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
-            ID TEXT PRIMARY KEY,
+            ID VARCHAR(36) PRIMARY KEY,
             Descripcion TEXT NOT NULL,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
-        );
-
-        CREATE TABLE IF NOT EXISTS Libros_Formatos (
-            ID TEXT PRIMARY KEY,
-            Descripcion TEXT,
-            Alto FLOAT NOT NULL,
-            Largo FLOAT NOT NULL,
-            Ancho FLOAT NOT NULL,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
-            FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
-        );
-
-        CREATE TABLE IF NOT EXISTS Colores (
-            ID TEXT PRIMARY KEY,
-            Codigo_Hexadecimal TEXT NOT NULL,
-            Nombre TEXT,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
