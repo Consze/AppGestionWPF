@@ -300,7 +300,7 @@ namespace WPFApp1.ViewModels
                     RutaImagen = producto.RutaImagen
                 };
                 
-                if (_registro is Libro)
+                if (_registro is ProductoBase)
                 {
                     _registro.MostrarCategoria = true;
                 }

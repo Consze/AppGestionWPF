@@ -179,7 +179,7 @@ namespace WPFApp1.ViewModels
             NombreDeVentana = "Editar Producto";
 
             //
-            if (Producto is Libro _libro)
+            if (Producto is ProductoBase _producto)
             {
                 ItemConCategoria = true;
             }
