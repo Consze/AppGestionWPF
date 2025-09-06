@@ -67,6 +67,8 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+
+        // Propiedades de registro
         private string _nombreProducto;
         public string NombreProducto
         {
@@ -119,7 +121,35 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _visibilidadWeb;
+        public bool VisibilidadWeb
+        {
+            get { return _visibilidadWeb; }
+            set
+            {
+                if (_visibilidadWeb != value)
+                {
+                    _visibilidadWeb = value;
+                    OnPropertyChanged(nameof(VisibilidadWeb));
+                }
+            }
+        }
+        private bool _precioPublico;
+        public bool PrecioPublico
+        {
+            get { return _precioPublico; }
+            set
+            {
+                if (_precioPublico != value)
+                {
+                    _precioPublico = value;
+                    OnPropertyChanged(nameof(PrecioPublico));
+                }
+            }
+        }
         public string IDProducto { get; set; }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
         private ServicioSFX _servicioSFX { get; set; }
@@ -143,6 +173,8 @@ namespace WPFApp1.ViewModels
             CategoriaProducto = string.Empty;
             PrecioProducto = 0;
             ItemConCategoria = true;
+            VisibilidadWeb = false;
+            PrecioPublico = false;
 
             NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
