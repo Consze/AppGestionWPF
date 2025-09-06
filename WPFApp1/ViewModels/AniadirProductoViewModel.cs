@@ -108,6 +108,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private int _cantidadEnStock;
+        public int CantidadEnStock
+        {
+            get { return _cantidadEnStock; }
+            set
+            {
+                if (_cantidadEnStock != value)
+                {
+                    _cantidadEnStock = value;
+                    OnPropertyChanged(nameof(CantidadEnStock));
+                }
+            }
+        }
         private bool _itemConCategoria;
         public bool ItemConCategoria
         {
@@ -157,6 +170,7 @@ namespace WPFApp1.ViewModels
         public ICommand AniadirProductoCommand { get; }
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
+        public ICommand ModificarCantidadStockCommand { get; }
 
         public AniadirProductoViewModel(IProductoServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
         {
@@ -175,12 +189,14 @@ namespace WPFApp1.ViewModels
             ItemConCategoria = true;
             VisibilidadWeb = false;
             PrecioPublico = false;
+            CantidadEnStock = 0;
 
             NombreDeVentana = "Añadir Producto";
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
             BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
+            ModificarCantidadStockCommand = new RelayCommand<object>(ModificarCantidadStock);
 
             //Servicios
             _productoService = productoServicio;
@@ -505,6 +521,22 @@ namespace WPFApp1.ViewModels
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
 
+        }
+        public void ModificarCantidadStock(object parameter)
+        {
+            string caso = parameter as string;
+
+            if (caso == "SUMAR")
+            {
+                CantidadEnStock++;
+            }
+            else
+            {
+                if (CantidadEnStock > 0)
+                {
+                    CantidadEnStock--;
+                }
+            }
         }
         public void CerrarVista(object parameter)
         {
