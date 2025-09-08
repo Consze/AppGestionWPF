@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using NPOI.XSSF.Streaming.Values;
+using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 using WPFApp1.ViewModels;
 
@@ -21,16 +23,21 @@ namespace WPFApp1
             VentanaAniadirProductoVigente = this;
             InitializeComponent();
         }
-
         private void OnCierreSolicitado(object sender, EventArgs e)
         {
             this.Close();
         }
-
         private void Window_Closed(object sender, EventArgs e)
         {
             Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
             Instancias--;
+        }
+        private void DobleClickModificarStock(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount > 1)
+            {
+                Messenger.Default.Publish(new VistaAniadirProductosCantidadModificada { });
+            }
         }
     }
 }

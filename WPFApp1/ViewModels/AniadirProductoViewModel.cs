@@ -160,8 +160,20 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _marcaProducto;
+        public string MarcaProducto
+        {
+            get { return _marcaProducto; }
+            set
+            {
+                if (_marcaProducto != value)
+                {
+                    _marcaProducto = value;
+                    OnPropertyChanged(nameof(MarcaProducto));
+                }
+            }
+        }
         public string IDProducto { get; set; }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
@@ -197,6 +209,8 @@ namespace WPFApp1.ViewModels
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
             BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
             ModificarCantidadStockCommand = new RelayCommand<object>(ModificarCantidadStock);
+
+            Messenger.Default.Subscribir<VistaAniadirProductosCantidadModificada>(OnCantidadModificada);
 
             //Servicios
             _productoService = productoServicio;
@@ -536,6 +550,19 @@ namespace WPFApp1.ViewModels
                 {
                     CantidadEnStock--;
                 }
+            }
+        }
+        public void OnCantidadModificada(VistaAniadirProductosCantidadModificada _mensaje)
+        {
+            // Invocar como dialogo (modal) entrada de usuario
+            InputUsuarioViewModel _viewModel = new InputUsuarioViewModel("Ingrese Cantidad de Stock");
+            InputUsuario _vista = new InputUsuario(_viewModel);
+            _vista.ShowDialog();
+            int Cantidad;
+
+            if (int.TryParse(_viewModel.Entrada, out Cantidad))
+            {
+                CantidadEnStock = Cantidad;
             }
         }
         public void CerrarVista(object parameter)

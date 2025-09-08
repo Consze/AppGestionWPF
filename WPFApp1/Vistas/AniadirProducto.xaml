@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFApp1" MinWidth="250"
         mc:Ignorable="d" FontFamily="Roboto" FontSize="15" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
-        Title="{Binding NombreDeVentana}" Height="600" Width="500" Closed="Window_Closed">
+        Title="{Binding NombreDeVentana}" Height="550" Width="310" Closed="Window_Closed">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -37,22 +37,16 @@
             <TextBlock Margin="2" FontSize="18">General</TextBlock>
             <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
                 <StackPanel Margin="5" Orientation="Vertical">
-
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="Nombre" FontWeight="Light"/>
-                        <TextBox x:Name="CampoNombre" Text="{Binding NombreProducto}"/>
-                    </StackPanel>
-                    
-                    <StackPanel Orientation="Vertical" Visibility="{Binding ItemConCategoria, Converter={StaticResource BooleanToVisibility}}">
-                        <TextBlock Text="Categoria" FontWeight="Light"/>
-                        <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaProducto}"/>
-                    </StackPanel>
+                    <TextBlock Text="Nombre" FontWeight="Light"/>
+                    <TextBox x:Name="CampoNombre" Text="{Binding NombreProducto}"/>
+                    <TextBlock Text="Marca" FontWeight="Light"/>
+                    <TextBox x:Name="CampoMarca" Text="{Binding MarcaProducto}"/>
                 </StackPanel>
             </Border>
         </StackPanel>
         
         <!--Imagen-->
-        <StackPanel Grid.Row="1" Grid.Column="2" Margin="5" Grid.RowSpan="2">
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="5">
             <TextBlock Margin="2" FontSize="18">Imagenes</TextBlock>
             <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
                 <Grid>
@@ -65,7 +59,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0.5" Margin="5" Style="{StaticResource EstiloBorderConAnimacion}"
-                    Width="{Binding AnchoImagenSeleccionada}" Height="{Binding AltoImagenSeleccionada}" Grid.RowSpan="2" Grid.Row="0">
+                        Width="{Binding AnchoImagenSeleccionada}" Height="{Binding AltoImagenSeleccionada}" Grid.RowSpan="2" Grid.Row="0">
                         <Image x:Name="PlaceHolder" Source="{Binding RutaImagenSeleccionada}"/>
                     </Border>
                     <Button x:Name="ElegirImagen" Content="elegir imagen" Command="{Binding ElegirImagenCommand}" Margin="5" FontSize="14" FontWeight="Light" Grid.Row="2"/>
@@ -78,34 +72,33 @@
             <TextBlock Margin="2" FontSize="18">Precio y Stock</TextBlock>
             <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2" Margin="5">
                 <StackPanel Orientation="Vertical" Grid.Row="1" Margin="5">
-                        <TextBlock Text="Precio" FontWeight="Light" Grid.Column="0"/>
-                        <TextBox x:Name="campoPrecio" Text="{Binding PrecioProducto}" Grid.Column="1" Margin="0,0,0,7"/>
-                        
-                        <TextBlock Text="Haber" FontWeight="Light"/>
-                        <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Precio" FontWeight="Light" Grid.Column="0"/>
+                    <TextBox x:Name="campoPrecio" Text="{Binding PrecioProducto}" Grid.Column="1" Margin="0,0,0,7"/>
+                    <TextBlock Text="Haber" FontWeight="Light"/>
+                    <StackPanel Orientation="Horizontal">
                         <Button x:Name="Restar" Margin="0" BorderThickness="0" Command="{Binding ModificarCantidadStockCommand }" CommandParameter="RESTAR">
-                                <Button.Background>
-                                    <SolidColorBrush Color="Transparent"/>
-                                </Button.Background>
-                                <Image Width="20" Height="24" Source="/iconos/restar1.png" Style="{StaticResource ImagenHover}"/>
-                            </Button>
-                            <TextBlock Text="{Binding CantidadEnStock}" FontWeight="Medium" Margin="5"/>
+                            <Button.Background>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Button.Background>
+                            <Image Width="20" Height="24" Source="/iconos/restar1.png" Style="{StaticResource ImagenHover}"/>
+                        </Button>
+                        <Border MouseLeftButtonDown="DobleClickModificarStock">
+                            <TextBlock x:Name="CampoCantidad" Text="{Binding CantidadEnStock}" FontWeight="Medium" Margin="5"/>
+                        </Border>
                         <Button x:Name="Aniadir" Margin="0" BorderThickness="0" Command="{Binding ModificarCantidadStockCommand }" CommandParameter="SUMAR">
-                                <Button.Background>
-                                    <SolidColorBrush Color="Transparent"/>
-                                </Button.Background>
-                                <Image Width="24" Height="24" Source="/iconos/sumar1.png" Style="{StaticResource ImagenHover}"/>
-                            </Button>
-                        </StackPanel>
+                            <Button.Background>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Button.Background>
+                            <Image Width="24" Height="24" Source="/iconos/sumar1.png" Style="{StaticResource ImagenHover}"/>
+                        </Button>
                     </StackPanel>
-
+                </StackPanel>
             </Border>
         </StackPanel>
         
-
         <!--Booleanas-->
         <StackPanel Grid.Row="3" Grid.Column="1" Margin="5">
-            <TextBlock Margin="2" FontSize="18">Catalogo Publico</TextBlock>
+            <TextBlock Margin="2" FontSize="18">Catalogo</TextBlock>
             <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
                 <Grid Margin="5">
                     <Grid.ColumnDefinitions>
@@ -121,6 +114,45 @@
                     <CheckBox IsChecked="{Binding PrecioPublico}" Grid.Row="1">
                         <TextBlock FontWeight="Light">Precio Publico</TextBlock>
                     </CheckBox>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <!--Envios-->
+        <StackPanel Grid.Row="2" Grid.Column="2" Margin="5">
+            <TextBlock Margin="2" FontSize="18">Envios</TextBlock>
+            <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Peso" FontWeight="Light"/>
+                        <TextBox x:Name="campoPeso" Text="{Binding PrecioProducto}" Margin="0,0,0,7"/>
+                        <TextBlock Text="Dimensiones" FontWeight="Light"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <!--Clasificacion-->
+        <StackPanel Grid.Row="3" Grid.Column="2" Margin="5">
+            <TextBlock Margin="2" FontSize="18">Clasificacion</TextBlock>
+            <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Categoria" FontWeight="Light"/>
+                        <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaProducto}"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </StackPanel>
