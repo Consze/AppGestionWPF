@@ -223,7 +223,7 @@ namespace WPFApp1.Repositorios
             Nombre TEXT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
+            FechaCreacion DATETIME
         );
 
         CREATE TABLE IF NOT EXISTS Productos_titulos (
@@ -239,7 +239,7 @@ namespace WPFApp1.Repositorios
             Palabra VARCHAR NOT NULL COLLATE NOCASE,
             producto_id VARCHAR(36) NOT NULL,
             UNIQUE (producto_id, palabra) ON CONFLICT IGNORE,
-            FOREIGN KEY(producto_id) REFERENCES Productos(id),
+            FOREIGN KEY(producto_id) REFERENCES Productos(id)
         );
 
         CREATE TABLE IF NO EXISTS Productos_ediciones (
@@ -250,18 +250,20 @@ namespace WPFApp1.Repositorios
             FechaCreacion DATETIME,
             EsEliminado BOOLEAN DEFAULT FALSE,
             formato_id VARCHAR(36),
-            FOREIGN KEY(formato_id) REFERENCES Productos_formatos(ID)
+            RutaRelativaImagen TEXT,
+            FOREIGN KEY(formato_id) REFERENCES Productos_formatos(ID),
+            FOREIGN KEY (producto_id) REFERENCES Productos(ID)
         );
 
         CREATE TABLE IF NOT EXISTS Productos_formatos (
             ID VARCHAR(36) PRIMARY KEY,
             descripcion TEXT,
-            alto FLOAT NOT NULL,
-            ancho FLOAT NOT NULL,
-            largo FLOAT NOT NULL,
+            alto INT NOT NULL,
+            ancho INT NOT NULL,
+            largo INT NOT NULL,
             EsEliminado BOOLEAN DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
+            FechaCreacion DATETIME
         );
 
         CREATE TABLE IF NOT EXISTS Productos_Stock (
@@ -285,7 +287,7 @@ namespace WPFApp1.Repositorios
             Nombre TEXT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
+            FechaCreacion DATETIME
         );
 
         CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
@@ -293,7 +295,7 @@ namespace WPFApp1.Repositorios
             Descripcion TEXT NOT NULL,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
+            FechaCreacion DATETIME
         );";
         public SqliteConnection Conexion { get; private set; }
         public ConexionDBSQLite()
