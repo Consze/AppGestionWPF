@@ -93,6 +93,7 @@ namespace WPFApp1
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<ConfigurarSQLServerViewModel>();
             services.AddTransient<CatalogoViewModel>();
+            services.AddTransient<ProductosDesarrollo>();
             services.AddTransient<ExportarProductosViewModel>();
             services.AddSingleton<MainWindow>();
         }

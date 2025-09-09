@@ -41,8 +41,8 @@ namespace WPFApp1.Entidades
                 }
             }
         }
-        private int _precio;
-        public int Precio {
+        private decimal _precio;
+        public decimal Precio {
             get => _precio;
             set
             {

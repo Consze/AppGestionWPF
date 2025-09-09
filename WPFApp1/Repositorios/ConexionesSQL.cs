@@ -214,8 +214,8 @@ namespace WPFApp1.Repositorios
         private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Productos (
             id VARCHAR(36) PRIMARY KEY,
             Nombre VARCHAR(255) NOT NULL,
-            Categoria VARCHAR(255),
-            Marca TEXT
+            categoria_id,
+            FOREIGN KEY(categoria_id) REFERENCES Productos_categorias(ID)
         );
 
         CREATE TABLE IF NOT EXISTS Productos_categorias (
@@ -242,17 +242,19 @@ namespace WPFApp1.Repositorios
             FOREIGN KEY(producto_id) REFERENCES Productos(id)
         );
 
-        CREATE TABLE IF NO EXISTS Productos_ediciones (
+        CREATE TABLE IF NOT EXISTS Productos_versiones (
             ID VARCHAR(36) PRIMARY KEY,
             producto_id VARCHAR(36) NOT NULL,
             EAN VARCHAR(13),
+            Marca_id VARCHAR(36),
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
             EsEliminado BOOLEAN DEFAULT FALSE,
             formato_id VARCHAR(36),
             RutaRelativaImagen TEXT,
             FOREIGN KEY(formato_id) REFERENCES Productos_formatos(ID),
-            FOREIGN KEY (producto_id) REFERENCES Productos(ID)
+            FOREIGN KEY(producto_id) REFERENCES Productos(ID),
+            FOREIGN KEY(Marca_id) REFERENCES Marcas(ID)
         );
 
         CREATE TABLE IF NOT EXISTS Productos_formatos (
@@ -261,6 +263,7 @@ namespace WPFApp1.Repositorios
             alto INT NOT NULL,
             ancho INT NOT NULL,
             largo INT NOT NULL,
+            peso INT,
             EsEliminado BOOLEAN DEFAULT FALSE,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME
@@ -269,16 +272,15 @@ namespace WPFApp1.Repositorios
         CREATE TABLE IF NOT EXISTS Productos_Stock (
             SKU_Producto VARCHAR(36) PRIMARY KEY,
             ubicacion_id VARCHAR(36),
-            producto_edicion_id VARCHAR(36) NOT NULL,
+            producto_version_id VARCHAR(36) NOT NULL,
             Haber INT,
             Precio FLOAT,
-            Ruta_imagen TEXT,
             EsEliminado BOOLEAN DEFAULT FALSE,
             SeMuestraOnline BOOLEAN DEFAULT FALSE,
             PrecioPublico BOOLEAN DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME,
-            FOREIGN KEY(producto_edicion_id) REFERENCES Productos_ediciones(ID),
+            FechaCreacion DATETIME, 
+            FOREIGN KEY(producto_version_id) REFERENCES Productos_versiones(ID),
             FOREIGN KEY(ubicacion_id) REFERENCES Ubicaciones_inventario(ID)
         );
 
