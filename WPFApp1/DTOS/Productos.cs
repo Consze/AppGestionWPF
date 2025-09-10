@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Media.Animation;
 
 namespace WPFApp1.DTOS
 {
@@ -22,8 +23,8 @@ namespace WPFApp1.DTOS
             get { return _categoria; }
             set { _categoria = value; OnPropertyChanged(nameof(Categoria)); }
         }
-        private int _precio;
-        public int Precio 
+        private decimal _precio;
+        public decimal Precio 
         {
             get { return _precio; }
             set { _precio = value; OnPropertyChanged(nameof(Precio)); }
@@ -36,7 +37,7 @@ namespace WPFApp1.DTOS
             set { _rutaImagen = value; OnPropertyChanged(nameof(RutaImagen)); }
         }
 
-        public Productos(string ProductoID, string NombreDeProducto, string CategoriaDeProducto, int PrecioDeProducto, string RutaAImagen)
+        public Productos(string ProductoID, string NombreDeProducto, string CategoriaDeProducto, decimal PrecioDeProducto, string RutaAImagen)
         {
             ID = ProductoID;
             Nombre = NombreDeProducto;

@@ -1,9 +1,9 @@
-﻿using WPFApp1.ViewModels;
+﻿using WPFApp1.Entidades;
 
 namespace WPFApp1.Mensajes
 {
     public class ProductoModificadoMensaje
     {
-        public ProductoCatalogo ProductoModificado { get; set; }
+        public ProductoBase ProductoModificado { get; set; }
     }
 }

@@ -95,8 +95,8 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private int _precioProducto;
-        public int PrecioProducto
+        private decimal _precioProducto;
+        public decimal PrecioProducto
         {
             get { return _precioProducto; }
             set
@@ -317,21 +317,13 @@ namespace WPFApp1.ViewModels
 
             // Solicitar cambio a servicio de Productos y mostrar resultado
             Productos ProductoModificado = new Productos(IDProducto, NombreProducto, CategoriaProducto, PrecioProducto, RutaImagenSeleccionada);
-            ProductoCatalogo ProductoMensaje = new ProductoCatalogo
+            ProductoBase ProductoMensaje = new ProductoBase
             { ID = ProductoModificado.ID,
                 Nombre = ProductoModificado.Nombre,
                 Categoria = ProductoModificado.Categoria,
                 Precio = ProductoModificado.Precio,
                 RutaImagen = ProductoModificado.RutaImagen
             };
-            if(string.IsNullOrWhiteSpace(ProductoModificado.Categoria))
-            {
-                ProductoMensaje.MostrarCategoria = false;
-            }
-            else
-            {
-                ProductoMensaje.MostrarCategoria = true;
-            }
 
             if (_productoService.ActualizarProducto(ProductoModificado))
             {
@@ -507,14 +499,6 @@ namespace WPFApp1.ViewModels
                 Precio = _nuevoProducto.Precio,
                 RutaImagen = _nuevoProducto.RutaImagen
             };
-            if(string.IsNullOrWhiteSpace(_nuevoProducto.Categoria))
-            {
-                ProductoMensaje.MostrarCategoria = false;
-            }
-            else
-            {
-                ProductoMensaje.MostrarCategoria = true;
-            }
 
             string Resultado = _productoService.CrearProducto(_nuevoProducto);
             if (Resultado != null )

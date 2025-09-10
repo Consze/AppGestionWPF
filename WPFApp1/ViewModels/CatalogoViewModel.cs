@@ -10,10 +10,6 @@ using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
 {
-    public class ProductoCatalogo : ProductoBase
-    {
-        public bool MostrarCategoria { get; set; }
-    }
     public enum VistaElegida
     {
         Tabla,
@@ -24,7 +20,7 @@ namespace WPFApp1.ViewModels
     {
         private readonly IProductoServicio _productoServicio;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
-        public ObservableCollection<ProductoCatalogo> ColeccionProductos { get; set; }
+        public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
         public bool MostrarBotonRegresar
         {
@@ -131,7 +127,7 @@ namespace WPFApp1.ViewModels
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
-            ColeccionProductos = new ObservableCollection<ProductoCatalogo>();
+            ColeccionProductos = new ObservableCollection<ProductoBase>();
             EliminarItemCommand = new RelayCommand<ProductoCatalogo>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
@@ -230,14 +226,6 @@ namespace WPFApp1.ViewModels
                 {
                     producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
                     ProductoCatalogo _registro = new ProductoCatalogo { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen };
-                    if (string.IsNullOrEmpty(_registro.Categoria))
-                    {
-                        _registro.MostrarCategoria = false;
-                    }
-                    else
-                    {
-                        _registro.MostrarCategoria = true;
-                    }
                     ColeccionProductos.Add(_registro);
                 }
             });
@@ -299,16 +287,6 @@ namespace WPFApp1.ViewModels
                     Categoria = producto.Categoria,
                     RutaImagen = producto.RutaImagen
                 };
-                
-                if (_registro is ProductoBase)
-                {
-                    _registro.MostrarCategoria = true;
-                }
-                else
-                {
-                    _registro.MostrarCategoria = false;
-                }
-
                 ColeccionProductos.Add(_registro);
             }
         }
@@ -343,8 +321,8 @@ namespace WPFApp1.ViewModels
         {
             if(Mensaje?.ProductoModificado != null)
             {
-                ProductoCatalogo ProductoModificado = Mensaje.ProductoModificado;
-                ProductoCatalogo productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
+                ProductoBase ProductoModificado = Mensaje.ProductoModificado;
+                ProductoBase productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
                 if (productoAEditar != null)
                 {
                     productoAEditar.Nombre = ProductoModificado.Nombre;
