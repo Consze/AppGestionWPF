@@ -2,6 +2,23 @@
 {
     public class ProductoCatalogo : ProductoBase
     {
+        //CLAVE PRIMARIA
+        private string _productoSKU;
+        public string ProductoSKU
+        {
+            get => _productoSKU;
+            set
+            {
+                if (_productoSKU != value)
+                {
+                    _productoSKU = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+
+        //--------Booleanas---------
         private bool _precioPublico;
         public bool PrecioPublico
         {
@@ -28,6 +45,9 @@
                 }
             }
         }
+        
+
+        //--------Enteros---------
         private int _haber;
         public int Haber
         {
@@ -37,32 +57,6 @@
                 if (_haber != value)
                 {
                     _haber = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private string _productoEdicionID;
-        public string ProductoEdicionID
-        {
-            get => _productoEdicionID;
-            set
-            {
-                if (_productoEdicionID != value)
-                {
-                    _productoEdicionID = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private string _ubicacionID;
-        public string UbicacionID
-        {
-            get => _ubicacionID;
-            set
-            {
-                if (_ubicacionID != value)
-                {
-                    _ubicacionID = value;
                     OnPropertyChanged();
                 }
             }
@@ -119,15 +113,44 @@
                 }
             }
         }
-        private string _ean;
-        public string EAN
+        
+
+        //-----Claves Foraneas-----
+        private string _productoVersionID;
+        public string ProductoVersionID
         {
-            get => _ean;
+            get => _productoVersionID;
             set
             {
-                if (_ean != value)
+                if (_productoVersionID != value)
                 {
-                    _ean = value;
+                    _productoVersionID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string _formatoProductoID;
+        public string FormatoProductoID
+        {
+            get => _formatoProductoID;
+            set
+            {
+                if (_formatoProductoID != value)
+                {
+                    _formatoProductoID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string _ubicacionID;
+        public string UbicacionID
+        {
+            get => _ubicacionID;
+            set
+            {
+                if (_ubicacionID != value)
+                {
+                    _ubicacionID = value;
                     OnPropertyChanged();
                 }
             }
@@ -141,6 +164,22 @@
                 if (_marcaID != value)
                 {
                     _marcaID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+
+        //Cadenas
+        private string _ean;
+        public string EAN
+        {
+            get => _ean;
+            set
+            {
+                if (_ean != value)
+                {
+                    _ean = value;
                     OnPropertyChanged();
                 }
             }
