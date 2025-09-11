@@ -128,7 +128,7 @@ namespace WPFApp1.ViewModels
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
             ColeccionProductos = new ObservableCollection<ProductoBase>();
-            EliminarItemCommand = new RelayCommand<ProductoCatalogo>(EliminarItem);
+            EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
             ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
             AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
@@ -168,7 +168,7 @@ namespace WPFApp1.ViewModels
             await AlternarFormatoVistaAsync().ConfigureAwait(false);
             Procesando = false;
         }
-        public void EliminarItem(ProductoCatalogo ProductoEliminar)
+        public void EliminarItem(ProductoBase ProductoEliminar)
         {
             if(ProductoEliminar != null)
             {
@@ -225,7 +225,7 @@ namespace WPFApp1.ViewModels
                 foreach (var producto in registros)
                 {
                     producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
-                    ProductoCatalogo _registro = new ProductoCatalogo { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen };
+                    ProductoBase _registro = new ProductoBase { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen };
                     ColeccionProductos.Add(_registro);
                 }
             });
@@ -279,7 +279,7 @@ namespace WPFApp1.ViewModels
         {
             await foreach (var producto in _productoServicio.LeerProductosAsync())
             {
-                ProductoCatalogo _registro = new ProductoCatalogo
+                ProductoBase _registro = new ProductoBase
                 {
                     Nombre = producto.Nombre,
                     ID = producto.ID,

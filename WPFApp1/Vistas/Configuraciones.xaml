@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPFApp1.ViewModels"
-             mc:Ignorable="d" FontFamily="Roboto" FontSize="24"
+             mc:Ignorable="d" FontFamily="Roboto" FontSize="18"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>

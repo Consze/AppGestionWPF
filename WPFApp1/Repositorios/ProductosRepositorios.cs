@@ -135,7 +135,6 @@ namespace WPFApp1.Repositorios
         public string CrearProducto(Productos producto)
         {
             string Consulta = "INSERT INTO Productos (ID, Nombre, Categoria, Precio, Ruta_imagen) VALUES (@id, @nombre, @categoria, @precio, @ruta_imagen);";
-            string nuevoProductoId = null;
             try
             {
                 using (SqliteCommand Comando = new SqliteCommand(Consulta, _accesoDB.ObtenerConexionDB()))

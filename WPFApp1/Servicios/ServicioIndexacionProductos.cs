@@ -1,6 +1,7 @@
 ﻿using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
+using WPFApp1.Entidades;
 
 namespace WPFApp1.Servicios
 {
@@ -66,7 +67,7 @@ namespace WPFApp1.Servicios
             List<Productos> ColeccionProductosCoincidentes = RecuperarProductos(coincidencias);
             return ColeccionProductosCoincidentes;
         }
-        public void IndexarProducto(Productos Producto)
+        public void IndexarProducto(ProductoBase Producto)
         {
             string titulo = Producto.Nombre;
             string ID = Producto.ID;
