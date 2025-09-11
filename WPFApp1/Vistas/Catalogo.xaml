@@ -279,7 +279,7 @@
                                     <Image Source="{Binding Path=RutaImagen}"/>
                                 </Border>
                                 <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding Nombre}"/>
-                                <TextBlock Text="{Binding Path=Categoria, StringFormat='Categoria: {0}'}" Visibility="{Binding Path=MostrarCategoria, Converter={StaticResource BooleanToVisibility}}"/>
+                                <TextBlock Text="{Binding Path=Categoria, StringFormat='Categoria: {0}'}"/>
                                 <TextBlock Text="{Binding Path=Precio, StringFormat='Precio: ${0}'}"/>
                             </StackPanel>
                         </Border>

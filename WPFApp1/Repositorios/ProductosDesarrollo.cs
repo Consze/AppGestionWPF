@@ -257,5 +257,14 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
+        public bool ModificarProducto(ProductoCatalogo productoModificado)
+        {
+            string Consulta = "UPDATE Producto_stock SET ";
+
+            Consulta += " WHERE SKU_Producto = @IDProductoModificado";
+
+
+            return true;
+        }
     }
 }

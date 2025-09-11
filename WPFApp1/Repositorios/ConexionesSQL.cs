@@ -274,7 +274,7 @@ namespace WPFApp1.Repositorios
             ubicacion_id VARCHAR(36),
             producto_version_id VARCHAR(36) NOT NULL,
             Haber INT,
-            Precio FLOAT,
+            Precio NUMERIC(18,2),
             EsEliminado BOOLEAN DEFAULT FALSE,
             SeMuestraOnline BOOLEAN DEFAULT FALSE,
             PrecioPublico BOOLEAN DEFAULT FALSE,
