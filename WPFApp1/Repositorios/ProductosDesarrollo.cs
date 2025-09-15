@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using NPOI.SS.Formula.Functions;
 using WPFApp1.Entidades;
 
 namespace WPFApp1.Repositorios
@@ -6,9 +7,23 @@ namespace WPFApp1.Repositorios
     public class ProductosDesarrollo
     {
         private readonly ConexionDBSQLite _accesoDB;
+        public readonly Dictionary<string,string> MapeoColumnas;
         public ProductosDesarrollo(ConexionDBSQLite accesoDB)
         {
             _accesoDB = accesoDB;
+            MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Nombre de Columna
+                {"ProductoSKU", "SKU_Producto" },
+                {"UbicacionID", "ubicacion_id" },
+                {"Haber" , "Haber" },
+                {"Precio", "Precio" },
+                {"EsEliminado", "EsEliminado" },
+                {"VisibilidadWeb","VisibilidadWeb" },
+                {"PrecioPublico","PrecioPublico" },
+                {"FechaModificacion", "FechaModificacion"},
+                {"FechaCreacion","FechaCreacion" }
+            };
         }
         public ProductoCatalogo RecuperarProductoPorID(string ProductoID)
         {
@@ -259,12 +274,72 @@ namespace WPFApp1.Repositorios
         }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
         {
-            string Consulta = "UPDATE Producto_stock SET ";
+            ProductoCatalogo productoActual = RecuperarProductoPorID(productoModificado.ProductoSKU);
+            bool registroModificado = false;
 
-            Consulta += " WHERE SKU_Producto = @IDProductoModificado";
+            //Campos a ignorar
+            var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "SKU_Producto",
+                "FechaCreacion"
+            };
+            var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
+            var listaPropiedadesModificadas = new List<string>();
 
+            using (var conexion = _accesoDB.ObtenerConexionDB())
+            {
+                conexion.Open();
+                using (var comando = new SqliteCommand())
+                {
+                    comando.Connection = conexion;
 
-            return true;
+                    //bucle de construccion de consulta
+                    foreach (var propiedad in propiedadesEntidad)
+                    {
+                        if (listaExclusion.Contains(propiedad.Name))
+                            continue;
+
+                        //Comprobar diferencia
+                        var valorActual = propiedad.GetValue(productoActual);
+                        var valorModificado = propiedad.GetValue(productoModificado);
+                        if (!object.Equals(valorActual, valorModificado))
+                        {
+                            string nombreColumna = MapeoColumnas[propiedad.Name];
+                            string nombreParametro = propiedad.Name;
+                            listaPropiedadesModificadas.Add($"{nombreColumna} = @{nombreParametro}");
+                            comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(productoModificado) ?? DBNull.Value);
+                        }
+                    }
+
+                    if (listaPropiedadesModificadas.Count == 0)
+                        return false;
+
+                    string Consulta = $"UPDATE Productos_stock SET {string.Join(", ", listaPropiedadesModificadas)} WHERE SKU_Producto = @IDProductoModificado";
+                    comando.Parameters.AddWithValue("@IDProductoModificado", productoModificado.ProductoSKU);
+                    comando.CommandText = Consulta;
+
+                    int filasAfectadas = comando.ExecuteNonQuery();
+                    return filasAfectadas > 0;
+                }
+            }
+        }
+        public bool EliminarProducto(string ProductoID)
+        {
+            //TODO
+            try
+            {
+                string consulta = "UPDATE Producto_Stock";
+                using (SqliteCommand comando = new SqliteCommand())
+                {
+
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return false;
         }
     }
 }

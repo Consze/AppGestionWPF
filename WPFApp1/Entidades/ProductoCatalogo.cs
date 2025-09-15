@@ -16,7 +16,7 @@
                 }
             }
         }
-        
+
 
         //--------Booleanas---------
         private bool _precioPublico;
@@ -45,7 +45,7 @@
                 }
             }
         }
-        
+
 
         //--------Enteros---------
         private int _haber;
@@ -113,7 +113,7 @@
                 }
             }
         }
-        
+
 
         //-----Claves Foraneas-----
         private string _productoVersionID;
@@ -168,7 +168,7 @@
                 }
             }
         }
-        
+
 
         //Cadenas
         private string _ean;
@@ -184,9 +184,6 @@
                 }
             }
         }
-    }
-    public class FlagsCambios
-    {
 
     }
 }
