@@ -122,19 +122,6 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private bool _itemConCategoria;
-        public bool ItemConCategoria
-        {
-            get { return _itemConCategoria; }
-            set
-            {
-                if (_itemConCategoria != value)
-                {
-                    _itemConCategoria = value;
-                    OnPropertyChanged(nameof(ItemConCategoria));
-                }
-            }
-        }
         private bool _visibilidadWeb;
         public bool VisibilidadWeb
         {
@@ -199,7 +186,6 @@ namespace WPFApp1.ViewModels
             NombreProducto = string.Empty;
             CategoriaProducto = string.Empty;
             PrecioProducto = 0;
-            ItemConCategoria = true;
             VisibilidadWeb = false;
             PrecioPublico = false;
             CantidadEnStock = 0;
@@ -230,7 +216,7 @@ namespace WPFApp1.ViewModels
                 AniadirProducto(0);
             }
         }
-        public void ConfigurarEdicionDeProducto(ProductoBase Producto)
+        public void ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
         {
             // Configurar Bindings
             EsModoEdicion = true;
@@ -239,20 +225,13 @@ namespace WPFApp1.ViewModels
             PrecioProducto= Producto.Precio;
             CategoriaProducto = Producto.Categoria;
             IDProducto = Producto.ID;
+            VisibilidadWeb = Producto.VisibilidadWeb;
+            PrecioProducto = Producto.Precio;
+            MarcaProducto = "";
             NombreDeVentana = "Editar Producto";
 
-            //
-            if (Producto is ProductoBase _producto)
-            {
-                ItemConCategoria = true;
-            }
-            else
-            {
-                ItemConCategoria = false;
-            }
-
-                // Obtener dimensiones de imagen
-                CargarDimensionesImagen(RutaImagenSeleccionada);
+            // Obtener dimensiones de imagen
+            CargarDimensionesImagen(RutaImagenSeleccionada);
             LadoMasLargo lado = new LadoMasLargo();
             int UBound = 0;
             int LBound = 0;
@@ -317,14 +296,14 @@ namespace WPFApp1.ViewModels
             }
 
             // Solicitar cambio a servicio de Productos y mostrar resultado
-            Productos ProductoModificado = new Productos(IDProducto, NombreProducto, CategoriaProducto, PrecioProducto, RutaImagenSeleccionada);
-            ProductoBase ProductoMensaje = new ProductoBase
-            { ID = ProductoModificado.ID,
-                Nombre = ProductoModificado.Nombre,
-                Categoria = ProductoModificado.Categoria,
-                Precio = ProductoModificado.Precio,
-                RutaImagen = ProductoModificado.RutaImagen
+            ProductoCatalogo ProductoModificado = new ProductoCatalogo {
+                ID = IDProducto,
+                Nombre = NombreProducto,
+                Categoria = CategoriaProducto,
+                Precio = PrecioProducto,
+                RutaImagen = RutaImagenSeleccionada
             };
+            ProductoBase ProductoMensaje = ProductoModificado;
 
             if (_productoService.ModificarProducto(ProductoModificado))
             {
@@ -491,18 +470,18 @@ namespace WPFApp1.ViewModels
                 }
             }
 
-            Productos _nuevoProducto = new Productos(null,NombreProducto,CategoriaProducto,PrecioProducto, RutaImagenSalida);
-            ProductoBase ProductoMensaje = new ProductoBase
+            ProductoCatalogo _nuevoProducto = new ProductoCatalogo
             {
                 ID = null,
-                Nombre = _nuevoProducto.Nombre,
-                Categoria = _nuevoProducto.Categoria,
-                Precio = _nuevoProducto.Precio,
-                RutaImagen = _nuevoProducto.RutaImagen
+                Nombre = NombreProducto,
+                Categoria  = CategoriaProducto,
+                Precio = PrecioProducto,
+                RutaImagen = RutaImagenSalida
             };
+            ProductoBase ProductoMensaje = _nuevoProducto;
 
-            string Resultado = _productoService.CrearProducto(_nuevoProducto);
-            if (Resultado != null )
+            bool Resultado = _productoService.CrearProducto(_nuevoProducto);
+            if (Resultado)
             {
                 ProductoMensaje.ID = Resultado.ToString();
                 _servicioIndexacion.IndexarProducto(ProductoMensaje);

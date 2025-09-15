@@ -8,13 +8,11 @@ namespace WPFApp1.Conmutadores
     {
         private readonly ProductosAccesoDatosSQLServer _repoServer;
         private readonly ProductosAcessoDatosSQLite _repoLocal;
-
         public ProductoConmutador(ProductosAccesoDatosSQLServer repoServer, ProductosAcessoDatosSQLite repoLocal)
         {
             _repoServer = repoServer;
             _repoLocal = repoLocal;
         }
-
         public ProductoCatalogo RecuperarProductoPorID(string productoID)
         {
             if (_repoServer._accesoDB.LeerConfiguracionManual())
@@ -28,6 +26,8 @@ namespace WPFApp1.Conmutadores
         }
         public bool CrearProducto(ProductoCatalogo nuevoProducto)
         {
+            Guid guid = Guid.NewGuid();
+            nuevoProducto.ProductoSKU = guid.ToString();
             if (_repoServer._accesoDB.LeerConfiguracionManual())
             {
                 try

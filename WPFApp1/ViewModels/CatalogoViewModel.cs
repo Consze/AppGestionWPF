@@ -6,6 +6,7 @@ using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
+using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -18,7 +19,8 @@ namespace WPFApp1.ViewModels
     }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductoServicioObsoleto _productoServicio;
+        //private readonly IProductoServicioObsoleto _productoServicio;
+        private readonly IProductosServicio _productoServicio;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
@@ -118,7 +120,7 @@ namespace WPFApp1.ViewModels
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
         private ServicioSFX _servicioSFX { get; set; }
-        public CatalogoViewModel(IProductoServicioObsoleto productoServicio, ServicioIndexacionProductos ServicioIndexacion)
+        public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
         {
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
@@ -176,7 +178,7 @@ namespace WPFApp1.ViewModels
                 if (eleccionUsuario == DialogResult.Yes)
                 {
                     ColeccionProductos.Remove(ProductoEliminar);
-                    _productoServicio.EliminarProducto(ProductoEliminar.ID);
+                    _productoServicio.EliminarProducto(ProductoEliminar.ID, TipoEliminacion.Logica);
                     _servicioSFX.Confirmar();
                     Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                     Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
@@ -300,8 +302,9 @@ namespace WPFApp1.ViewModels
             {
                 AniadirProducto.VentanaAniadirProductoVigente.Close();
             }
-            if (ProductoClickeado is ProductoBase producto)
+            if (ProductoClickeado is ProductoBase _producto)
             {
+                ProductoCatalogo producto = _productoServicio.RecuperarProductoPorID(_producto.ID);
                 _servicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 var _viewModel = App.GetService<AniadirProductoViewModel>();

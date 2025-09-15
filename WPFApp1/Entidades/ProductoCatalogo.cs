@@ -184,6 +184,19 @@
                 }
             }
         }
+        private string _marcaNombre;
+        public string MarcaNombre
+        {
+            get => _marcaNombre;
+            set
+            {
+                if (_marcaNombre != value)
+                {
+                    _marcaNombre = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
     }
 }
