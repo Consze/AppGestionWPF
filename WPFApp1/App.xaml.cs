@@ -32,9 +32,19 @@ namespace WPFApp1
             services.AddSingleton<ConexionDBSQLite>();
             services.AddSingleton<ConexionDBSQLServer>();
 
+            services.AddTransient<ProductosAccesoDatosSQLServer>();
+            services.AddTransient<ProductosAcessoDatosSQLite>();
+            services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
+            {
+                var repoServer = provider.GetRequiredService<ProductosAccesoDatosSQLServer>();
+                var repoLocal = provider.GetRequiredService<ProductosAcessoDatosSQLite>();
+
+                return new ProductoConmutador(repoServer, repoLocal);
+            });
+
             services.AddTransient<IndexadorGenericoService>();
 
-            services.AddTransient<IProductoServicio, ProductoServicio>();
+            services.AddTransient<IProductoServicioObsoleto, ProductoServicio>();
             services.AddTransient<IndexadorProductoSQLite>();
             services.AddTransient<IndexadorProductoSQLServer>();
 
@@ -52,7 +62,7 @@ namespace WPFApp1
                 var indexadorRepositorioConmutador = provider.GetRequiredService<IIndexadorProductosRepositorio>();
 
                 // Fabrica diferida
-                Func<IProductoServicio> productoServicioFactory = () => provider.GetRequiredService<IProductoServicio>();
+                Func<IProductoServicioObsoleto> productoServicioFactory = () => provider.GetRequiredService<IProductoServicioObsoleto>();
 
                 return new ServicioIndexacionProductos(
                     indexadorGenerico,
@@ -74,7 +84,7 @@ namespace WPFApp1
                 return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
             });
 
-            services.AddSingleton<WPFApp1.Interfaces.IProductoServicio, ProductoServicio>(provider =>
+            services.AddSingleton<WPFApp1.Interfaces.IProductoServicioObsoleto, ProductoServicio>(provider =>
             {
                 var sqliteFactory = provider.GetRequiredService<Factories.SqliteRepositorioProductosFactory>();
                 var sqlServerFactory = provider.GetRequiredService<Factories.SqlServerRepositorioProductosFactory>();
@@ -93,7 +103,6 @@ namespace WPFApp1
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<ConfigurarSQLServerViewModel>();
             services.AddTransient<CatalogoViewModel>();
-            services.AddTransient<ProductosDesarrollo>();
             services.AddTransient<ExportarProductosViewModel>();
             services.AddSingleton<MainWindow>();
         }

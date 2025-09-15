@@ -21,7 +21,8 @@ namespace WPFApp1.ViewModels
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductoServicio _productoService;
+        //private readonly IProductoServicioObsoleto _productoService;
+        private readonly IProductosServicio _productoService;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
@@ -184,7 +185,7 @@ namespace WPFApp1.ViewModels
         public ICommand CerrarVistaCommand { get; }
         public ICommand ModificarCantidadStockCommand { get; }
 
-        public AniadirProductoViewModel(IProductoServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
+        public AniadirProductoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -325,7 +326,7 @@ namespace WPFApp1.ViewModels
                 RutaImagen = ProductoModificado.RutaImagen
             };
 
-            if (_productoService.ActualizarProducto(ProductoModificado))
+            if (_productoService.ModificarProducto(ProductoModificado))
             {
                 _servicioIndexacion.IndexarProducto(ProductoMensaje);
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen);

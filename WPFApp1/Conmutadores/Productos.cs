@@ -8,7 +8,7 @@ using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
-    public class ProductoServicio : IProductoServicio
+    public class ProductoServicio : IProductoServicioObsoleto
     {
         private readonly SqliteRepositorioProductosFactory _sqliteFactory;
         private readonly SqlServerRepositorioProductosFactory _sqlServerFactory;

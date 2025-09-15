@@ -4,6 +4,6 @@ namespace WPFApp1.Factories
 {
     public interface IProductosFactory
     {
-        IProductosAccesoDatos CrearRepositorio();
+        IProductosAccesoDatosOBSOLETO CrearRepositorio();
     }
 }

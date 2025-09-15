@@ -2,7 +2,7 @@
 
 namespace WPFApp1.Interfaces
 {
-    public interface IProductoServicio
+    public interface IProductoServicioObsoleto
     {
         bool ActualizarProducto(Productos producto);
         string CrearProducto(Productos producto);

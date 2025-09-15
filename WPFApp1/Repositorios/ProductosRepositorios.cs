@@ -8,7 +8,7 @@ using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
-    public class SQLiteAccesoProductos : IProductosAccesoDatos
+    public class SQLiteAccesoProductos : IProductosAccesoDatosOBSOLETO
     {
         private readonly ConexionDBSQLite _accesoDB;
         public SQLiteAccesoProductos(ConexionDBSQLite accesoDB)
@@ -288,7 +288,7 @@ namespace WPFApp1.Repositorios
         }
     }
 
-    public class SQLServerAccesoProductos : IProductosAccesoDatos
+    public class SQLServerAccesoProductos : IProductosAccesoDatosOBSOLETO
     {
         private readonly string _conexionCadena;
         public SQLServerAccesoProductos(string rutaConexion)

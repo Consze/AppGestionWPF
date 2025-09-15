@@ -18,7 +18,7 @@ namespace WPFApp1.ViewModels
     }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductoServicio _productoServicio;
+        private readonly IProductoServicioObsoleto _productoServicio;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
@@ -118,7 +118,7 @@ namespace WPFApp1.ViewModels
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
         private ServicioSFX _servicioSFX { get; set; }
-        public CatalogoViewModel(IProductoServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
+        public CatalogoViewModel(IProductoServicioObsoleto productoServicio, ServicioIndexacionProductos ServicioIndexacion)
         {
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;

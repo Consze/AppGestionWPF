@@ -25,12 +25,12 @@ namespace WPFApp1.ViewModels
             }
         }
         public ICommand ExportarXLSXCommand { get; }
-        private readonly IProductoServicio _productoServicio;
+        private readonly IProductoServicioObsoleto _productoServicio;
         private ServicioSFX _servicioSFX { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         //constructor
-        public ExportarProductosViewModel(IProductoServicio productoServicio)
+        public ExportarProductosViewModel(IProductoServicioObsoleto productoServicio)
         {
             _productoServicio = productoServicio;
             _servicioSFX = new ServicioSFX();

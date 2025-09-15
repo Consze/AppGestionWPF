@@ -12,7 +12,7 @@ namespace WPFApp1.Factories
             this._cadenaConexion = CadenaConexion;
         }
 
-        public IProductosAccesoDatos CrearRepositorio()
+        public IProductosAccesoDatosOBSOLETO CrearRepositorio()
         {
             return new SQLServerAccesoProductos(this._cadenaConexion);
         }

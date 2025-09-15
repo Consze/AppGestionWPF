@@ -10,7 +10,7 @@ namespace WPFApp1.Factories
         {
             this._accesoDB = accesoDB;
         }
-        public IProductosAccesoDatos CrearRepositorio()
+        public IProductosAccesoDatosOBSOLETO CrearRepositorio()
         {
             return new SQLiteAccesoProductos(_accesoDB);
         }
