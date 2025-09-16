@@ -24,7 +24,7 @@ namespace WPFApp1.Conmutadores
                 return _repoLocal.RecuperarProductoPorID(productoID);
             }
         }
-        public bool CrearProducto(ProductoCatalogo nuevoProducto)
+        public string CrearProducto(ProductoCatalogo nuevoProducto)
         {
             Guid guid = Guid.NewGuid();
             nuevoProducto.ProductoSKU = guid.ToString();

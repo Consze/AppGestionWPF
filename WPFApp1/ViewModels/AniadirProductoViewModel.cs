@@ -291,7 +291,6 @@ namespace WPFApp1.ViewModels
         }
 
 
-
         //CLAVES
         private string _marcaProductoID;
         public string MarcaProductoID
@@ -431,20 +430,34 @@ namespace WPFApp1.ViewModels
         {
             // Configurar Bindings
             EsModoEdicion = true;
+            NombreDeVentana = "Editar Producto";
+
+            //--PK--
+            ProductoSKU = Producto.ProductoSKU;
 
             //Cadena
             RutaImagenSeleccionada = Producto.RutaImagen;
             NombreProducto = Producto.Nombre;
+            EAN = Producto.EAN;
+            CategoriaNombre = Producto.CategoriaNombre;
+            MarcaNombre = Producto.MarcaNombre;
+
+            //Fecha
+            FechaCreacionProducto = Producto.FechaCreacion;
+            FechaModificacionProducto = Producto.FechaModificacion;
 
             //Claves
             CategoriaProductoID = Producto.Categoria;
-            ProductoID = Producto.ProductoSKU;
+            ProductoVersionID = Producto.ProductoVersionID;
             MarcaProductoID = Producto.MarcaID;
             UbicacionID = Producto.UbicacionID;
+            FormatoID = Producto.FormatoProductoID;
+            ProductoID = Producto.ID;
 
             //Booleanas
             VisibilidadWeb = Producto.VisibilidadWeb;
             PrecioPublico = Producto.PrecioPublico;
+            EsProductoEliminado = Producto.EsEliminado;
 
             //Numericas
             CantidadEnStock = Producto.Haber;
@@ -453,13 +466,6 @@ namespace WPFApp1.ViewModels
             Peso = Producto.Peso;
             Ancho = Producto.Ancho;
             Largo = Producto.Largo;
-
-            //Cadenas Completadas
-            CategoriaNombre = "";
-            MarcaNombre = Producto.MarcaNombre;
-            
-
-            NombreDeVentana = "Editar Producto";
 
             // Obtener dimensiones de imagen
             CargarDimensionesImagen(RutaImagenSeleccionada);
@@ -528,12 +534,33 @@ namespace WPFApp1.ViewModels
 
             // Solicitar cambio a servicio de Productos y mostrar resultado
             ProductoCatalogo ProductoModificado = new ProductoCatalogo {
-                ID = string.Empty,
+                ID = ProductoID,
+                UbicacionID = UbicacionID,
+                ProductoSKU = ProductoSKU,
+                FormatoProductoID = FormatoID,
+                Categoria = CategoriaProductoID,
+                ProductoVersionID = ProductoVersionID,
+                MarcaID = MarcaProductoID,
+
                 Nombre = NombreProducto,
-                Categoria = CategoriaProducto,
-                Precio = PrecioProducto,
                 RutaImagen = RutaImagenSeleccionada,
-                ProductoSKU = IDProducto,
+                CategoriaNombre = CategoriaNombre,
+                MarcaNombre = MarcaNombre,
+                EAN = EAN,
+
+                VisibilidadWeb = VisibilidadWeb,
+                PrecioPublico = PrecioPublico,
+                EsEliminado = EsProductoEliminado,
+
+                FechaCreacion = FechaCreacionProducto,
+                FechaModificacion = FechaModificacionProducto,
+
+                Precio = PrecioProducto,
+                Haber = CantidadEnStock,
+                Altura = Altura,
+                Ancho = Ancho,
+                Largo = Largo,
+                Peso = Peso,
 
             };
             ProductoBase ProductoMensaje = ProductoModificado;
@@ -649,7 +676,7 @@ namespace WPFApp1.ViewModels
         }
         public void AniadirProducto(object parameter)
         {
-            if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(CategoriaProducto) || PrecioProducto == 0)
+            if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(CategoriaNombre) || PrecioProducto == 0)
             {
                 System.Windows.MessageBox.Show("Por favor, complete todos los campos.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -707,16 +734,19 @@ namespace WPFApp1.ViewModels
             {
                 ID = null,
                 Nombre = NombreProducto,
-                Categoria  = CategoriaProducto,
+                Categoria  = CategoriaProductoID,
                 Precio = PrecioProducto,
-                RutaImagen = RutaImagenSalida
+                RutaImagen = RutaImagenSalida,
+                VisibilidadWeb = VisibilidadWeb,
+                PrecioPublico = PrecioPublico,
+
             };
             ProductoBase ProductoMensaje = _nuevoProducto;
 
-            bool Resultado = _productoService.CrearProducto(_nuevoProducto);
-            if (Resultado)
+            string NuevoProductoSKU = _productoService.CrearProducto(_nuevoProducto);
+            if (NuevoProductoSKU != null)
             {
-                ProductoMensaje.ID = Resultado.ToString();
+                ProductoMensaje.ID = NuevoProductoSKU;
                 _servicioIndexacion.IndexarProducto(ProductoMensaje);
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen)  ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });

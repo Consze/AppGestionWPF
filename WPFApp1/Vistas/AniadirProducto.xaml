@@ -38,7 +38,7 @@
                         <TextBlock Text="Nombre" FontWeight="Light"/>
                         <TextBox x:Name="CampoNombre" Text="{Binding NombreProducto}"/>
                         <TextBlock Text="Marca" FontWeight="Light"/>
-                        <TextBox x:Name="CampoMarca" Text="{Binding MarcaProducto}"/>
+                        <TextBox x:Name="CampoMarca" Text="{Binding MarcaNombre}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -131,7 +131,7 @@
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Peso" FontWeight="Light"/>
-                            <TextBox x:Name="campoPeso" Text="{Binding PrecioProducto}" Margin="0,0,0,7"/>
+                            <TextBox x:Name="campoPeso" Text="{Binding Peso}" Margin="0,0,0,7"/>
                             <TextBlock Text="Dimensiones" FontWeight="Light"/>
                         </StackPanel>
                     </Grid>
@@ -151,7 +151,7 @@
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Categoria" FontWeight="Light"/>
-                            <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaProducto}"/>
+                            <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaNombre}"/>
                         </StackPanel>
                     </Grid>
                 </Border>

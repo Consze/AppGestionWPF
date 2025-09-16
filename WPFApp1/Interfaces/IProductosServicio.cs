@@ -6,7 +6,7 @@ namespace WPFApp1.Interfaces
     public interface IProductosServicio
     {
         ProductoCatalogo RecuperarProductoPorID(string ProductoID);
-        bool CrearProducto(ProductoCatalogo nuevoProducto);
+        string CrearProducto(ProductoCatalogo nuevoProducto);
         IAsyncEnumerable<ProductoCatalogo> LeerProductosAsync();
         List<ProductoCatalogo> LeerProductos();
         bool ModificarProducto(ProductoCatalogo productoModificado);

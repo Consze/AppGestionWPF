@@ -24,6 +24,7 @@ namespace WPFApp1.Repositorios
                 //Propiedad de Clase , Nombre de Columna
                 {"ProductoSKU", "SKU_Producto" },
                 {"UbicacionID", "ubicacion_id" },
+                {"ProductoVersionID", "producto_version_id" },
                 {"Haber" , "Haber" },
                 {"Precio", "Precio" },
                 {"EsEliminado", "EsEliminado" },
@@ -57,6 +58,7 @@ namespace WPFApp1.Repositorios
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
                 m.nombre AS MarcaNombre
             FROM Productos_stock AS s
@@ -85,6 +87,7 @@ namespace WPFApp1.Repositorios
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                             int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                            int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
                             int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
                             int IDXEan = lector.GetOrdinal("EAN");
                             int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
@@ -112,7 +115,7 @@ namespace WPFApp1.Repositorios
 
                             //Cadena
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            registro.Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria);
+                            registro.CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria);
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
                             registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre);
@@ -123,6 +126,7 @@ namespace WPFApp1.Repositorios
                             registro.FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID);
                             registro.ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID);
                             registro.ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID);
+                            registro.Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID);
 
                             //Datetime
                             registro.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
@@ -145,7 +149,7 @@ namespace WPFApp1.Repositorios
             }
             return registro;
         }
-        public bool CrearProducto(ProductoCatalogo nuevoProducto)
+        public string CrearProducto(ProductoCatalogo nuevoProducto)
         {
             string Consulta = @"INSERT INTO Productos_Stock (
                 SKU_Producto,
@@ -173,7 +177,7 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@PrecioPublico", nuevoProducto.PrecioPublico);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
 
-                    return comando.ExecuteNonQuery() > 0;
+                    return nuevoProducto.ProductoSKU;
                 }
             }
             catch (SqliteException ex)
@@ -204,6 +208,7 @@ namespace WPFApp1.Repositorios
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
                 m.nombre AS MarcaNombre
             FROM Productos_stock AS s
@@ -229,6 +234,7 @@ namespace WPFApp1.Repositorios
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                             int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                            int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
                             int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
                             int IDXEan = lector.GetOrdinal("EAN");
                             int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
@@ -260,7 +266,7 @@ namespace WPFApp1.Repositorios
 
                                     //Cadena
                                     Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                    Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                    CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
                                     EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
                                     RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                     MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
@@ -271,6 +277,7 @@ namespace WPFApp1.Repositorios
                                     FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                     ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
                                     ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                    Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
 
                                     //Datetime
                                     FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -405,7 +412,21 @@ namespace WPFApp1.Repositorios
             {
                 "SKU_Producto",
                 "FechaCreacion",
-                "FechaModificacion"
+                "FechaModificacion",
+                "CategoriaNombre",
+                "UbicacionNombre",
+                "MarcaNombre",
+                "EAN",
+                "RutaImagen",
+                "Nombre",
+                "ID",
+                "Categoria",
+                "FormatoProductoID",
+                "MarcaID",
+                "Altura",
+                "Ancho",
+                "Largo",
+                "Peso"
             };
             var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
@@ -530,6 +551,7 @@ namespace WPFApp1.Repositorios
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
                 m.nombre AS MarcaNombre
             FROM Productos_stock AS s
@@ -558,6 +580,7 @@ namespace WPFApp1.Repositorios
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                             int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                            int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
                             int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
                             int IDXEan = lector.GetOrdinal("EAN");
                             int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
@@ -584,7 +607,7 @@ namespace WPFApp1.Repositorios
 
                             //Cadena
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            registro.Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria);
+                            registro.CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria);
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
                             registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre);
@@ -595,6 +618,7 @@ namespace WPFApp1.Repositorios
                             registro.FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID);
                             registro.ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID);
                             registro.ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID);
+                            registro.Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID);
 
                             //Datetime
                             registro.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
@@ -617,7 +641,7 @@ namespace WPFApp1.Repositorios
             }
             return registro;
         }
-        public bool CrearProducto(ProductoCatalogo nuevoProducto)
+        public string CrearProducto(ProductoCatalogo nuevoProducto)
         {
             string Consulta = @"INSERT INTO Productos_Stock (
                 SKU_Producto,
@@ -645,7 +669,7 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@PrecioPublico", nuevoProducto.PrecioPublico);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
 
-                    return comando.ExecuteNonQuery() > 0;
+                    return nuevoProducto.ProductoSKU;
                 }
             }
             catch (SqlException ex)
@@ -676,6 +700,7 @@ namespace WPFApp1.Repositorios
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
                 m.nombre AS MarcaNombre
             FROM Productos_stock AS s
@@ -701,6 +726,7 @@ namespace WPFApp1.Repositorios
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                         int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
                         int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
                         int IDXEan = lector.GetOrdinal("EAN");
                         int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
@@ -732,7 +758,7 @@ namespace WPFApp1.Repositorios
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
                                 RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
@@ -743,6 +769,7 @@ namespace WPFApp1.Repositorios
                                 FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
                                 ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
 
                                 //Datetime
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),

@@ -181,6 +181,19 @@
                 }
             }
         }
+        private string _categoriaNombre;
+        public string CategoriaNombre
+        {
+            get => _categoriaNombre;
+            set
+            {
+                if (_categoriaNombre != value)
+                {
+                    _categoriaNombre = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
     }
 }

@@ -286,7 +286,7 @@ namespace WPFApp1.ViewModels
                     Nombre = producto.Nombre,
                     ID = producto.ID,
                     Precio = producto.Precio,
-                    Categoria = producto.Categoria,
+                    Categoria = producto.CategoriaNombre,
                     RutaImagen = producto.RutaImagen,
                     ProductoSKU = producto.ProductoSKU
                 };
