@@ -2,22 +2,6 @@
 {
     public class ProductoCatalogo : ProductoBase
     {
-        //CLAVE PRIMARIA
-        private string _productoSKU;
-        public string ProductoSKU
-        {
-            get => _productoSKU;
-            set
-            {
-                if (_productoSKU != value)
-                {
-                    _productoSKU = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
         //--------Booleanas---------
         private bool _precioPublico;
         public bool PrecioPublico

@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.IO;
 using Microsoft.Data.Sqlite;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -35,8 +36,7 @@ namespace WPFApp1.Repositorios
         public ProductoCatalogo RecuperarProductoPorID(string ProductoID)
         {
             ProductoCatalogo registro = new ProductoCatalogo();
-            string Consulta = @"
-            SELECT 
+            string Consulta = @"SELECT 
                 s.SKU_Producto AS ProductoSKU,
                 s.ubicacion_id AS ProductoHaberUbicacionID,
                 s.producto_version_id AS ProductoVersionID,
@@ -114,7 +114,7 @@ namespace WPFApp1.Repositorios
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
                             registro.Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria);
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
-                            registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : lector.GetString(IDXRutaImagen);
+                            registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre);
 
                             //Claves
@@ -262,7 +262,7 @@ namespace WPFApp1.Repositorios
                                     Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                     Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
                                     EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
-                                    RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : lector.GetString(IDXRutaImagen),
+                                    RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                     MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
 
                                     //Claves
@@ -287,6 +287,113 @@ namespace WPFApp1.Repositorios
                         }
                 }
             }
+        }
+        public List<ProductoCatalogo> LeerProductos()
+        {
+            string Consulta = @"SELECT 
+                s.SKU_Producto AS ProductoSKU,
+                s.ubicacion_id AS ProductoHaberUbicacionID,
+                s.producto_version_id AS ProductoVersionID,
+                s.haber AS ProductoHaber,
+                s.precio AS ProductoPrecio,
+                s.VisibilidadWeb AS ProductoVisibilidadWeb,
+                s.PrecioPublico AS ProductoPrecioPublico,
+                s.FechaModificacion AS ProductoFechaModificacion,
+                s.FechaCreacion AS ProductoFechaCreacion,
+                s.EsEliminado AS ProductoEsEliminado,
+                v.RutaRelativaImagen AS RutaRelativaImagen,
+                v.EAN AS EAN,
+                v.producto_id AS ProductoID,
+                v.Marca_id AS MarcaID,
+                v.formato_id AS FormatoID,
+                f.alto AS Altura,
+                f.ancho AS Ancho,
+                f.largo AS Largo,
+                f.peso AS Peso,
+                p.nombre AS ProductoNombre,
+                c.nombre AS ProductoCategoria,
+                m.nombre AS MarcaNombre
+            FROM Productos_stock AS s
+            INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+            INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
+            INNER JOIN Productos AS p ON v.producto_id = p.id
+            INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+            INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            WHERE s.EsEliminado = False
+                AND s.haber > 0;";
+            List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
+            using (SqliteConnection conexion = _accesoDB.ObtenerConexionDB())
+            {
+                using (SqliteCommand comando = new SqliteCommand(Consulta, conexion))
+                {
+                    using (SqliteDataReader lector = comando.ExecuteReader())
+                    {
+                        // Indices
+                        int IDXAltura = lector.GetOrdinal("Altura");
+                        int IDXAncho = lector.GetOrdinal("Ancho");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXHaber = lector.GetOrdinal("ProductoHaber");
+                        int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                        int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("ProductoFechaModificacion");
+                        int IDXProductoEsEliminado = lector.GetOrdinal("ProductoEsEliminado");
+                        int IDXProductoPrecioPublico = lector.GetOrdinal("ProductoPrecioPublico");
+                        int IDXProductoVisibilidadWeb = lector.GetOrdinal("ProductoVisibilidadWeb");
+                        int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
+
+                        while (lector.Read())
+                        {
+                            ProductoCatalogo registroActual = new ProductoCatalogo
+                            {
+                                ProductoSKU = lector.GetString(IDXProductoSKU),
+
+                                //Numericos
+                                Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
+                                Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo),
+                                Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
+                                Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+
+                                //Cadena
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
+                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+
+                                //Claves
+                                UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
+                                ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+
+                                //Datetime
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+
+                                //Booleanos
+                                EsEliminado = lector.IsDBNull(IDXProductoEsEliminado) ? false : lector.GetBoolean(IDXProductoEsEliminado),
+                                PrecioPublico = lector.IsDBNull(IDXProductoPrecioPublico) ? false : lector.GetBoolean(IDXProductoPrecioPublico),
+                                VisibilidadWeb = lector.IsDBNull(IDXProductoVisibilidadWeb) ? false : lector.GetBoolean(IDXProductoVisibilidadWeb)
+                            };
+
+                            listaRegistros.Add(registroActual);
+                        }
+                    }
+                }
+            }
+            return listaRegistros;
         }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
         {
@@ -479,7 +586,7 @@ namespace WPFApp1.Repositorios
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
                             registro.Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria);
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
-                            registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : lector.GetString(IDXRutaImagen);
+                            registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre);
 
                             //Claves
@@ -627,7 +734,7 @@ namespace WPFApp1.Repositorios
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
-                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : lector.GetString(IDXRutaImagen),
+                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
 
                                 //Claves
@@ -652,6 +759,114 @@ namespace WPFApp1.Repositorios
                     }
                 }
             }
+        }
+        public List<ProductoCatalogo> LeerProductos()
+        {
+            string Consulta = @"SELECT 
+                s.SKU_Producto AS ProductoSKU,
+                s.ubicacion_id AS ProductoHaberUbicacionID,
+                s.producto_version_id AS ProductoVersionID,
+                s.haber AS ProductoHaber,
+                s.precio AS ProductoPrecio,
+                s.VisibilidadWeb AS ProductoVisibilidadWeb,
+                s.PrecioPublico AS ProductoPrecioPublico,
+                s.FechaModificacion AS ProductoFechaModificacion,
+                s.FechaCreacion AS ProductoFechaCreacion,
+                s.EsEliminado AS ProductoEsEliminado,
+                v.RutaRelativaImagen AS RutaRelativaImagen,
+                v.EAN AS EAN,
+                v.producto_id AS ProductoID,
+                v.Marca_id AS MarcaID,
+                v.formato_id AS FormatoID,
+                f.alto AS Altura,
+                f.ancho AS Ancho,
+                f.largo AS Largo,
+                f.peso AS Peso,
+                p.nombre AS ProductoNombre,
+                c.nombre AS ProductoCategoria,
+                m.nombre AS MarcaNombre
+            FROM Productos_stock AS s
+            INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+            INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
+            INNER JOIN Productos AS p ON v.producto_id = p.id
+            INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+            INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            WHERE s.EsEliminado = False
+                AND s.haber > 0;";
+
+            List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
+            using (SqlConnection conexion = _accesoDB.ObtenerConexionDB())
+            {
+                using (SqlCommand comando = new SqlCommand(Consulta, conexion))
+                {
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        // Indices
+                        int IDXAltura = lector.GetOrdinal("Altura");
+                        int IDXAncho = lector.GetOrdinal("Ancho");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXHaber = lector.GetOrdinal("ProductoHaber");
+                        int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                        int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("ProductoFechaModificacion");
+                        int IDXProductoEsEliminado = lector.GetOrdinal("ProductoEsEliminado");
+                        int IDXProductoPrecioPublico = lector.GetOrdinal("ProductoPrecioPublico");
+                        int IDXProductoVisibilidadWeb = lector.GetOrdinal("ProductoVisibilidadWeb");
+                        int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
+
+                        while (lector.Read())
+                        {
+                            ProductoCatalogo registroActual = new ProductoCatalogo
+                            {
+                                ProductoSKU = lector.GetString(IDXProductoSKU),
+
+                                //Numericos
+                                Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
+                                Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo),
+                                Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
+                                Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+
+                                //Cadena
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
+                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+
+                                //Claves
+                                UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
+                                ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+
+                                //Datetime
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+
+                                //Booleanos
+                                EsEliminado = lector.IsDBNull(IDXProductoEsEliminado) ? false : lector.GetBoolean(IDXProductoEsEliminado),
+                                PrecioPublico = lector.IsDBNull(IDXProductoPrecioPublico) ? false : lector.GetBoolean(IDXProductoPrecioPublico),
+                                VisibilidadWeb = lector.IsDBNull(IDXProductoVisibilidadWeb) ? false : lector.GetBoolean(IDXProductoVisibilidadWeb)
+                            };
+
+                            listaRegistros.Add(registroActual);
+                        }
+                    }
+                }
+            }
+            return listaRegistros;
         }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
         {

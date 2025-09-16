@@ -28,20 +28,7 @@ namespace WPFApp1.ViewModels
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
-        private string _rutaImagenSeleccionada;
-        public string RutaImagenSeleccionada 
-        {
-            get { return _rutaImagenSeleccionada; }
-            set
-            {
-                if (_rutaImagenSeleccionada != value)
-                {
-                    _rutaImagenSeleccionada = value;
-                    OnPropertyChanged(nameof(RutaImagenSeleccionada));
-                    CargarDimensionesImagen(value);
-                }
-            }
-        }
+
         private int _altoImagenSeleccionada;
         public int AltoImagenSeleccionada 
         {
@@ -69,7 +56,8 @@ namespace WPFApp1.ViewModels
             }
         }
 
-        // Propiedades de registro
+
+        //---- Propiedades de registro -----
         private string _nombreProducto;
         public string NombreProducto
         {
@@ -83,19 +71,104 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private string _categoriaProducto;
-        public string CategoriaProducto
+        private string _rutaImagenSeleccionada;
+        public string RutaImagenSeleccionada
         {
-            get { return _categoriaProducto; }
+            get { return _rutaImagenSeleccionada; }
             set
             {
-                if (_categoriaProducto != value)
+                if (_rutaImagenSeleccionada != value)
                 {
-                    _categoriaProducto = value;
-                    OnPropertyChanged(nameof(CategoriaProducto));
+                    _rutaImagenSeleccionada = value;
+                    OnPropertyChanged(nameof(RutaImagenSeleccionada));
+                    CargarDimensionesImagen(value);
                 }
             }
         }
+        private DateTime _fechaCreacionProducto;
+        public DateTime FechaCreacionProducto
+        {
+            get { return _fechaCreacionProducto; }
+            set
+            {
+                if (_fechaCreacionProducto != value)
+                {
+                    _fechaCreacionProducto = value;
+                    OnPropertyChanged(nameof(FechaCreacionProducto));
+                }
+            }
+        }
+        private DateTime _fechaModificacionProducto;
+        public DateTime FechaModificacionProducto
+        {
+            get { return _fechaModificacionProducto; }
+            set
+            {
+                if (_fechaModificacionProducto != value)
+                {
+                    _fechaModificacionProducto = value;
+                    OnPropertyChanged(nameof(FechaModificacionProducto));
+                }
+            }
+        }
+
+
+        //CADENA
+        private string _ean;
+        public string EAN
+        {
+            get { return _ean; }
+            set
+            {
+                if (_ean != value)
+                {
+                    _ean = value;
+                    OnPropertyChanged(nameof(EAN));
+                }
+            }
+        }
+        private string _marcaNombre;
+        public string MarcaNombre
+        {
+            get { return _marcaNombre; }
+            set
+            {
+                if (_marcaNombre != value)
+                {
+                    _marcaNombre = value;
+                    OnPropertyChanged(nameof(MarcaNombre));
+                }
+            }
+        }
+        private string _categoriaNombre;
+        public string CategoriaNombre
+        {
+            get { return _categoriaNombre; }
+            set
+            {
+                if (_categoriaNombre != value)
+                {
+                    _categoriaNombre = value;
+                    OnPropertyChanged(nameof(CategoriaNombre));
+                }
+            }
+        }
+        private string _ubicacionNombre;
+        public string UbicacionNombre
+        {
+            get { return _ubicacionNombre; }
+            set
+            {
+                if (_ubicacionNombre != value)
+                {
+                    _ubicacionNombre = value;
+                    OnPropertyChanged(nameof(UbicacionNombre));
+                }
+            }
+        }
+
+
+        //NUMERICAS
         private decimal _precioProducto;
         public decimal PrecioProducto
         {
@@ -122,6 +195,61 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private int _altura;
+        public int Altura
+        {
+            get { return _altura; }
+            set
+            {
+                if (_altura != value)
+                {
+                    _altura = value;
+                    OnPropertyChanged(nameof(Altura));
+                }
+            }
+        }
+        private int _ancho;
+        public int Ancho
+        {
+            get { return _ancho; }
+            set
+            {
+                if (_ancho != value)
+                {
+                    _ancho = value;
+                    OnPropertyChanged(nameof(Ancho));
+                }
+            }
+        }
+        private int _largo;
+        public int Largo
+        {
+            get { return _largo; }
+            set
+            {
+                if (_largo != value)
+                {
+                    _largo = value;
+                    OnPropertyChanged(nameof(Largo));
+                }
+            }
+        }
+        private int _peso;
+        public int Peso
+        {
+            get { return _peso; }
+            set
+            {
+                if (_peso != value)
+                {
+                    _peso = value;
+                    OnPropertyChanged(nameof(Peso));
+                }
+            }
+        }
+
+
+        //BOOLEANAS
         private bool _visibilidadWeb;
         public bool VisibilidadWeb
         {
@@ -148,20 +276,103 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private string _marcaProducto;
-        public string MarcaProducto
+        private bool _esProductoEliminado;
+        public bool EsProductoEliminado
         {
-            get { return _marcaProducto; }
+            get { return _esProductoEliminado; }
             set
             {
-                if (_marcaProducto != value)
+                if (_esProductoEliminado != value)
                 {
-                    _marcaProducto = value;
-                    OnPropertyChanged(nameof(MarcaProducto));
+                    _esProductoEliminado = value;
+                    OnPropertyChanged(nameof(EsProductoEliminado));
                 }
             }
         }
-        public string IDProducto { get; set; }
+
+
+
+        //CLAVES
+        private string _marcaProductoID;
+        public string MarcaProductoID
+        {
+            get { return _marcaProductoID; }
+            set
+            {
+                if (_marcaProductoID != value)
+                {
+                    _marcaProductoID = value;
+                    OnPropertyChanged(nameof(MarcaProductoID));
+                }
+            }
+        }
+        private string _formato;
+        public string FormatoID
+        {
+            get { return _formato; }
+            set
+            {
+                if (_formato != value)
+                {
+                    _formato = value;
+                    OnPropertyChanged(nameof(FormatoID));
+                }
+            }
+        }
+        private string _productoVersionID;
+        public string ProductoVersionID
+        {
+            get { return _productoVersionID; }
+            set
+            {
+                if (_productoVersionID != value)
+                {
+                    _productoVersionID = value;
+                    OnPropertyChanged(nameof(ProductoVersionID));
+                }
+            }
+        }
+        private string _ubicacionID;
+        public string UbicacionID
+        {
+            get { return _ubicacionID; }
+            set
+            {
+                if (_ubicacionID != value)
+                {
+                    _ubicacionID = value;
+                    OnPropertyChanged(nameof(UbicacionID));
+                }
+            }
+        }
+        private string _categoriaProductoID;
+        public string CategoriaProductoID
+        {
+            get { return _categoriaProductoID; }
+            set
+            {
+                if (_categoriaProductoID != value)
+                {
+                    _categoriaProductoID = value;
+                    OnPropertyChanged(nameof(CategoriaProductoID));
+                }
+            }
+        }
+        private string _productoID;
+        public string ProductoID
+        {
+            get { return _productoID; }
+            set
+            {
+                if (_productoID != value)
+                {
+                    _productoID = value;
+                    OnPropertyChanged(nameof(ProductoID));
+                }
+            }
+        }
+        public string ProductoSKU { get; set; }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
@@ -180,11 +391,11 @@ namespace WPFApp1.ViewModels
             AltoImagenSeleccionada = 0;
             CalculoAlturaMarco = 0;
             CalculoAnchoMarco = 0;
-            IDProducto = null;
+            ProductoSKU = null;
 
             //Entidad
             NombreProducto = string.Empty;
-            CategoriaProducto = string.Empty;
+            CategoriaNombre = string.Empty;
             PrecioProducto = 0;
             VisibilidadWeb = false;
             PrecioPublico = false;
@@ -220,14 +431,34 @@ namespace WPFApp1.ViewModels
         {
             // Configurar Bindings
             EsModoEdicion = true;
+
+            //Cadena
             RutaImagenSeleccionada = Producto.RutaImagen;
             NombreProducto = Producto.Nombre;
-            PrecioProducto= Producto.Precio;
-            CategoriaProducto = Producto.Categoria;
-            IDProducto = Producto.ID;
+
+            //Claves
+            CategoriaProductoID = Producto.Categoria;
+            ProductoID = Producto.ProductoSKU;
+            MarcaProductoID = Producto.MarcaID;
+            UbicacionID = Producto.UbicacionID;
+
+            //Booleanas
             VisibilidadWeb = Producto.VisibilidadWeb;
+            PrecioPublico = Producto.PrecioPublico;
+
+            //Numericas
+            CantidadEnStock = Producto.Haber;
             PrecioProducto = Producto.Precio;
-            MarcaProducto = "";
+            Altura = Producto.Altura;
+            Peso = Producto.Peso;
+            Ancho = Producto.Ancho;
+            Largo = Producto.Largo;
+
+            //Cadenas Completadas
+            CategoriaNombre = "";
+            MarcaNombre = Producto.MarcaNombre;
+            
+
             NombreDeVentana = "Editar Producto";
 
             // Obtener dimensiones de imagen
@@ -297,11 +528,13 @@ namespace WPFApp1.ViewModels
 
             // Solicitar cambio a servicio de Productos y mostrar resultado
             ProductoCatalogo ProductoModificado = new ProductoCatalogo {
-                ID = IDProducto,
+                ID = string.Empty,
                 Nombre = NombreProducto,
                 Categoria = CategoriaProducto,
                 Precio = PrecioProducto,
-                RutaImagen = RutaImagenSeleccionada
+                RutaImagen = RutaImagenSeleccionada,
+                ProductoSKU = IDProducto,
+
             };
             ProductoBase ProductoMensaje = ProductoModificado;
 

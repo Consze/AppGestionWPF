@@ -8,6 +8,7 @@ namespace WPFApp1.Interfaces
         ProductoCatalogo RecuperarProductoPorID(string ProductoID);
         bool CrearProducto(ProductoCatalogo nuevoProducto);
         IAsyncEnumerable<ProductoCatalogo> LeerProductosAsync();
+        List<ProductoCatalogo> LeerProductos();
         bool ModificarProducto(ProductoCatalogo productoModificado);
         bool EliminarProducto(string ProductoID, TipoEliminacion TipoEliminacion);
     }

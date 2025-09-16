@@ -61,6 +61,17 @@ namespace WPFApp1.Conmutadores
                 }
             }
         }
+        public List<ProductoCatalogo> LeerProductos()
+        {
+            if (_repoServer._accesoDB.LeerConfiguracionManual())
+            {
+                return _repoServer.LeerProductos();
+            }
+            else
+            {
+                return _repoLocal.LeerProductos();
+            }
+        }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
         {
             if (_repoServer._accesoDB.LeerConfiguracionManual())

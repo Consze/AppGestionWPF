@@ -287,7 +287,8 @@ namespace WPFApp1.ViewModels
                     ID = producto.ID,
                     Precio = producto.Precio,
                     Categoria = producto.Categoria,
-                    RutaImagen = producto.RutaImagen
+                    RutaImagen = producto.RutaImagen,
+                    ProductoSKU = producto.ProductoSKU
                 };
                 ColeccionProductos.Add(_registro);
             }
@@ -304,7 +305,7 @@ namespace WPFApp1.ViewModels
             }
             if (ProductoClickeado is ProductoBase _producto)
             {
-                ProductoCatalogo producto = _productoServicio.RecuperarProductoPorID(_producto.ID);
+                ProductoCatalogo producto = _productoServicio.RecuperarProductoPorID(_producto.ProductoSKU);
                 _servicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 var _viewModel = App.GetService<AniadirProductoViewModel>();

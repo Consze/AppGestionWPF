@@ -188,7 +188,7 @@ namespace WPFApp1.ViewModels
         private async Task CambiarVistaAsync(object nuevaVista)
         {
             Procesando = true;
-            await Task.Delay(200);
+            await Task.Delay(2);
             VistaActual = nuevaVista;
             Procesando = false;
         }

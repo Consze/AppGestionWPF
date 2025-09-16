@@ -5,6 +5,19 @@ namespace WPFApp1.Entidades
 {
     public class ProductoBase : INotifyPropertyChanged
     {
+        private string _productoSKU;
+        public string ProductoSKU
+        {
+            get => _productoSKU;
+            set
+            {
+                if (_productoSKU != value)
+                {
+                    _productoSKU = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private string _nombre;
         public string Nombre {
             get => _nombre;
