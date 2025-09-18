@@ -560,13 +560,14 @@ namespace WPFApp1.ViewModels
                 Altura = Altura,
                 Ancho = Ancho,
                 Largo = Largo,
-                Peso = Peso,
+                Peso = Peso
 
             };
             ProductoBase ProductoMensaje = ProductoModificado;
 
             if (_productoService.ModificarProducto(ProductoModificado))
             {
+                ProductoMensaje.Categoria = ProductoModificado.CategoriaNombre;
                 _servicioIndexacion.IndexarProducto(ProductoMensaje);
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoMensaje });
@@ -732,21 +733,40 @@ namespace WPFApp1.ViewModels
 
             ProductoCatalogo _nuevoProducto = new ProductoCatalogo
             {
-                ID = null,
+                ID = ProductoID,
+                UbicacionID = UbicacionID,
+                ProductoSKU = ProductoSKU,
+                FormatoProductoID = FormatoID,
+                Categoria = CategoriaProductoID,
+                ProductoVersionID = ProductoVersionID,
+                MarcaID = MarcaProductoID,
+
                 Nombre = NombreProducto,
-                Categoria  = CategoriaProductoID,
-                Precio = PrecioProducto,
                 RutaImagen = RutaImagenSalida,
+                CategoriaNombre = CategoriaNombre,
+                MarcaNombre = MarcaNombre,
+                EAN = EAN,
+
                 VisibilidadWeb = VisibilidadWeb,
                 PrecioPublico = PrecioPublico,
+                EsEliminado = EsProductoEliminado,
 
+                FechaCreacion = FechaCreacionProducto,
+                FechaModificacion = FechaModificacionProducto,
+
+                Precio = PrecioProducto,
+                Haber = CantidadEnStock,
+                Altura = Altura,
+                Ancho = Ancho,
+                Largo = Largo,
+                Peso = Peso
             };
             ProductoBase ProductoMensaje = _nuevoProducto;
 
             string NuevoProductoSKU = _productoService.CrearProducto(_nuevoProducto);
             if (NuevoProductoSKU != null)
             {
-                ProductoMensaje.ID = NuevoProductoSKU;
+                ProductoMensaje.Categoria = _nuevoProducto.CategoriaNombre;
                 _servicioIndexacion.IndexarProducto(ProductoMensaje);
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen)  ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });

@@ -38,7 +38,7 @@ namespace WPFApp1.Repositorios
         public List<PalabrasTitulosProductos> BuscarPalabra(string Palabra)
         {
             List<PalabrasTitulosProductos> palabraColeccionTitulos = new List<PalabrasTitulosProductos>();
-            string Consulta = "SELECT * FROM Productos_titulos WHERE palabra = @palabra COLLATE NOCASE;";
+            string Consulta = "SELECT (palabra, producto_id) FROM Productos_titulos WHERE palabra = @palabra COLLATE NOCASE;";
             try
             {
                 using(SqliteCommand comand = new SqliteCommand(Consulta, _dbConexionSQLite.ObtenerConexionDB()))
@@ -46,11 +46,15 @@ namespace WPFApp1.Repositorios
                     comand.Parameters.AddWithValue("@palabra", Palabra);
                     using(SqliteDataReader lector = comand.ExecuteReader())
                     {
-                        while(lector.Read())
+                        int IDXPalabra = lector.GetOrdinal("palabra");
+                        int IDXProductoID = lector.GetOrdinal("producto_id");
+
+                        while (lector.Read())
                         {
-                            PalabrasTitulosProductos palabraEncontrada = new PalabrasTitulosProductos();
-                            palabraEncontrada.palabra = lector["palabra"].ToString();
-                            palabraEncontrada.producto_id = lector["producto_id"].ToString();
+                            PalabrasTitulosProductos palabraEncontrada = new PalabrasTitulosProductos {
+                                palabra = lector.GetString(IDXPalabra),
+                                producto_id = lector.GetString(IDXProductoID)
+                            };
                             
                             if(palabraEncontrada.palabra != null)
                             {
@@ -79,16 +83,17 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@id", producto_id);
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
+                        int IDXPalabra = lector.GetOrdinal("palabra");
+                        int IDXProductoID = lector.GetOrdinal("producto_id");
+                        int IDXIndiceID = lector.GetOrdinal("id");
+
                         while (lector.Read())
                         {
-                            int ID = Convert.ToInt32(lector["id"]);
-                            string prod_id = lector["producto_id"].ToString();
-                            string Palabra = lector["palabra"].ToString();
                             IDX_Prod_Titulos registro = new IDX_Prod_Titulos
                             {
-                                ID = ID,
-                                producto_id = prod_id,
-                                palabra = Palabra
+                                ID = lector.GetInt32(IDXIndiceID),
+                                producto_id = lector.GetString(IDXProductoID),
+                                palabra = lector.GetString(IDXPalabra)
                             };
                             registrosIDX.Add(registro);
                         }
