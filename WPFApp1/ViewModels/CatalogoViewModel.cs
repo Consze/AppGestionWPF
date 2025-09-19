@@ -19,7 +19,6 @@ namespace WPFApp1.ViewModels
     }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
-        //private readonly IProductoServicioObsoleto _productoServicio;
         private readonly IProductosServicio _productoServicio;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
@@ -178,7 +177,7 @@ namespace WPFApp1.ViewModels
                 if (eleccionUsuario == DialogResult.Yes)
                 {
                     ColeccionProductos.Remove(ProductoEliminar);
-                    _productoServicio.EliminarProducto(ProductoEliminar.ID, TipoEliminacion.Logica);
+                    _productoServicio.EliminarProducto(ProductoEliminar.ProductoSKU, TipoEliminacion.Logica);
                     _servicioSFX.Confirmar();
                     Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                     Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
@@ -219,16 +218,14 @@ namespace WPFApp1.ViewModels
         }
         private async Task BuscarProductosTitulos(string Titulo)
         {
-            List<Productos> registros = await Task.Run(() => _servicioIndexacion.BuscarTituloProductos(Titulo));
+            List<ProductoBase> registros = await Task.Run(() => _servicioIndexacion.BuscarTituloProductos(Titulo));
 
             App.Current.Dispatcher.Invoke(() =>
             {
                 ColeccionProductos.Clear();
                 foreach (var producto in registros)
                 {
-                    producto.RutaImagen = Path.GetFullPath(producto.RutaImagen);
-                    ProductoBase _registro = new ProductoBase { Nombre = producto.Nombre, ID = producto.ID, Precio = producto.Precio, Categoria = producto.Categoria,RutaImagen = producto.RutaImagen };
-                    ColeccionProductos.Add(_registro);
+                    ColeccionProductos.Add(producto);
                 }
             });
             

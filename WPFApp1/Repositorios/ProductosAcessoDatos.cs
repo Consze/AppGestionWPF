@@ -12,6 +12,9 @@ namespace WPFApp1.Repositorios
         Fisica
     };
 
+    /// <summary>
+    /// Implementación para DBMS local SQLite
+    /// </summary>
     public class ProductosAcessoDatosSQLite : IProductosAccesoDatos
     {
         private readonly ConexionDBSQLite _accesoDB;
@@ -176,7 +179,7 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@VisibilidadWeb", nuevoProducto.VisibilidadWeb);
                     comando.Parameters.AddWithValue("@PrecioPublico", nuevoProducto.PrecioPublico);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
-
+                    comando.ExecuteNonQuery();
                     return nuevoProducto.ProductoSKU;
                 }
             }
@@ -505,6 +508,10 @@ namespace WPFApp1.Repositorios
             }
         }
     }
+
+    /// <summary>
+    /// Implementación para DBMS SQL Server
+    /// </summary>
     public class ProductosAccesoDatosSQLServer : IProductosAccesoDatos
     {
         public readonly ConexionDBSQLServer _accesoDB;
@@ -668,7 +675,7 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@VisibilidadWeb", nuevoProducto.VisibilidadWeb);
                     comando.Parameters.AddWithValue("@PrecioPublico", nuevoProducto.PrecioPublico);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
-
+                    comando.ExecuteNonQuery();
                     return nuevoProducto.ProductoSKU;
                 }
             }

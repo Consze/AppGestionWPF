@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
+using System.IO;
 using WPFApp1.DTOS;
+using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
@@ -70,6 +72,67 @@ namespace WPFApp1.Repositorios
             }
             
             return palabraColeccionTitulos;
+        }
+        public List<ProductoBase> BuscarProductos(List<string> ColeccionPalabras)
+        {
+            string parametros = string.Join(", ", Enumerable.Range(0, ColeccionPalabras.Count).Select(i => $"@palabra{i}"));
+            List<ProductoBase> registrosCoincidentes = new List<ProductoBase>();
+            if (string.IsNullOrEmpty(parametros))
+            {
+                return registrosCoincidentes;
+            }
+
+            string Consulta = $@"SELECT 
+                s.SKU_Producto AS ProductoSKU,
+                s.precio AS ProductoPrecio,
+                v.RutaRelativaImagen AS RutaRelativaImagen,
+                p.nombre AS ProductoNombre,
+                c.nombre AS ProductoCategoria,
+                COUNT(t.palabra) AS CantidadCoincidencias
+            FROM Productos_stock AS s
+            INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+            INNER JOIN Productos AS p ON v.producto_id = p.id            
+            INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+            INNER JOIN Productos_titulos AS t ON t.producto_id = p.id
+            WHERE t.palabra IN ({parametros})
+                AND s.haber > 0
+                AND s.EsEliminado = FALSE
+            GROUP BY  ProductoSKU, ProductoPrecio, RutaRelativaImagen, ProductoNombre, ProductoCategoria
+            ORDER BY CantidadCoincidencias DESC;";
+
+
+            using (SqliteCommand comando = new SqliteCommand(Consulta, _dbConexionSQLite.ObtenerConexionDB()))
+            {
+                for (int i = 0; i < ColeccionPalabras.Count; i++)
+                {
+                    comando.Parameters.AddWithValue($"@palabra{i}", ColeccionPalabras[i]);
+                }
+
+                using (SqliteDataReader lector = comando.ExecuteReader())
+                {
+                    int IDXNombreProducto = lector.GetOrdinal("ProductoNombre");
+                    int IDXNombreCategoria = lector.GetOrdinal("ProductoCategoria");
+                    int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                    int IDXSKU = lector.GetOrdinal("ProductoSKU");
+                    int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+
+                    while(lector.Read())
+                    {
+                        ProductoBase producto = new ProductoBase
+                        {
+                            Nombre = lector.IsDBNull(IDXNombreProducto) ? "" : lector.GetString(IDXNombreProducto),
+                            Categoria = lector.IsDBNull(IDXNombreCategoria) ? "" : lector.GetString(IDXNombreCategoria),
+                            RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                            Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                            ProductoSKU = lector.GetString(IDXSKU)
+                        };
+
+                        registrosCoincidentes.Add(producto);
+                    }
+
+                    return registrosCoincidentes;
+                }
+            }
         }
         public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(string producto_id)
         {
@@ -189,6 +252,66 @@ namespace WPFApp1.Repositorios
             }
 
             return palabraColeccionTitulos;
+        }
+        public List<ProductoBase> BuscarProductos(List<string> ColeccionPalabras)
+        {
+            string parametros = string.Join(", ", Enumerable.Range(0, ColeccionPalabras.Count).Select(i => $"@palabra{i}"));
+            List<ProductoBase> registrosCoincidentes = new List<ProductoBase>();
+            if (string.IsNullOrEmpty(parametros))
+            {
+                return registrosCoincidentes;
+            }
+
+            string Consulta = $@"SELECT 
+                s.SKU_Producto AS ProductoSKU,
+                s.precio AS ProductoPrecio,
+                v.RutaRelativaImagen AS RutaRelativaImagen,
+                p.nombre AS ProductoNombre,
+                c.nombre AS ProductoCategoria,
+                COUNT(t.palabra) AS CantidadCoincidencias
+            FROM Productos_stock AS s
+            INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+            INNER JOIN Productos AS p ON v.producto_id = p.id            
+            INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+            INNER JOIN Productos_titulos AS t ON t.producto_id = p.id
+            WHERE t.palabra IN ({parametros})
+                AND s.haber > 0
+                AND s.EsEliminado = 0
+            GROUP BY  s.SKU_Producto, s.precio, v.RutaRelativaImagen, p.nombre, c.nombre
+            ORDER BY CantidadCoincidencias DESC;";
+
+            using (SqlCommand comando = new SqlCommand(Consulta, _dbSQLServer.ObtenerConexionDB()))
+            {
+                for (int i = 0; i < ColeccionPalabras.Count; i++)
+                {
+                    comando.Parameters.AddWithValue($"@palabra{i}", ColeccionPalabras[i]);
+                }
+
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    int IDXNombreProducto = lector.GetOrdinal("ProductoNombre");
+                    int IDXNombreCategoria = lector.GetOrdinal("ProductoCategoria");
+                    int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                    int IDXSKU = lector.GetOrdinal("ProductoSKU");
+                    int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+
+                    while (lector.Read())
+                    {
+                        ProductoBase producto = new ProductoBase
+                        {
+                            Nombre = lector.IsDBNull(IDXNombreProducto) ? "" : lector.GetString(IDXNombreProducto),
+                            Categoria = lector.IsDBNull(IDXNombreCategoria) ? "" : lector.GetString(IDXNombreCategoria),
+                            RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                            Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                            ProductoSKU = lector.GetString(IDXSKU)
+                        };
+
+                        registrosCoincidentes.Add(producto);
+                    }
+
+                    return registrosCoincidentes;
+                }
+            }
         }
         public List<IDX_Prod_Titulos> RecuperarIndicesPorProductoID(string producto_id)
         {

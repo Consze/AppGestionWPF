@@ -1,5 +1,6 @@
-﻿using WPFApp1.Interfaces;
-using WPFApp1.DTOS;
+﻿using WPFApp1.DTOS;
+using WPFApp1.Entidades;
+using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
@@ -15,7 +16,6 @@ namespace WPFApp1.Conmutadores
             _repositorioLocal = repositorioLocal;
             _repositorioRemoto = repositorioRemoto;
         }
-
         public List<PalabrasTitulosProductos> BuscarPalabra(string Palabra)
         {
             List<PalabrasTitulosProductos> Palabras = new List<PalabrasTitulosProductos>();
@@ -28,6 +28,17 @@ namespace WPFApp1.Conmutadores
                 Palabras = _repositorioLocal.BuscarPalabra(Palabra);
             }
             return Palabras;
+        }
+        public List<ProductoBase> BuscarProductos(List<string> ColeccionPalabras)
+        {
+            if (_conexionServidor.LeerConfiguracionManual())
+            {
+                return _repositorioRemoto.BuscarProductos(ColeccionPalabras);
+            }
+            else
+            {
+                return _repositorioLocal.BuscarProductos(ColeccionPalabras);
+            }
         }
         public bool InsertarRegistro(string Palabra, string ID)
         {
