@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -21,9 +22,9 @@ namespace WPFApp1.ViewModels
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        //private readonly IProductoServicioObsoleto _productoService;
         private readonly IProductosServicio _productoService;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
+        public ObservableCollection<EntidadNombrada> Formatos { get; set; }
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
