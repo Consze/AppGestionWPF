@@ -34,6 +34,7 @@ namespace WPFApp1
 
             services.AddTransient<ProductosAccesoDatosSQLServer>();
             services.AddTransient<ProductosAcessoDatosSQLite>();
+            services.AddTransient<IRepoFormatos, RepoEntidadBaseSQLite>();
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
                 var repoServer = provider.GetRequiredService<ProductosAccesoDatosSQLServer>();

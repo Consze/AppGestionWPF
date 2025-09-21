@@ -196,34 +196,34 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private int _altura;
-        public int Altura
+        private decimal _alto;
+        public decimal Alto
         {
-            get { return _altura; }
+            get { return _alto; }
             set
             {
-                if (_altura != value)
+                if (_alto != value)
                 {
-                    _altura = value;
-                    OnPropertyChanged(nameof(Altura));
+                    _alto = value;
+                    OnPropertyChanged(nameof(Alto));
                 }
             }
         }
-        private int _ancho;
-        public int Ancho
+        private decimal _profundidad;
+        public decimal Profundidad
         {
-            get { return _ancho; }
+            get { return _profundidad; }
             set
             {
-                if (_ancho != value)
+                if (_profundidad != value)
                 {
-                    _ancho = value;
-                    OnPropertyChanged(nameof(Ancho));
+                    _profundidad = value;
+                    OnPropertyChanged(nameof(Profundidad));
                 }
             }
         }
-        private int _largo;
-        public int Largo
+        private decimal _largo;
+        public decimal Largo
         {
             get { return _largo; }
             set
@@ -235,8 +235,8 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private int _peso;
-        public int Peso
+        private decimal _peso;
+        public decimal Peso
         {
             get { return _peso; }
             set
@@ -463,9 +463,9 @@ namespace WPFApp1.ViewModels
             //Numericas
             CantidadEnStock = Producto.Haber;
             PrecioProducto = Producto.Precio;
-            Altura = Producto.Altura;
+            Alto = Producto.Alto;
             Peso = Producto.Peso;
-            Ancho = Producto.Ancho;
+            Profundidad = Producto.Profundidad;
             Largo = Producto.Largo;
 
             // Obtener dimensiones de imagen
@@ -558,8 +558,8 @@ namespace WPFApp1.ViewModels
 
                 Precio = PrecioProducto,
                 Haber = CantidadEnStock,
-                Altura = Altura,
-                Ancho = Ancho,
+                Alto = Alto,
+                Profundidad = Profundidad,
                 Largo = Largo,
                 Peso = Peso
 
@@ -757,8 +757,8 @@ namespace WPFApp1.ViewModels
 
                 Precio = PrecioProducto,
                 Haber = CantidadEnStock,
-                Altura = Altura,
-                Ancho = Ancho,
+                Alto = Alto,
+                Profundidad = Profundidad,
                 Largo = Largo,
                 Peso = Peso
             };

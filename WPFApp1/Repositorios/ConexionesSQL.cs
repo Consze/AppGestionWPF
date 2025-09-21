@@ -260,10 +260,10 @@ namespace WPFApp1.Repositorios
         CREATE TABLE IF NOT EXISTS Productos_formatos (
             ID VARCHAR(36) PRIMARY KEY,
             descripcion TEXT,
-            alto INT NOT NULL,
-            ancho INT NOT NULL,
-            largo INT NOT NULL,
-            peso INT,
+            alto NUMERIC(18, 1) NOT NULL,
+            ancho NUMERIC(18, 1) NOT NULL,
+            largo NUMERIC(18, 1) NOT NULL,
+            peso NUMERIC(18, 1) DEFAULT 1,
             EsEliminado BOOLEAN DEFAULT FALSE,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME

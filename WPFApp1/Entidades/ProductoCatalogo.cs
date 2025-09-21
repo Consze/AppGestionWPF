@@ -31,7 +31,7 @@
         }
 
 
-        //--------Enteros---------
+        //--------Numericos---------
         private int _haber;
         public int Haber
         {
@@ -45,8 +45,8 @@
                 }
             }
         }
-        private int _peso;
-        public int Peso
+        private decimal _peso;
+        public decimal Peso
         {
             get => _peso;
             set
@@ -58,21 +58,21 @@
                 }
             }
         }
-        private int _altura;
-        public int Altura
+        private decimal _alto;
+        public decimal Alto
         {
-            get => _altura;
+            get => _alto;
             set
             {
-                if (_altura != value)
+                if (_alto != value)
                 {
-                    _altura = value;
+                    _alto = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private int _largo;
-        public int Largo
+        private decimal _largo;
+        public decimal Largo
         {
             get => _largo;
             set
@@ -84,15 +84,15 @@
                 }
             }
         }
-        private int _ancho;
-        public int Ancho
+        private decimal _profundidad;
+        public decimal Profundidad
         {
-            get => _ancho;
+            get => _profundidad;
             set
             {
-                if (_ancho != value)
+                if (_profundidad != value)
                 {
-                    _ancho = value;
+                    _profundidad = value;
                     OnPropertyChanged();
                 }
             }

@@ -56,8 +56,8 @@ namespace WPFApp1.Repositorios
                 v.producto_id AS ProductoID,
                 v.Marca_id AS MarcaID,
                 v.formato_id AS FormatoID,
-                f.alto AS Altura,
-                f.ancho AS Ancho,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
@@ -84,8 +84,8 @@ namespace WPFApp1.Repositorios
                         if (lector.Read())
                         {
                             //indices
-                            int IDXAltura = lector.GetOrdinal("Altura");
-                            int IDXAncho = lector.GetOrdinal("Ancho");
+                            int IDXAlto = lector.GetOrdinal("Alto");
+                            int IDXProfundidad = lector.GetOrdinal("Profundidad");
                             int IDXLargo = lector.GetOrdinal("Largo");
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
@@ -110,9 +110,9 @@ namespace WPFApp1.Repositorios
 
 
                             //Numericos
-                            registro.Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura);
-                            registro.Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho);
-                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo);
+                            registro.Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto);
+                            registro.Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad);
+                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber);
                             registro.Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio);
 
@@ -206,8 +206,8 @@ namespace WPFApp1.Repositorios
                 v.producto_id AS ProductoID,
                 v.Marca_id AS MarcaID,
                 v.formato_id AS FormatoID,
-                f.alto AS Altura,
-                f.ancho AS Ancho,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
@@ -231,8 +231,8 @@ namespace WPFApp1.Repositorios
                     using (var lector = await comando.ExecuteReaderAsync())
                         {
                             // Indices
-                            int IDXAltura = lector.GetOrdinal("Altura");
-                            int IDXAncho = lector.GetOrdinal("Ancho");
+                            int IDXAlto = lector.GetOrdinal("Alto");
+                            int IDXProfundidad = lector.GetOrdinal("Profundidad");
                             int IDXLargo = lector.GetOrdinal("Largo");
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
@@ -261,9 +261,9 @@ namespace WPFApp1.Repositorios
                                     ProductoSKU = lector.GetString(IDXProductoSKU),
 
                                     //Numericos
-                                    Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
-                                    Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho),
-                                    Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo),
+                                    Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                    Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                    Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                     Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                     Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
 
@@ -316,8 +316,8 @@ namespace WPFApp1.Repositorios
                 v.producto_id AS ProductoID,
                 v.Marca_id AS MarcaID,
                 v.formato_id AS FormatoID,
-                f.alto AS Altura,
-                f.ancho AS Ancho,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
@@ -339,8 +339,8 @@ namespace WPFApp1.Repositorios
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
                         // Indices
-                        int IDXAltura = lector.GetOrdinal("Altura");
-                        int IDXAncho = lector.GetOrdinal("Ancho");
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
                         int IDXLargo = lector.GetOrdinal("Largo");
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
@@ -368,9 +368,9 @@ namespace WPFApp1.Repositorios
                                 ProductoSKU = lector.GetString(IDXProductoSKU),
 
                                 //Numericos
-                                Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
-                                Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
 
@@ -553,8 +553,8 @@ namespace WPFApp1.Repositorios
                 v.producto_id AS ProductoID,
                 v.Marca_id AS MarcaID,
                 v.formato_id AS FormatoID,
-                f.alto AS Altura,
-                f.ancho AS Ancho,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
@@ -581,8 +581,8 @@ namespace WPFApp1.Repositorios
                         if (lector.Read())
                         {
                             //indices
-                            int IDXAltura = lector.GetOrdinal("Altura");
-                            int IDXAncho = lector.GetOrdinal("Ancho");
+                            int IDXAlto = lector.GetOrdinal("Alto");
+                            int IDXProfundidad = lector.GetOrdinal("Profundidad");
                             int IDXLargo = lector.GetOrdinal("Largo");
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
@@ -606,9 +606,9 @@ namespace WPFApp1.Repositorios
                             //__
 
                             //Numericos
-                            registro.Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura);
-                            registro.Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho);
-                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo);
+                            registro.Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto);
+                            registro.Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad);
+                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber);
                             registro.Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio);
 
@@ -702,8 +702,8 @@ namespace WPFApp1.Repositorios
                 v.producto_id AS ProductoID,
                 v.Marca_id AS MarcaID,
                 v.formato_id AS FormatoID,
-                f.alto AS Altura,
-                f.ancho AS Ancho,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
@@ -727,8 +727,8 @@ namespace WPFApp1.Repositorios
                     using (var lector = await comando.ExecuteReaderAsync())
                     {
                         // Indices
-                        int IDXAltura = lector.GetOrdinal("Altura");
-                        int IDXAncho = lector.GetOrdinal("Ancho");
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
                         int IDXLargo = lector.GetOrdinal("Largo");
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
@@ -757,9 +757,9 @@ namespace WPFApp1.Repositorios
                                 ProductoSKU = lector.GetString(IDXProductoSKU),
 
                                 //Numericos
-                                Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
-                                Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
 
@@ -812,8 +812,8 @@ namespace WPFApp1.Repositorios
                 v.producto_id AS ProductoID,
                 v.Marca_id AS MarcaID,
                 v.formato_id AS FormatoID,
-                f.alto AS Altura,
-                f.ancho AS Ancho,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
                 p.nombre AS ProductoNombre,
@@ -836,8 +836,8 @@ namespace WPFApp1.Repositorios
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
                         // Indices
-                        int IDXAltura = lector.GetOrdinal("Altura");
-                        int IDXAncho = lector.GetOrdinal("Ancho");
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
                         int IDXLargo = lector.GetOrdinal("Largo");
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
@@ -865,9 +865,9 @@ namespace WPFApp1.Repositorios
                                 ProductoSKU = lector.GetString(IDXProductoSKU),
 
                                 //Numericos
-                                Altura = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
-                                Ancho = lector.IsDBNull(IDXAncho) ? 0 : lector.GetInt32(IDXAncho),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetInt32(IDXLargo),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
 
