@@ -306,8 +306,8 @@ namespace WPFApp1.ViewModels
                 _servicioSFX.Paginacion();
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
-                _viewModel.ConfigurarEdicionDeProducto(producto);
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
+                _viewModel.ConfigurarEdicionDeProducto(producto);
                 AniadirProductoInstanciado.Show();
             }
         }

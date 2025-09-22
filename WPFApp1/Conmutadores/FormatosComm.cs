@@ -10,6 +10,7 @@ namespace WPFApp1.Conmutadores
         string Insertar(T nuevoRegistro);
         T Recuperar(string ID);
         IAsyncEnumerable<T> RecuperarStreamAsync();
+        List<T> RecuperarList();
     }
     public class ConmutadorFormatos : IConmutadorEntidadGenerica<Formatos>
     {
@@ -35,6 +36,17 @@ namespace WPFApp1.Conmutadores
                 {
                     yield return producto;
                 }
+            }
+        }
+        public List<Formatos> RecuperarList()
+        {
+            if(repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                return repoServer.RecuperarList();
+            }
+            else
+            {
+                return repoLocal.RecuperarList();
             }
         }
         public bool Eliminar(string ID) => throw new NotImplementedException();

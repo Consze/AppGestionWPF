@@ -9,5 +9,6 @@ namespace WPFApp1.Interfaces
         string Insertar(T nuevoRegistro);
         T Recuperar(string ID);
         IAsyncEnumerable<T> RecuperarStreamAsync();
+        List<T> RecuperarList();
     }
 }

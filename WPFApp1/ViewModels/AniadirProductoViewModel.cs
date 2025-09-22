@@ -27,7 +27,7 @@ namespace WPFApp1.ViewModels
         private readonly IProductosServicio _productoService;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
-        public ObservableCollection<Formatos> Formatos { get; set; }
+        public ObservableCollection<Formatos> Formatos { get; } = new();
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -431,12 +431,11 @@ namespace WPFApp1.ViewModels
                 AniadirProducto(0);
             }
         }
-        private async Task CargarFormatos()
-        {
-            await foreach(var formato in servicioFormatos.RecuperarStreamAsync())
-            {
-                Formatos.Add(formato);
-            }
+        private async Task CargarFormatos() { 
+            await foreach (var formato in servicioFormatos.RecuperarStreamAsync()) 
+            { 
+                Formatos.Add(formato); 
+            } 
         }
         public async Task ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
         {

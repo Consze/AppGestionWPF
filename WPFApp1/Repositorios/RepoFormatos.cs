@@ -1,5 +1,5 @@
-﻿using System.Data.SqlClient;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using System.Data.SqlClient;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
@@ -14,7 +14,6 @@ namespace WPFApp1.Repositorios
         }
         public async IAsyncEnumerable<Formatos> RecuperarStreamAsync()
         {
-            List<Formatos> formatos = new List<Formatos>();
             string consulta = @"SELECT 
                     f.id AS ID,
                     f.descripcion AS Nombre,
@@ -43,22 +42,79 @@ namespace WPFApp1.Repositorios
                         int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while(await lector.ReadAsync()) {
                             Formatos registro = new Formatos
                             {
-                                ID = lector.GetString(IDXID),
-                                Nombre = lector.GetString(IDXNombre),
-                                Alto = lector.GetDecimal(IDXAlto),
-                                Largo = lector.GetDecimal(IDXLargo),
-                                Profundidad = lector.GetDecimal(IDXProfundidad),
-                                Peso = lector.GetDecimal(IDXPeso),
-                                FechaCreacion = lector.GetDateTime(IDXFechaCreacion),
-                                FechaModificacion = lector.GetDateTime(IDXFechaModificacion)
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
                             };
 
                             yield return registro;
                         }
+                    }
+                }
+            }
+        }
+        public List<Formatos> RecuperarList()
+        {
+            List<Formatos> formatos = new List<Formatos>();
+            string consulta = @"SELECT 
+                    f.id AS ID,
+                    f.descripcion AS Nombre,
+                    f.alto AS Alto,
+                    f.largo AS Largo,
+                    f.profundidad AS Profundidad,
+                    f.peso AS Peso,
+                    f.EsEliminado AS EsEliminado,
+                    f.FechaCreacion AS FechaCreacion,
+                    f.FechaModificacion AS FechaModificacion
+                FROM Productos_formatos AS f
+                WHERE f.EsEliminado = False;";
+
+            using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
+            {
+                using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
+                {
+                    using (SqliteDataReader lector =  comando.ExecuteReader())
+                    {
+                        int IDXID = lector.GetOrdinal("ID");
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
+                        int IDXPeso = lector.GetOrdinal("Peso");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
+                        int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
+
+                        while (lector.Read())
+                        {
+                            Formatos registro = new Formatos
+                            {
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
+                            };
+
+                            formatos.Add(registro);
+                        }
+
+                        return formatos;
                     }
                 }
             }
@@ -107,23 +163,80 @@ namespace WPFApp1.Repositorios
                         int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (await lector.ReadAsync())
                         {
                             Formatos registro = new Formatos
                             {
-                                ID = lector.GetString(IDXID),
-                                Nombre = lector.GetString(IDXNombre),
-                                Alto = lector.GetDecimal(IDXAlto),
-                                Largo = lector.GetDecimal(IDXLargo),
-                                Profundidad = lector.GetDecimal(IDXProfundidad),
-                                Peso = lector.GetDecimal(IDXPeso),
-                                FechaCreacion = lector.GetDateTime(IDXFechaCreacion),
-                                FechaModificacion = lector.GetDateTime(IDXFechaModificacion)
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
                             };
 
                             yield return registro;
                         }
+                    }
+                }
+            }
+        }
+        public List<Formatos> RecuperarList()
+        {
+            List<Formatos> formatos = new List<Formatos>();
+            string consulta = @"SELECT 
+                    f.id AS ID,
+                    f.descripcion AS Nombre,
+                    f.alto AS Alto,
+                    f.largo AS Largo,
+                    f.profundidad AS Profundidad,
+                    f.peso AS Peso,
+                    f.EsEliminado AS EsEliminado,
+                    f.FechaCreacion AS FechaCreacion,
+                    f.FechaModificacion AS FechaModificacion
+                FROM Productos_formatos AS f
+                WHERE f.EsEliminado = 0;";
+
+            using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
+            {
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        int IDXID = lector.GetOrdinal("ID");
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
+                        int IDXPeso = lector.GetOrdinal("Peso");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
+                        int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
+
+                        while (lector.Read())
+                        {
+                            Formatos registro = new Formatos
+                            {
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
+                            };
+
+                            formatos.Add(registro);
+                        }
+
+                        return formatos;
                     }
                 }
             }

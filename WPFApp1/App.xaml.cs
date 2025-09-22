@@ -35,8 +35,12 @@ namespace WPFApp1
 
             services.AddTransient<ProductosAccesoDatosSQLServer>();
             services.AddTransient<ProductosAcessoDatosSQLite>();
+            services.AddTransient<RepoFormatosSQLite>();
+            services.AddTransient<RepoFormatosSQLServer>();
             services.AddTransient<IRepoEntidadGenerica<Formatos>, RepoFormatosSQLite>();
             services.AddTransient<IRepoEntidadGenerica<Formatos>, RepoFormatosSQLServer>();
+            services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
+
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
                 var repoServer = provider.GetRequiredService<ProductosAccesoDatosSQLServer>();
@@ -44,7 +48,7 @@ namespace WPFApp1
 
                 return new ProductoConmutador(repoServer, repoLocal);
             });
-
+            
             services.AddTransient<IndexadorGenericoService>();
 
             services.AddTransient<IProductoServicioObsoleto, ProductoServicio>();
