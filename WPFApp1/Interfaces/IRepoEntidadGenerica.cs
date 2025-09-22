@@ -2,12 +2,12 @@
 
 namespace WPFApp1.Interfaces
 {
-    public interface IRepoEntidadGenerica
+    public interface IRepoEntidadGenerica<T> where T : EntidadBase
     {
         bool Eliminar(string ID);
-        bool Modificar(EntidadBase registroModificado);
-        string Insertar(EntidadBase nuevoRegistro);
-        EntidadBase Recuperar(string ID);
-        IAsyncEnumerable<EntidadBase> RecuperarStreamAsync();
+        bool Modificar(T registroModificado);
+        string Insertar(T nuevoRegistro);
+        T Recuperar(string ID);
+        IAsyncEnumerable<T> RecuperarStreamAsync();
     }
 }

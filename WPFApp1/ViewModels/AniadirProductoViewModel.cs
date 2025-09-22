@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -24,7 +26,8 @@ namespace WPFApp1.ViewModels
     {
         private readonly IProductosServicio _productoService;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
-        public ObservableCollection<EntidadNombrada> Formatos { get; set; }
+        private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
+        public ObservableCollection<Formatos> Formatos { get; set; }
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -383,7 +386,7 @@ namespace WPFApp1.ViewModels
         public ICommand CerrarVistaCommand { get; }
         public ICommand ModificarCantidadStockCommand { get; }
 
-        public AniadirProductoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
+        public AniadirProductoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, IConmutadorEntidadGenerica<Formatos> _servicioFormatos)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -414,6 +417,7 @@ namespace WPFApp1.ViewModels
             _productoService = productoServicio;
             _servicioSFX = new ServicioSFX();
             _servicioIndexacion = ServicioIndexacion;
+            servicioFormatos = _servicioFormatos;
         }
 
         public void BotonPresionado(object parameter)
@@ -427,7 +431,14 @@ namespace WPFApp1.ViewModels
                 AniadirProducto(0);
             }
         }
-        public void ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
+        private async Task CargarFormatos()
+        {
+            await foreach(var formato in servicioFormatos.RecuperarStreamAsync())
+            {
+                Formatos.Add(formato);
+            }
+        }
+        public async Task ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
         {
             // Configurar Bindings
             EsModoEdicion = true;
@@ -505,6 +516,9 @@ namespace WPFApp1.ViewModels
                         break;
                 }
             }
+
+            // Poblar Combobox de formatos
+            await CargarFormatos();
         }
         public void EditarProducto(object parameter)
         {

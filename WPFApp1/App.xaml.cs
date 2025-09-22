@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using WPFApp1.Conmutadores;
+using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
@@ -34,7 +35,8 @@ namespace WPFApp1
 
             services.AddTransient<ProductosAccesoDatosSQLServer>();
             services.AddTransient<ProductosAcessoDatosSQLite>();
-            services.AddTransient<IRepoFormatos, RepoEntidadBaseSQLite>();
+            services.AddTransient<IRepoEntidadGenerica<Formatos>, RepoFormatosSQLite>();
+            services.AddTransient<IRepoEntidadGenerica<Formatos>, RepoFormatosSQLServer>();
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
                 var repoServer = provider.GetRequiredService<ProductosAccesoDatosSQLServer>();
