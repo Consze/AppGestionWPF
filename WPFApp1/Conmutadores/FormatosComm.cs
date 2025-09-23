@@ -1,17 +1,9 @@
 ﻿using WPFApp1.Entidades;
 using WPFApp1.Repositorios;
+using WPFApp1.Interfaces;
 
 namespace WPFApp1.Conmutadores
 {
-    public interface IConmutadorEntidadGenerica<T> where T : EntidadBase
-    {
-        bool Eliminar(string ID);
-        bool Modificar(T registroModificado);
-        string Insertar(T nuevoRegistro);
-        T Recuperar(string ID);
-        IAsyncEnumerable<T> RecuperarStreamAsync();
-        List<T> RecuperarList();
-    }
     public class ConmutadorFormatos : IConmutadorEntidadGenerica<Formatos>
     {
         private readonly RepoFormatosSQLite repoLocal;
@@ -25,16 +17,16 @@ namespace WPFApp1.Conmutadores
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                await foreach (var producto in repoServer.RecuperarStreamAsync())
+                await foreach (var formato in repoServer.RecuperarStreamAsync())
                 {
-                    yield return producto;
+                    yield return formato;
                 }
             }
             else
             {
-                await foreach (var producto in repoLocal.RecuperarStreamAsync())
+                await foreach (var formato in repoLocal.RecuperarStreamAsync())
                 {
-                    yield return producto;
+                    yield return formato;
                 }
             }
         }
@@ -49,7 +41,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.RecuperarList();
             }
         }
-        public bool Eliminar(string ID) => throw new NotImplementedException();
+        public bool Eliminar(string ID, TipoEliminacion Caso) => throw new NotImplementedException();
         public bool Modificar(Formatos registroModificado) => throw new NotImplementedException();
         public string Insertar(Formatos nuevoRegistro) => throw new NotImplementedException();
         public Formatos Recuperar(string ID) => throw new NotImplementedException();

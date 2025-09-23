@@ -37,9 +37,12 @@ namespace WPFApp1
             services.AddTransient<ProductosAcessoDatosSQLite>();
             services.AddTransient<RepoFormatosSQLite>();
             services.AddTransient<RepoFormatosSQLServer>();
-            services.AddTransient<IRepoEntidadGenerica<Formatos>, RepoFormatosSQLite>();
-            services.AddTransient<IRepoEntidadGenerica<Formatos>, RepoFormatosSQLServer>();
+            services.AddTransient<RepoVersionesSQLite>();
+            services.AddTransient<RepoVersionesSQLServer>();
+
+            // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
+            services.AddTransient<IConmutadorEntidadGenerica<Versiones>, VersionesConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {

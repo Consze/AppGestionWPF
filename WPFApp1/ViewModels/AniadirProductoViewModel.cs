@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;

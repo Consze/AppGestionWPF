@@ -119,7 +119,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Eliminar(string ID) => throw new NotImplementedException();
+        public bool Eliminar(string ID, TipoEliminacion Caso) => throw new NotImplementedException();
         public bool Modificar(Formatos registroModificado) => throw new NotImplementedException();
         public string Insertar(Formatos nuevoRegistro) => throw new NotImplementedException();
         public Formatos Recuperar(string ID) => throw new NotImplementedException();
@@ -241,7 +241,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Eliminar(string ID) => throw new NotImplementedException();
+        public bool Eliminar(string ID, TipoEliminacion Caso) => throw new NotImplementedException();
         public bool Modificar(Formatos registroModificado) => throw new NotImplementedException();
         public string Insertar(Formatos nuevoRegistro) => throw new NotImplementedException();
         public Formatos Recuperar(string ID) => throw new NotImplementedException();

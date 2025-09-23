@@ -3,7 +3,7 @@ using WPFApp1.Repositorios;
 
 namespace WPFApp1.Interfaces
 {
-    public interface IRepoEntidadGenerica<T> where T : EntidadBase
+    public interface IConmutadorEntidadGenerica<T> where T : EntidadBase
     {
         bool Eliminar(string ID, TipoEliminacion Caso);
         bool Modificar(T registroModificado);
