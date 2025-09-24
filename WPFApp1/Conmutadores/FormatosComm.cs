@@ -41,9 +41,59 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.RecuperarList();
             }
         }
-        public bool Eliminar(string ID, TipoEliminacion Caso) => throw new NotImplementedException();
-        public bool Modificar(Formatos registroModificado) => throw new NotImplementedException();
-        public string Insertar(Formatos nuevoRegistro) => throw new NotImplementedException();
-        public Formatos Recuperar(string ID) => throw new NotImplementedException();
+        public bool Eliminar(string ID, TipoEliminacion Caso) 
+        {
+            if (repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                return repoServer.Eliminar(ID, Caso);
+            }
+            else
+            {
+                return repoLocal.Eliminar(ID, Caso);
+            }
+        }
+        public bool Modificar(Formatos registroModificado)
+        {
+            if (repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                return repoServer.Modificar(registroModificado);
+            }
+            else
+            {
+                return repoLocal.Modificar(registroModificado);
+            }
+        }
+        public string Insertar(Formatos nuevoRegistro)
+        {
+            Guid id = new Guid();
+            nuevoRegistro.ID = id.ToString();
+
+            if (repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                try
+                {
+                    return repoServer.Insertar(nuevoRegistro);
+                }
+                catch(Exception)
+                {
+                    return repoLocal.Insertar(nuevoRegistro);
+                }
+            }
+            else
+            {
+                return repoLocal.Insertar(nuevoRegistro);
+            }
+        }
+        public Formatos Recuperar(string ID) 
+        {
+            if (repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                return repoServer.Recuperar(ID);
+            }
+            else
+            {
+                return repoLocal.Recuperar(ID);
+            }
+        }
     }
 }

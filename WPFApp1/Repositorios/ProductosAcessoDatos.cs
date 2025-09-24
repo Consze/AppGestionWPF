@@ -71,8 +71,7 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             WHERE s.SKU_Producto = @IdBuscada
-                AND s.haber > 0
-                AND s.EsEliminado = FALSE;";
+                AND s.haber > 0;";
 
             try
             {
@@ -568,8 +567,7 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             WHERE s.SKU_Producto = @IdBuscada
-                AND s.haber > 0
-                AND s.EsEliminado = 0;";
+                AND s.haber > 0;";
 
             try
             {

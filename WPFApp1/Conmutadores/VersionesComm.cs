@@ -70,7 +70,14 @@ namespace WPFApp1.Conmutadores
 
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                return repoServer.Insertar(nuevoRegistro);
+                try
+                {
+                    return repoServer.Insertar(nuevoRegistro);
+                }
+                catch(Exception)
+                {
+                    return repoLocal.Insertar(nuevoRegistro);
+                }
             }
             else
             {

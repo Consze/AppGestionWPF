@@ -485,7 +485,6 @@ namespace WPFApp1.Repositorios
         public bool Modificar(Versiones registroModificado)
         {
             Versiones registroActual = Recuperar(registroModificado.ID);
-            bool flagModificaciones = false;
             var propiedadesEntidad = typeof(Versiones).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
