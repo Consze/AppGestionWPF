@@ -25,6 +25,7 @@ namespace WPFApp1.ViewModels
         private readonly IProductosServicio _productoService;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
+        private readonly OrquestadorProductos OrquestadorProductos;
         public ObservableCollection<Formatos> Formatos { get; } = new();
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }

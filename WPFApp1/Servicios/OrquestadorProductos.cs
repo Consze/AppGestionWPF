@@ -89,7 +89,7 @@ namespace WPFApp1.Servicios
             //3 - Llamada a conmutador para asentar cambios en Stock
             return productoServicio.ModificarProducto(productoModificado);
         }
-
+        public string CrearProducto()
         public string ModificarVersion(ProductoCatalogo productoModificado)
         {
             string IDNuevaVersion = string.Empty;
