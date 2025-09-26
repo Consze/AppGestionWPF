@@ -5,7 +5,7 @@ using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
-    public class RepoCategoriasSQLite : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoCategoriasSQLite : IRepoEntidadGenerica<Categorias>
     {
         public readonly ConexionDBSQLite accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
@@ -22,7 +22,7 @@ namespace WPFApp1.Repositorios
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Categorias Recuperar(string ID)
         {
             string consulta = @"SELECT 
                     c.id AS CategoriaID,
@@ -45,7 +45,7 @@ namespace WPFApp1.Repositorios
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Categoria = new EntidadNombrada();
+                        Categorias Categoria = new Categorias();
 
                         if (lector.Read())
                         {
@@ -61,7 +61,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaCategoria)
+        public string Insertar(Categorias nuevaCategoria)
         {
             string consulta = @"INSERT INTO Productos_categorias (
                 ID,
@@ -84,7 +84,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Categorias> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
                     c.id AS CategoriaID,
@@ -110,7 +110,7 @@ namespace WPFApp1.Repositorios
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Categoria = new EntidadNombrada
+                            Categorias Categoria = new Categorias
                             {
                                 ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -125,9 +125,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Categorias> RecuperarList()
         {
-            List<EntidadNombrada> Categorias = new List<EntidadNombrada>();
+            List<Categorias> Categorias = new List<Categorias>();
             string consulta = @"SELECT 
                     c.id AS CategoriaID,
                     c.nombre AS Nombre,
@@ -151,7 +151,7 @@ namespace WPFApp1.Repositorios
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Categoria = new EntidadNombrada
+                            Categorias Categoria = new Categorias
                             {
                                 ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -189,10 +189,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada categoriaModificada)
+        public bool Modificar(Categorias categoriaModificada)
         {
-            EntidadNombrada registroActual = Recuperar(categoriaModificada.ID);
-            var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
+            Categorias registroActual = Recuperar(categoriaModificada.ID);
+            var propiedadesEntidad = typeof(Categorias).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -246,7 +246,7 @@ namespace WPFApp1.Repositorios
             }
         }
     }
-    public class RepoCategoriasSQLServer : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoCategoriasSQLServer : IRepoEntidadGenerica<Categorias>
     {
         public readonly ConexionDBSQLServer accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
@@ -263,7 +263,7 @@ namespace WPFApp1.Repositorios
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Categorias Recuperar(string ID)
         {
             string consulta = @"SELECT 
                     c.id AS CategoriaID,
@@ -286,7 +286,7 @@ namespace WPFApp1.Repositorios
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Categoria = new EntidadNombrada();
+                        Categorias Categoria = new Categorias();
 
                         if (lector.Read())
                         {
@@ -303,7 +303,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaCategoria)
+        public string Insertar(Categorias nuevaCategoria)
         {
             string consulta = @"INSERT INTO Productos_categorias (
                 ID,
@@ -326,7 +326,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Categorias> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
                     c.id AS CategoriaID,
@@ -352,7 +352,7 @@ namespace WPFApp1.Repositorios
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Categoria = new EntidadNombrada
+                            Categorias Categoria = new Categorias
                             {
                                 ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -367,9 +367,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Categorias> RecuperarList()
         {
-            List<EntidadNombrada> Categorias = new List<EntidadNombrada>();
+            List<Categorias> Categorias = new List<Categorias>();
             string consulta = @"SELECT 
                     c.id AS CategoriaID,
                     c.nombre AS Nombre,
@@ -393,7 +393,7 @@ namespace WPFApp1.Repositorios
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Categoria = new EntidadNombrada
+                            Categorias Categoria = new Categorias
                             {
                                 ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -431,10 +431,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada categoriaModificada)
+        public bool Modificar(Categorias categoriaModificada)
         {
-            EntidadNombrada registroActual = Recuperar(categoriaModificada.ID);
-            var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
+            Categorias registroActual = Recuperar(categoriaModificada.ID);
+            var propiedadesEntidad = typeof(Categorias).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {

@@ -1,4 +1,5 @@
-﻿using WPFApp1.Conmutadores;
+﻿using Microsoft.Extensions.DependencyInjection;
+using WPFApp1.Conmutadores;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
@@ -44,21 +45,35 @@ namespace WPFApp1.Servicios
 
             MapeoPropiedades = new Dictionary<string, ServicioAsociado>(StringComparer.OrdinalIgnoreCase)
             {
-                //Propiedad de Clase , Servicio Asociado
+                // Propiedad de Clase , Servicio Asociado
                 {"RutaImagen", ServicioAsociado.Versiones },
                 {"EAN", ServicioAsociado.Versiones },
                 {"MarcaID", ServicioAsociado.Versiones },
                 {"FormatoProductoID", ServicioAsociado.Versiones },
 
+                // Inserción de nueva entidad auxiliar
                 {"MarcaNombre", ServicioAsociado.Marcas },
-
-                {"UbicacionID", ServicioAsociado.Stock},
+                {"CategoriaNombre",ServicioAsociado.Categorias },
                 {"ID", ServicioAsociado.Producto},
+                {"Nombre", ServicioAsociado.Producto },
+                {"Alto", ServicioAsociado.Formatos},
+                {"Largo", ServicioAsociado.Formatos},
+                {"Profundidad", ServicioAsociado.Formatos},
+                {"Peso", ServicioAsociado.Formatos},
+
+                // Propiedades de registro Stock
+                {"Categoria", ServicioAsociado.Stock},
+                {"UbicacionID", ServicioAsociado.Stock},
                 {"Haber", ServicioAsociado.Stock},
                 {"Precio", ServicioAsociado.Stock},
                 {"EsEliminado", ServicioAsociado.Stock },
-                {"FechaModificacion", ServicioAsociado.Stock}
-                //{"FechaCreacion",ServicioAsociado.Stock }
+                {"VisibilidadWeb", ServicioAsociado.Stock},
+                {"PrecioPublcio", ServicioAsociado.Stock},
+
+                // Ignoradas
+                {"ProductoSKU", ServicioAsociado.Null},
+                {"FechaModificacion", ServicioAsociado.Null},
+                {"FechaCreacion",ServicioAsociado.Null}
             };
         }
 

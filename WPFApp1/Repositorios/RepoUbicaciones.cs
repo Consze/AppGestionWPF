@@ -5,7 +5,7 @@ using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
-    public class RepoUbicacionesSQLite : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoUbicacionesSQLite : IRepoEntidadGenerica<Ubicaciones>
     {
         public readonly ConexionDBSQLite accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
@@ -22,7 +22,7 @@ namespace WPFApp1.Repositorios
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Ubicaciones Recuperar(string ID)
         {
             string consulta = @"SELECT 
                     u.id AS UbicacionID,
@@ -45,7 +45,7 @@ namespace WPFApp1.Repositorios
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Ubicacion = new EntidadNombrada();
+                        Ubicaciones Ubicacion = new Ubicaciones();
 
                         if (lector.Read())
                         {
@@ -62,7 +62,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaUbicacion)
+        public string Insertar(Ubicaciones nuevaUbicacion)
         {
             string consulta = @"INSERT INTO Ubicaciones_inventario (
                 ID,
@@ -85,7 +85,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Ubicaciones> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
                     u.id AS UbicacionID,
@@ -111,7 +111,7 @@ namespace WPFApp1.Repositorios
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Ubicacion = new EntidadNombrada
+                            Ubicaciones Ubicacion = new Ubicaciones
                             {
                                 ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -126,9 +126,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Ubicaciones> RecuperarList()
         {
-            List<EntidadNombrada> Ubicaciones = new List<EntidadNombrada>();
+            List<Ubicaciones> Ubicaciones = new List<Ubicaciones>();
             string consulta = @"SELECT 
                     u.id AS UbicacionID,
                     u.descripcion AS UbicacionNombre,
@@ -152,7 +152,7 @@ namespace WPFApp1.Repositorios
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Ubicacion = new EntidadNombrada
+                            Ubicaciones Ubicacion = new Ubicaciones
                             {
                                 ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -190,10 +190,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada ubicacionModificada)
+        public bool Modificar(Ubicaciones ubicacionModificada)
         {
-            EntidadNombrada registroActual = Recuperar(ubicacionModificada.ID);
-            var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
+            Ubicaciones registroActual = Recuperar(ubicacionModificada.ID);
+            var propiedadesEntidad = typeof(Ubicaciones).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -247,7 +247,7 @@ namespace WPFApp1.Repositorios
             }
         }
     }
-    public class RepoUbicacionesSQLServer : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoUbicacionesSQLServer : IRepoEntidadGenerica<Ubicaciones>
     {
         public readonly ConexionDBSQLServer accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
@@ -264,7 +264,7 @@ namespace WPFApp1.Repositorios
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Ubicaciones Recuperar(string ID)
         {
             string consulta = @"SELECT 
                     u.id AS UbicacionID,
@@ -287,7 +287,7 @@ namespace WPFApp1.Repositorios
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Ubicacion = new EntidadNombrada();
+                        Ubicaciones Ubicacion = new Ubicaciones();
 
                         if (lector.Read())
                         {
@@ -304,7 +304,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaUbicacion)
+        public string Insertar(Ubicaciones nuevaUbicacion)
         {
             string consulta = @"INSERT INTO Ubicaciones_inventario (
                 ID,
@@ -327,7 +327,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Ubicaciones> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
                     u.id AS UbicacionID,
@@ -353,7 +353,7 @@ namespace WPFApp1.Repositorios
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Marca = new EntidadNombrada
+                            Ubicaciones Marca = new Ubicaciones
                             {
                                 ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -368,9 +368,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Ubicaciones> RecuperarList()
         {
-            List<EntidadNombrada> Ubicaciones = new List<EntidadNombrada>();
+            List<Ubicaciones> Ubicaciones = new List<Ubicaciones>();
             string consulta = @"SELECT 
                     u.id AS UbicacionID,
                     u.descripcion AS UbicacionNombre,
@@ -394,7 +394,7 @@ namespace WPFApp1.Repositorios
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Ubicacion = new EntidadNombrada
+                            Ubicaciones Ubicacion = new Ubicaciones
                             {
                                 ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -432,10 +432,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada ubicacionModificada)
+        public bool Modificar(Ubicaciones ubicacionModificada)
         {
-            EntidadNombrada registroActual = Recuperar(ubicacionModificada.ID);
-            var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
+            Ubicaciones registroActual = Recuperar(ubicacionModificada.ID);
+            var propiedadesEntidad = typeof(Ubicaciones).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {

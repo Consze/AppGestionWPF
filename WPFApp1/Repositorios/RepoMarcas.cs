@@ -5,7 +5,7 @@ using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
-    public class RepoMarcasSQLite : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoMarcasSQLite : IRepoEntidadGenerica<Marcas>
     {
         public readonly ConexionDBSQLite accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
@@ -22,7 +22,7 @@ namespace WPFApp1.Repositorios
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Marcas Recuperar(string ID)
         {
             string consulta = @"SELECT 
                     m.id AS MarcaID,
@@ -45,7 +45,7 @@ namespace WPFApp1.Repositorios
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Marca = new EntidadNombrada();
+                        Marcas Marca = new Marcas();
 
                         if(lector.Read())
                         {
@@ -61,7 +61,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaMarca)
+        public string Insertar(Marcas nuevaMarca)
         {
             string consulta = @"INSERT INTO Marcas (
                 ID,
@@ -84,7 +84,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Marcas> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
                     m.id AS MarcaID,
@@ -110,7 +110,7 @@ namespace WPFApp1.Repositorios
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Marca = new EntidadNombrada
+                            Marcas Marca = new Marcas
                             {
                                 ID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -125,9 +125,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Marcas> RecuperarList()
         {
-            List<EntidadNombrada> Marcas = new List<EntidadNombrada>();
+            List<Marcas> Marcas = new List<Marcas>();
             string consulta = @"SELECT 
                     m.id AS MarcaID,
                     m.nombre AS MarcaNombre,
@@ -151,7 +151,7 @@ namespace WPFApp1.Repositorios
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Marca = new EntidadNombrada
+                            Marcas Marca = new Marcas
                             {
                                 ID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -189,10 +189,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada marcaModificada)
+        public bool Modificar(Marcas marcaModificada)
         {
-            EntidadNombrada registroActual = Recuperar(marcaModificada.ID);
-            var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
+            Marcas registroActual = Recuperar(marcaModificada.ID);
+            var propiedadesEntidad = typeof(Marcas).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -246,7 +246,7 @@ namespace WPFApp1.Repositorios
             }
         }
     }
-    public class RepoMarcasSQLServer : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoMarcasSQLServer : IRepoEntidadGenerica<Marcas>
     {
         public readonly ConexionDBSQLServer accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
@@ -263,7 +263,7 @@ namespace WPFApp1.Repositorios
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Marcas Recuperar(string ID)
         {
             string consulta = @"SELECT 
                     m.id AS MarcaID,
@@ -286,7 +286,7 @@ namespace WPFApp1.Repositorios
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Marca = new EntidadNombrada();
+                        Marcas Marca = new Marcas();
 
                         if (lector.Read())
                         {
@@ -303,7 +303,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaMarca)
+        public string Insertar(Marcas nuevaMarca)
         {
             string consulta = @"INSERT INTO Marcas (
                 ID,
@@ -326,7 +326,7 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Marcas> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
                     m.id AS MarcaID,
@@ -352,7 +352,7 @@ namespace WPFApp1.Repositorios
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Marca = new EntidadNombrada
+                            Marcas Marca = new Marcas
                             {
                                 ID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -367,9 +367,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Marcas> RecuperarList()
         {
-            List<EntidadNombrada> Marcas = new List<EntidadNombrada>();
+            List<Marcas> Marcas = new List<Marcas>();
             string consulta = @"SELECT 
                     m.id AS MarcaID,
                     m.nombre AS MarcaNombre,
@@ -393,7 +393,7 @@ namespace WPFApp1.Repositorios
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Marca = new EntidadNombrada
+                            Marcas Marca = new Marcas
                             {
                                 ID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -431,10 +431,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada marcaModificada)
+        public bool Modificar(Marcas marcaModificada)
         {
-            EntidadNombrada registroActual = Recuperar(marcaModificada.ID);
-            var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
+            Marcas registroActual = Recuperar(marcaModificada.ID);
+            var propiedadesEntidad = typeof(Marcas).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
