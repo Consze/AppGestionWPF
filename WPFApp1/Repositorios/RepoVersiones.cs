@@ -67,8 +67,8 @@ namespace WPFApp1.Repositorios
                                 FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
-                                FechaModificacion = lector.GetDateTime(IDXFechaModificacion),
-                                FechaCreacion = lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
@@ -120,8 +120,8 @@ namespace WPFApp1.Repositorios
                                 FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
-                                FechaModificacion = lector.GetDateTime(IDXFechaModificacion),
-                                FechaCreacion = lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
@@ -173,8 +173,8 @@ namespace WPFApp1.Repositorios
                             registro.FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID);
                             registro.MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID);
                             registro.ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID);
-                            registro.FechaModificacion = lector.GetDateTime(IDXFechaModificacion);
-                            registro.FechaCreacion = lector.GetDateTime(IDXFechaCreacion);
+                            registro.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
+                            registro.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
                             registro.RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
@@ -362,8 +362,8 @@ namespace WPFApp1.Repositorios
                                 FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
-                                FechaModificacion = lector.GetDateTime(IDXFechaModificacion),
-                                FechaCreacion = lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
@@ -415,8 +415,8 @@ namespace WPFApp1.Repositorios
                                 FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
                                 ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
-                                FechaModificacion = lector.GetDateTime(IDXFechaModificacion),
-                                FechaCreacion = lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
@@ -468,8 +468,8 @@ namespace WPFApp1.Repositorios
                             registro.FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID);
                             registro.MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID);
                             registro.ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID);
-                            registro.FechaModificacion = lector.GetDateTime(IDXFechaModificacion);
-                            registro.FechaCreacion = lector.GetDateTime(IDXFechaCreacion);
+                            registro.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
+                            registro.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
                             registro.RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);

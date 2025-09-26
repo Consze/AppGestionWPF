@@ -22,8 +22,6 @@ namespace WPFApp1.ViewModels
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductosServicio _productoService;
-        private readonly ServicioIndexacionProductos _servicioIndexacion;
         private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
         private readonly OrquestadorProductos OrquestadorProductos;
         public ObservableCollection<Formatos> Formatos { get; } = new();
@@ -385,7 +383,7 @@ namespace WPFApp1.ViewModels
         public ICommand CerrarVistaCommand { get; }
         public ICommand ModificarCantidadStockCommand { get; }
 
-        public AniadirProductoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, IConmutadorEntidadGenerica<Formatos> _servicioFormatos)
+        public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -413,9 +411,8 @@ namespace WPFApp1.ViewModels
             Messenger.Default.Subscribir<VistaAniadirProductosCantidadModificada>(OnCantidadModificada);
 
             //Servicios
-            _productoService = productoServicio;
+            OrquestadorProductos = _orquestador;
             _servicioSFX = new ServicioSFX();
-            _servicioIndexacion = ServicioIndexacion;
             servicioFormatos = _servicioFormatos;
         }
 
@@ -578,10 +575,9 @@ namespace WPFApp1.ViewModels
             };
             ProductoBase ProductoMensaje = ProductoModificado;
 
-            if (_productoService.ModificarProducto(ProductoModificado))
+            if (OrquestadorProductos.ModificarProducto(ProductoModificado))
             {
                 ProductoMensaje.Categoria = ProductoModificado.CategoriaNombre;
-                _servicioIndexacion.IndexarProducto(ProductoMensaje);
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoMensaje });
                 CerrarVistaCommand.Execute(0);
@@ -776,11 +772,10 @@ namespace WPFApp1.ViewModels
             };
             ProductoBase ProductoMensaje = _nuevoProducto;
 
-            string NuevoProductoSKU = _productoService.CrearProducto(_nuevoProducto);
+            string NuevoProductoSKU = OrquestadorProductos.CrearProducto(_nuevoProducto);
             if (NuevoProductoSKU != null)
             {
                 ProductoMensaje.Categoria = _nuevoProducto.CategoriaNombre;
-                _servicioIndexacion.IndexarProducto(ProductoMensaje);
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen)  ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });
                 CerrarVistaCommand.Execute(0);

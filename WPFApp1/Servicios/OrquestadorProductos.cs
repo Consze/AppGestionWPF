@@ -40,7 +40,7 @@ namespace WPFApp1.Servicios
                 {"RutaImagen", ServicioAsociado.Versiones },
                 {"EAN", ServicioAsociado.Versiones },
                 {"MarcaID", ServicioAsociado.Versiones },
-                {"FormatoID", ServicioAsociado.Versiones },
+                {"FormatoProductoID", ServicioAsociado.Versiones },
 
                 {"MarcaNombre", ServicioAsociado.Marcas },
 
@@ -59,7 +59,7 @@ namespace WPFApp1.Servicios
             ProductoCatalogo productoActual = productoServicio.RecuperarProductoPorID(productoModificado.ProductoSKU);
             var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
 
-            //Bandera
+            //Banderas
             bool ActualizarVersion = false;
 
             //1 - Bucle de relevamiento
@@ -89,7 +89,12 @@ namespace WPFApp1.Servicios
             //3 - Llamada a conmutador para asentar cambios en Stock
             return productoServicio.ModificarProducto(productoModificado);
         }
-        public string CrearProducto()
+        public string CrearProducto(ProductoCatalogo productoNuevo)
+        {
+            string nuevaId = productoServicio.CrearProducto(productoNuevo);
+            indexacionServicio.IndexarProducto(productoNuevo);
+            return nuevaId;
+        }
         public string ModificarVersion(ProductoCatalogo productoModificado)
         {
             string IDNuevaVersion = string.Empty;

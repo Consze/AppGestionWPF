@@ -65,7 +65,7 @@ namespace WPFApp1.Conmutadores
         }
         public string Insertar(Versiones nuevoRegistro)
         {
-            Guid id = new Guid();
+            Guid id = Guid.NewGuid();
             nuevoRegistro.ID = id.ToString();
 
             if (repoServer.accesoDB.LeerConfiguracionManual())

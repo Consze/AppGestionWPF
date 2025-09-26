@@ -1,38 +1,38 @@
 ﻿using WPFApp1.Entidades;
-using WPFApp1.Repositorios;
 using WPFApp1.Interfaces;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
-    public class ConmutadorFormatos : IConmutadorEntidadGenerica<Formatos>
+    public class MarcasConmutador : IConmutadorEntidadGenerica<EntidadNombrada>
     {
-        private readonly RepoFormatosSQLite repoLocal;
-        private readonly RepoFormatosSQLServer repoServer;
-        public ConmutadorFormatos(RepoFormatosSQLite _repoLocal, RepoFormatosSQLServer _repoServer)
+        private readonly RepoMarcasSQLite repoLocal;
+        private readonly RepoMarcasSQLServer repoServer;
+        public MarcasConmutador(RepoMarcasSQLServer _repoServer, RepoMarcasSQLite _repoLocal)
         {
             repoLocal = _repoLocal;
             repoServer = _repoServer;
         }
-        public async IAsyncEnumerable<Formatos> RecuperarStreamAsync()
+        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                await foreach (var formato in repoServer.RecuperarStreamAsync())
+                await foreach (var version in repoServer.RecuperarStreamAsync())
                 {
-                    yield return formato;
+                    yield return version;
                 }
             }
             else
             {
-                await foreach (var formato in repoLocal.RecuperarStreamAsync())
+                await foreach (var version in repoLocal.RecuperarStreamAsync())
                 {
-                    yield return formato;
+                    yield return version;
                 }
             }
         }
-        public List<Formatos> RecuperarList()
+        public List<EntidadNombrada> RecuperarList()
         {
-            if(repoServer.accesoDB.LeerConfiguracionManual())
+            if (repoServer.accesoDB.LeerConfiguracionManual())
             {
                 return repoServer.RecuperarList();
             }
@@ -41,7 +41,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.RecuperarList();
             }
         }
-        public bool Eliminar(string ID, TipoEliminacion Caso) 
+        public bool Eliminar(string ID, TipoEliminacion Caso)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -52,39 +52,39 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Eliminar(ID, Caso);
             }
         }
-        public bool Modificar(Formatos registroModificado)
+        public bool Modificar(EntidadNombrada marcaModificada)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                return repoServer.Modificar(registroModificado);
+                return repoServer.Modificar(marcaModificada);
             }
             else
             {
-                return repoLocal.Modificar(registroModificado);
+                return repoLocal.Modificar(marcaModificada);
             }
         }
-        public string Insertar(Formatos nuevoRegistro)
+        public string Insertar(EntidadNombrada nuevaMarca)
         {
             Guid id = Guid.NewGuid();
-            nuevoRegistro.ID = id.ToString();
+            nuevaMarca.ID = id.ToString();
 
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
                 try
                 {
-                    return repoServer.Insertar(nuevoRegistro);
+                    return repoServer.Insertar(nuevaMarca);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-                    return repoLocal.Insertar(nuevoRegistro);
+                    return repoLocal.Insertar(nuevaMarca);
                 }
             }
             else
             {
-                return repoLocal.Insertar(nuevoRegistro);
+                return repoLocal.Insertar(nuevaMarca);
             }
         }
-        public Formatos Recuperar(string ID) 
+        public EntidadNombrada Recuperar(string ID)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {

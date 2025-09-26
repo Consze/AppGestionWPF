@@ -35,14 +35,24 @@ namespace WPFApp1
 
             services.AddTransient<ProductosAccesoDatosSQLServer>();
             services.AddTransient<ProductosAcessoDatosSQLite>();
+
             services.AddTransient<RepoFormatosSQLite>();
             services.AddTransient<RepoFormatosSQLServer>();
+
             services.AddTransient<RepoVersionesSQLite>();
             services.AddTransient<RepoVersionesSQLServer>();
+
+            services.AddTransient<RepoUbicacionesSQLite>();
+            services.AddTransient<RepoUbicacionesSQLServer>();
+
+            services.AddTransient<RepoMarcasSQLite>();
+            services.AddTransient<RepoMarcasSQLServer>();
 
             // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
             services.AddTransient<IConmutadorEntidadGenerica<Versiones>, VersionesConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<EntidadNombrada>, MarcasConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<EntidadNombrada>, UbicacionesConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
@@ -115,6 +125,7 @@ namespace WPFApp1
             services.AddTransient<CatalogoViewModel>();
             services.AddTransient<ExportarProductosViewModel>();
             services.AddSingleton<MainWindow>();
+            services.AddTransient<OrquestadorProductos>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
