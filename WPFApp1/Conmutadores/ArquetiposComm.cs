@@ -4,33 +4,33 @@ using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
-    public class UbicacionesConmutador : IConmutadorEntidadGenerica<Ubicaciones>
+    public class ArquetiposConmutador : IConmutadorEntidadGenerica<Arquetipos>
     {
-        private readonly RepoUbicacionesSQLite repoLocal;
-        private readonly RepoUbicacionesSQLServer repoServer;
-        public UbicacionesConmutador(RepoUbicacionesSQLServer _repoServer, RepoUbicacionesSQLite _repoLocal)
+        private readonly RepoArquetiposSQLite repoLocal;
+        private readonly RepoArquetiposSQLServer repoServer;
+        public ArquetiposConmutador(RepoArquetiposSQLServer _repoServer, RepoArquetiposSQLite _repoLocal)
         {
             repoLocal = _repoLocal;
             repoServer = _repoServer;
         }
-        public async IAsyncEnumerable<Ubicaciones> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Arquetipos> RecuperarStreamAsync()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                await foreach (var version in repoServer.RecuperarStreamAsync())
+                await foreach (var arquetipo in repoServer.RecuperarStreamAsync())
                 {
-                    yield return version;
+                    yield return arquetipo;
                 }
             }
             else
             {
-                await foreach (var version in repoLocal.RecuperarStreamAsync())
+                await foreach (var arquetipo in repoLocal.RecuperarStreamAsync())
                 {
-                    yield return version;
+                    yield return arquetipo;
                 }
             }
         }
-        public List<Ubicaciones> RecuperarList()
+        public List<Arquetipos> RecuperarList()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -52,39 +52,39 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Eliminar(ID, Caso);
             }
         }
-        public bool Modificar(Ubicaciones marcaModificada)
+        public bool Modificar(Arquetipos registroModificado)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                return repoServer.Modificar(marcaModificada);
+                return repoServer.Modificar(registroModificado);
             }
             else
             {
-                return repoLocal.Modificar(marcaModificada);
+                return repoLocal.Modificar(registroModificado);
             }
         }
-        public string Insertar(Ubicaciones nuevaMarca)
+        public string Insertar(Arquetipos nuevoRegistro)
         {
             Guid id = Guid.NewGuid();
-            nuevaMarca.ID = id.ToString();
+            nuevoRegistro.ID = id.ToString();
 
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
                 try
                 {
-                    return repoServer.Insertar(nuevaMarca);
+                    return repoServer.Insertar(nuevoRegistro);
                 }
                 catch (Exception)
                 {
-                    return repoLocal.Insertar(nuevaMarca);
+                    return repoLocal.Insertar(nuevoRegistro);
                 }
             }
             else
             {
-                return repoLocal.Insertar(nuevaMarca);
+                return repoLocal.Insertar(nuevoRegistro);
             }
         }
-        public Ubicaciones Recuperar(string ID)
+        public Arquetipos Recuperar(string ID)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {

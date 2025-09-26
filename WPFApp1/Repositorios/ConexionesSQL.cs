@@ -214,7 +214,10 @@ namespace WPFApp1.Repositorios
         private string esquemaDB { get; set; } = @"CREATE TABLE IF NOT EXISTS Productos (
             id VARCHAR(36) PRIMARY KEY,
             Nombre VARCHAR(255) NOT NULL,
-            categoria_id,
+            categoria_id VARCHAR(36),
+            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            FechaModificacion DATETIME,
+            FechaCreacion DATETIME,
             FOREIGN KEY(categoria_id) REFERENCES Productos_categorias(ID)
         );
 

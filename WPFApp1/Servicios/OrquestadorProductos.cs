@@ -1,4 +1,5 @@
-﻿using WPFApp1.Entidades;
+﻿using WPFApp1.Conmutadores;
+using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
 namespace WPFApp1.Servicios
@@ -22,17 +23,24 @@ namespace WPFApp1.Servicios
         private readonly ServicioIndexacionProductos indexacionServicio;
         private readonly IConmutadorEntidadGenerica<Formatos> formatoServicio;
         private readonly IConmutadorEntidadGenerica<Versiones> versionesServicio;
-        //conmutador marcas
-        //conmutador ubicaciones_inventario
-        //conmutador categorias
-        //conmutador productos (base)
+        private readonly IConmutadorEntidadGenerica<Arquetipos> arquetiposServicio;
+        private readonly IConmutadorEntidadGenerica<Ubicaciones> ubicacionesServicio;
+        private readonly IConmutadorEntidadGenerica<Categorias> categoriasServicio;
+        private readonly IConmutadorEntidadGenerica<Marcas> marcasServicio;
+
         public OrquestadorProductos(IProductosServicio _servicioProductos, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
-            IConmutadorEntidadGenerica<Versiones> _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion)
+            IConmutadorEntidadGenerica<Versiones> _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion, 
+            IConmutadorEntidadGenerica<Arquetipos> _servicioArquetipo, IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones,
+            IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas)
         {
             productoServicio = _servicioProductos;
             indexacionServicio = _servicioIndexacion;
             formatoServicio = _servicioFormatos;
             versionesServicio = _servicioVersiones;
+            arquetiposServicio = _servicioArquetipo;
+            ubicacionesServicio = _servicioUbicaciones;
+            categoriasServicio = _servicioCategorias;
+            marcasServicio = _servicioMarcas;
 
             MapeoPropiedades = new Dictionary<string, ServicioAsociado>(StringComparer.OrdinalIgnoreCase)
             {

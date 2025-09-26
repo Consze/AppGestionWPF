@@ -25,12 +25,11 @@ namespace WPFApp1.ViewModels
             }
         }
         public ICommand ExportarXLSXCommand { get; }
-        private readonly IProductoServicioObsoleto _productoServicio;
         private ServicioSFX _servicioSFX { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
-
+        private readonly IProductosServicio _productoServicio;
         //constructor
-        public ExportarProductosViewModel(IProductoServicioObsoleto productoServicio)
+        public ExportarProductosViewModel(IProductosServicio productoServicio)
         {
             _productoServicio = productoServicio;
             _servicioSFX = new ServicioSFX();
@@ -43,6 +42,7 @@ namespace WPFApp1.ViewModels
         }
         public async Task ExportarXLSXAsync()
         {
+            /**
             _servicioSFX.Swipe();
             Notificacion _notificacion = new Notificacion { Mensaje = "Exportando catalogo...", Titulo = "Procesando", IconoRuta = Path.GetFullPath(IconoNotificacion.NOTIFICACION), Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
@@ -83,6 +83,7 @@ namespace WPFApp1.ViewModels
             {
                 Console.WriteLine("Ya hay una exportación en proceso");
             }
+            */
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

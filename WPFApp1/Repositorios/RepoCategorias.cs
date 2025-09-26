@@ -5,18 +5,18 @@ using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
-    public class RepoUbicacionesSQLite : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoCategoriasSQLite : IRepoEntidadGenerica<EntidadNombrada>
     {
         public readonly ConexionDBSQLite accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
-        public RepoUbicacionesSQLite(ConexionDBSQLite _accesoDB)
+        public RepoCategoriasSQLite(ConexionDBSQLite _accesoDB)
         {
             accesoDB = _accesoDB;
             MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 //Propiedad de Clase , Nombre de Columna
                 {"ID", "ID" },
-                {"Nombre", "Descripcion" },
+                {"Nombre", "Nombre" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
@@ -25,13 +25,13 @@ namespace WPFApp1.Repositorios
         public EntidadNombrada Recuperar(string ID)
         {
             string consulta = @"SELECT 
-                    u.id AS UbicacionID,
-                    u.descripcion AS UbicacionNombre,
-                    u.FechaCreacion AS FechaCreacion,
-                    u.FechaModificacion AS FechaModificacion,
-                    u.EsEliminado AS EsEliminado
-                FROM Ubicaciones_inventario AS u
-                WHERE u.id = @ID;";
+                    c.id AS CategoriaID,
+                    c.nombre AS Nombre,
+                    c.FechaCreacion AS FechaCreacion,
+                    c.FechaModificacion AS FechaModificacion,
+                    c.EsEliminado AS EsEliminado
+                FROM Productos_categorias AS c
+                WHERE c.id = @ID;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -40,61 +40,60 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@id", ID);
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXUbicacionID = lector.GetOrdinal("UbicacionID");
-                        int IDXNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Ubicacion = new EntidadNombrada();
+                        EntidadNombrada Categoria = new EntidadNombrada();
 
                         if (lector.Read())
                         {
-                            Ubicacion.ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID);
-                            Ubicacion.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            Ubicacion.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
-                            Ubicacion.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
-                            Ubicacion.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
-                        }
-                        ;
+                            Categoria.ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID);
+                            Categoria.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
+                            Categoria.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
+                            Categoria.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
+                            Categoria.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
+                        };
 
-                        return Ubicacion;
+                        return Categoria;
                     }
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaUbicacion)
+        public string Insertar(EntidadNombrada nuevaCategoria)
         {
-            string consulta = @"INSERT INTO Ubicaciones_inventario (
+            string consulta = @"INSERT INTO Productos_categorias (
                 ID,
-                Descripcion,
+                Nombre,
                 FechaCreacion)
             VALUES (
-                @UbicacionID,
-                @Descripcion,
+                @CategoriaID,
+                @Nombre,
                 @FechaCreacion);";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
-                    comando.Parameters.AddWithValue("@UbicacionID", nuevaUbicacion.ID);
-                    comando.Parameters.AddWithValue("@Descripcion", nuevaUbicacion.Nombre);
+                    comando.Parameters.AddWithValue("@CategoriaID", nuevaCategoria.ID);
+                    comando.Parameters.AddWithValue("@Nombre", nuevaCategoria.Nombre);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
-                    return nuevaUbicacion.ID;
+                    return nuevaCategoria.ID;
                 }
             }
         }
         public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
-                    u.id AS UbicacionID,
-                    u.descripcion AS UbicacionNombre,
-                    u.FechaCreacion AS FechaCreacion,
-                    u.FechaModificacion AS FechaModificacion,
-                    u.EsEliminado AS EsEliminado
-                FROM Ubicaciones_inventario AS u
-                WHERE u.EsEliminado = FALSE;";
+                    c.id AS CategoriaID,
+                    c.nombre AS Nombre,
+                    c.FechaCreacion AS FechaCreacion,
+                    c.FechaModificacion AS FechaModificacion,
+                    c.EsEliminado AS EsEliminado
+                FROM Productos_categorias AS c
+                WHERE c.EsEliminado = FALSE;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -103,24 +102,24 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqliteDataReader lector = await comando.ExecuteReaderAsync())
                     {
-                        int IDXUbicacionID = lector.GetOrdinal("UbicacionID");
-                        int IDXNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Ubicacion = new EntidadNombrada
+                            EntidadNombrada Categoria = new EntidadNombrada
                             {
-                                ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
                             };
 
-                            yield return Ubicacion;
+                            yield return Categoria;
                         }
                     }
                 }
@@ -128,15 +127,15 @@ namespace WPFApp1.Repositorios
         }
         public List<EntidadNombrada> RecuperarList()
         {
-            List<EntidadNombrada> Ubicaciones = new List<EntidadNombrada>();
+            List<EntidadNombrada> Categorias = new List<EntidadNombrada>();
             string consulta = @"SELECT 
-                    u.id AS UbicacionID,
-                    u.descripcion AS UbicacionNombre,
-                    u.FechaCreacion AS FechaCreacion,
-                    u.FechaModificacion AS FechaModificacion,
-                    u.EsEliminado AS EsEliminado
-                FROM Ubicaciones_inventario AS u
-                WHERE u.EsEliminado = FALSE;";
+                    c.id AS CategoriaID,
+                    c.nombre AS Nombre,
+                    c.FechaCreacion AS FechaCreacion,
+                    c.FechaModificacion AS FechaModificacion,
+                    c.EsEliminado AS EsEliminado
+                FROM Productos_categorias AS c
+                WHERE c.EsEliminado = FALSE;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -144,26 +143,26 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXUbicacionID = lector.GetOrdinal("UbicacionID");
-                        int IDXNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Ubicacion = new EntidadNombrada
+                            EntidadNombrada Categoria = new EntidadNombrada
                             {
-                                ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
                             };
-                            Ubicaciones.Add(Ubicacion);
+                            Categorias.Add(Categoria);
                         }
 
-                        return Ubicaciones;
+                        return Categorias;
                     }
                 }
             }
@@ -173,11 +172,11 @@ namespace WPFApp1.Repositorios
             string consulta = "";
             if (Caso == TipoEliminacion.Logica)
             {
-                consulta = "UPDATE Ubicaciones_inventario SET EsEliminado = TRUE WHERE ID = @id;";
+                consulta = "UPDATE Productos_categorias SET EsEliminado = TRUE WHERE ID = @id;";
             }
             else
             {
-                consulta = "DELETE FROM Ubicaciones_inventario WHERE ID = @id;";
+                consulta = "DELETE FROM Productos_categorias WHERE ID = @id;";
             }
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
@@ -190,9 +189,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada ubicacionModificada)
+        public bool Modificar(EntidadNombrada categoriaModificada)
         {
-            EntidadNombrada registroActual = Recuperar(ubicacionModificada.ID);
+            EntidadNombrada registroActual = Recuperar(categoriaModificada.ID);
             var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -217,13 +216,13 @@ namespace WPFApp1.Repositorios
                                 continue;
 
                             var valorActual = propiedad.GetValue(registroActual);
-                            var valorModificado = propiedad.GetValue(ubicacionModificada);
+                            var valorModificado = propiedad.GetValue(categoriaModificada);
                             if (!object.Equals(valorActual, valorModificado))
                             {
                                 string nombreColumna = MapeoColumnas[propiedad.Name];
                                 string nombreParametro = propiedad.Name;
                                 listaPropiedadesModificadas.Add($"{nombreColumna} = @{nombreParametro}");
-                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(ubicacionModificada) ?? DBNull.Value);
+                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(categoriaModificada) ?? DBNull.Value);
                             }
                         }
 
@@ -231,9 +230,9 @@ namespace WPFApp1.Repositorios
                             return false;
 
                         listaPropiedadesModificadas.Add("FechaModificacion = @FechaActual");
-                        string Consulta = $"UPDATE Ubicaciones_inventario SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
+                        string Consulta = $"UPDATE Productos_categorias SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
                         comando.Parameters.AddWithValue("@FechaActual", DateTime.Now);
-                        comando.Parameters.AddWithValue("@IDModificar", ubicacionModificada.ID);
+                        comando.Parameters.AddWithValue("@IDModificar", categoriaModificada.ID);
                         comando.CommandText = Consulta;
 
                         int filasAfectadas = comando.ExecuteNonQuery();
@@ -247,18 +246,18 @@ namespace WPFApp1.Repositorios
             }
         }
     }
-    public class RepoUbicacionesSQLServer : IRepoEntidadGenerica<EntidadNombrada>
+    public class RepoCategoriasSQLServer : IRepoEntidadGenerica<EntidadNombrada>
     {
         public readonly ConexionDBSQLServer accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
-        public RepoUbicacionesSQLServer(ConexionDBSQLServer _accesoDB)
+        public RepoCategoriasSQLServer(ConexionDBSQLServer _accesoDB)
         {
             accesoDB = _accesoDB;
             MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 //Propiedad de Clase , Nombre de Columna
                 {"ID", "ID" },
-                {"Nombre", "Descripcion" },
+                {"Nombre", "Nombre" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
@@ -267,13 +266,13 @@ namespace WPFApp1.Repositorios
         public EntidadNombrada Recuperar(string ID)
         {
             string consulta = @"SELECT 
-                    u.id AS UbicacionID,
-                    u.descripcion AS UbicacionNombre,
-                    u.FechaCreacion AS FechaCreacion,
-                    u.FechaModificacion AS FechaModificacion,
-                    u.EsEliminado AS EsEliminado
-                FROM Ubicaciones_inventario AS u
-                WHERE u.id = @ID;";
+                    c.id AS CategoriaID,
+                    c.nombre AS Nombre,
+                    c.FechaCreacion AS FechaCreacion,
+                    c.FechaModificacion AS FechaModificacion,
+                    c.EsEliminado AS EsEliminado
+                FROM Productos_categorias AS c
+                WHERE c.id = @ID;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -282,61 +281,61 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@id", ID);
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXUbicacionID = lector.GetOrdinal("UbicacionID");
-                        int IDXNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        EntidadNombrada Ubicacion = new EntidadNombrada();
+                        EntidadNombrada Categoria = new EntidadNombrada();
 
                         if (lector.Read())
                         {
-                            Ubicacion.ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID);
-                            Ubicacion.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            Ubicacion.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
-                            Ubicacion.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
-                            Ubicacion.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
+                            Categoria.ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID);
+                            Categoria.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
+                            Categoria.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
+                            Categoria.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
+                            Categoria.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
                         }
                         ;
 
-                        return Ubicacion;
+                        return Categoria;
                     }
                 }
             }
         }
-        public string Insertar(EntidadNombrada nuevaUbicacion)
+        public string Insertar(EntidadNombrada nuevaCategoria)
         {
-            string consulta = @"INSERT INTO Ubicaciones_inventario (
+            string consulta = @"INSERT INTO Productos_categorias (
                 ID,
-                Descripcion,
+                Nombre,
                 FechaCreacion)
             VALUES (
-                @UbicacionID,
-                @Descripcion,
+                @CategoriaID,
+                @Nombre,
                 @FechaCreacion);";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    comando.Parameters.AddWithValue("@UbicacionID", nuevaUbicacion.ID);
-                    comando.Parameters.AddWithValue("@Descripcion", nuevaUbicacion.Nombre);
+                    comando.Parameters.AddWithValue("@CategoriaID", nuevaCategoria.ID);
+                    comando.Parameters.AddWithValue("@Nombre", nuevaCategoria.Nombre);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
-                    return nuevaUbicacion.ID;
+                    return nuevaCategoria.ID;
                 }
             }
         }
         public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
-                    u.id AS UbicacionID,
-                    u.descripcion AS UbicacionNombre,
-                    u.FechaCreacion AS FechaCreacion,
-                    u.FechaModificacion AS FechaModificacion,
-                    u.EsEliminado AS EsEliminado
-                FROM Ubicaciones_inventario AS u
-                WHERE u.EsEliminado = FALSE;";
+                    c.id AS CategoriaID,
+                    c.nombre AS Nombre,
+                    c.FechaCreacion AS FechaCreacion,
+                    c.FechaModificacion AS FechaModificacion,
+                    c.EsEliminado AS EsEliminado
+                FROM Productos_categorias AS c
+                WHERE c.EsEliminado = FALSE;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -345,24 +344,24 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqlDataReader lector = await comando.ExecuteReaderAsync())
                     {
-                        int IDXUbicacionID = lector.GetOrdinal("UbicacionID");
-                        int IDXNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (await lector.ReadAsync())
                         {
-                            EntidadNombrada Marca = new EntidadNombrada
+                            EntidadNombrada Categoria = new EntidadNombrada
                             {
-                                ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
                             };
 
-                            yield return Marca;
+                            yield return Categoria;
                         }
                     }
                 }
@@ -370,15 +369,15 @@ namespace WPFApp1.Repositorios
         }
         public List<EntidadNombrada> RecuperarList()
         {
-            List<EntidadNombrada> Ubicaciones = new List<EntidadNombrada>();
+            List<EntidadNombrada> Categorias = new List<EntidadNombrada>();
             string consulta = @"SELECT 
-                    u.id AS UbicacionID,
-                    u.descripcion AS UbicacionNombre,
-                    u.FechaCreacion AS FechaCreacion,
-                    u.FechaModificacion AS FechaModificacion,
-                    u.EsEliminado AS EsEliminado
-                FROM Ubicaciones_inventario AS u
-                WHERE u.EsEliminado = FALSE;";
+                    c.id AS CategoriaID,
+                    c.nombre AS Nombre,
+                    c.FechaCreacion AS FechaCreacion,
+                    c.FechaModificacion AS FechaModificacion,
+                    c.EsEliminado AS EsEliminado
+                FROM Productos_categorias AS c
+                WHERE c.EsEliminado = FALSE;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -386,26 +385,26 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXUbicacionID = lector.GetOrdinal("UbicacionID");
-                        int IDXNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXNombre = lector.GetOrdinal("Nombre");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (lector.Read())
                         {
-                            EntidadNombrada Ubicacion = new EntidadNombrada
+                            EntidadNombrada Categoria = new EntidadNombrada
                             {
-                                ID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                ID = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
                             };
-                            Ubicaciones.Add(Ubicacion);
+                            Categorias.Add(Categoria);
                         }
 
-                        return Ubicaciones;
+                        return Categorias;
                     }
                 }
             }
@@ -415,11 +414,11 @@ namespace WPFApp1.Repositorios
             string consulta = "";
             if (Caso == TipoEliminacion.Logica)
             {
-                consulta = "UPDATE Ubicaciones_inventario SET EsEliminado = TRUE WHERE ID = @id;";
+                consulta = "UPDATE Productos_categorias SET EsEliminado = TRUE WHERE ID = @id;";
             }
             else
             {
-                consulta = "DELETE FROM Ubicaciones_inventario WHERE ID = @id;";
+                consulta = "DELETE FROM Productos_categorias WHERE ID = @id;";
             }
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
@@ -432,9 +431,9 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(EntidadNombrada ubicacionModificada)
+        public bool Modificar(EntidadNombrada categoriaModificada)
         {
-            EntidadNombrada registroActual = Recuperar(ubicacionModificada.ID);
+            EntidadNombrada registroActual = Recuperar(categoriaModificada.ID);
             var propiedadesEntidad = typeof(EntidadNombrada).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -459,13 +458,13 @@ namespace WPFApp1.Repositorios
                                 continue;
 
                             var valorActual = propiedad.GetValue(registroActual);
-                            var valorModificado = propiedad.GetValue(ubicacionModificada);
+                            var valorModificado = propiedad.GetValue(categoriaModificada);
                             if (!object.Equals(valorActual, valorModificado))
                             {
                                 string nombreColumna = MapeoColumnas[propiedad.Name];
                                 string nombreParametro = propiedad.Name;
                                 listaPropiedadesModificadas.Add($"{nombreColumna} = @{nombreParametro}");
-                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(ubicacionModificada) ?? DBNull.Value);
+                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(categoriaModificada) ?? DBNull.Value);
                             }
                         }
 
@@ -473,9 +472,9 @@ namespace WPFApp1.Repositorios
                             return false;
 
                         listaPropiedadesModificadas.Add("FechaModificacion = @FechaActual");
-                        string Consulta = $"UPDATE Ubicaciones_inventario SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
+                        string Consulta = $"UPDATE Productos_categorias SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
                         comando.Parameters.AddWithValue("@FechaActual", DateTime.Now);
-                        comando.Parameters.AddWithValue("@IDModificar", ubicacionModificada.ID);
+                        comando.Parameters.AddWithValue("@IDModificar", categoriaModificada.ID);
                         comando.CommandText = Consulta;
 
                         int filasAfectadas = comando.ExecuteNonQuery();

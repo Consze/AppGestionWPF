@@ -9,12 +9,10 @@ namespace WPFApp1.Servicios
     {
         private readonly IndexadorGenericoService _indexadorServicio;
         private readonly IIndexadorProductosRepositorio _repositorioIndexacion;
-        private readonly Func<IProductoServicioObsoleto> _productoServicioFactory;
-        public ServicioIndexacionProductos(IndexadorGenericoService indexadorGenerico, IIndexadorProductosRepositorio repositorioIndexacion, Func<IProductoServicioObsoleto> productoServicioFactory)
+        public ServicioIndexacionProductos(IndexadorGenericoService indexadorGenerico, IIndexadorProductosRepositorio repositorioIndexacion)
         {
             _indexadorServicio = indexadorGenerico;
             _repositorioIndexacion = repositorioIndexacion;
-            _productoServicioFactory = productoServicioFactory;
         }
         public List<ProductoBase> BuscarTituloProductos(string TituloBuscado)
         {

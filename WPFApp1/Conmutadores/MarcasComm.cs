@@ -4,7 +4,7 @@ using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
-    public class MarcasConmutador : IConmutadorEntidadGenerica<EntidadNombrada>
+    public class MarcasConmutador : IConmutadorEntidadGenerica<Marcas>
     {
         private readonly RepoMarcasSQLite repoLocal;
         private readonly RepoMarcasSQLServer repoServer;
@@ -13,7 +13,7 @@ namespace WPFApp1.Conmutadores
             repoLocal = _repoLocal;
             repoServer = _repoServer;
         }
-        public async IAsyncEnumerable<EntidadNombrada> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Marcas> RecuperarStreamAsync()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -30,7 +30,7 @@ namespace WPFApp1.Conmutadores
                 }
             }
         }
-        public List<EntidadNombrada> RecuperarList()
+        public List<Marcas> RecuperarList()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -52,7 +52,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Eliminar(ID, Caso);
             }
         }
-        public bool Modificar(EntidadNombrada marcaModificada)
+        public bool Modificar(Marcas marcaModificada)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -63,7 +63,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Modificar(marcaModificada);
             }
         }
-        public string Insertar(EntidadNombrada nuevaMarca)
+        public string Insertar(Marcas nuevaMarca)
         {
             Guid id = Guid.NewGuid();
             nuevaMarca.ID = id.ToString();
@@ -84,7 +84,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Insertar(nuevaMarca);
             }
         }
-        public EntidadNombrada Recuperar(string ID)
+        public Marcas Recuperar(string ID)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {

@@ -48,11 +48,19 @@ namespace WPFApp1
             services.AddTransient<RepoMarcasSQLite>();
             services.AddTransient<RepoMarcasSQLServer>();
 
+            services.AddTransient<RepoArquetiposSQLite>();
+            services.AddTransient<RepoArquetiposSQLServer>();
+
+            services.AddTransient<RepoCategoriasSQLite>();
+            services.AddTransient<RepoCategoriasSQLServer>();
+
             // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
             services.AddTransient<IConmutadorEntidadGenerica<Versiones>, VersionesConmutador>();
-            services.AddTransient<IConmutadorEntidadGenerica<EntidadNombrada>, MarcasConmutador>();
-            services.AddTransient<IConmutadorEntidadGenerica<EntidadNombrada>, UbicacionesConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Marcas>, MarcasConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Ubicaciones>, UbicacionesConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Categorias>, CategoriasConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Arquetipos>, ArquetiposConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
@@ -64,7 +72,6 @@ namespace WPFApp1
             
             services.AddTransient<IndexadorGenericoService>();
 
-            services.AddTransient<IProductoServicioObsoleto, ProductoServicio>();
             services.AddTransient<IndexadorProductoSQLite>();
             services.AddTransient<IndexadorProductoSQLServer>();
 
@@ -81,13 +88,9 @@ namespace WPFApp1
                 var indexadorGenerico = provider.GetRequiredService<IndexadorGenericoService>();
                 var indexadorRepositorioConmutador = provider.GetRequiredService<IIndexadorProductosRepositorio>();
 
-                // Fabrica diferida
-                Func<IProductoServicioObsoleto> productoServicioFactory = () => provider.GetRequiredService<IProductoServicioObsoleto>();
-
                 return new ServicioIndexacionProductos(
                     indexadorGenerico,
-                    indexadorRepositorioConmutador,
-                    productoServicioFactory
+                    indexadorRepositorioConmutador
                 );
             });
 
@@ -104,19 +107,6 @@ namespace WPFApp1
                 return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
             });
 
-            services.AddSingleton<WPFApp1.Interfaces.IProductoServicioObsoleto, ProductoServicio>(provider =>
-            {
-                var sqliteFactory = provider.GetRequiredService<Factories.SqliteRepositorioProductosFactory>();
-                var sqlServerFactory = provider.GetRequiredService<Factories.SqlServerRepositorioProductosFactory>();
-                var conexionServidor = provider.GetRequiredService<ConexionDBSQLServer>();
-                var servicioIndexacionProductos = provider.GetRequiredService<ServicioIndexacionProductos>();
-
-                return new ProductoServicio(
-                    sqliteFactory,
-                    sqlServerFactory,
-                    conexionServidor
-                );
-            });
 
             // Registrar ViewModels
             services.AddTransient<MainWindowViewModel>();

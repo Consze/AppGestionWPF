@@ -4,16 +4,16 @@ using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
-    public class UbicacionesConmutador : IConmutadorEntidadGenerica<Ubicaciones>
+    public class CategoriasConmutador : IConmutadorEntidadGenerica<Categorias>
     {
-        private readonly RepoUbicacionesSQLite repoLocal;
-        private readonly RepoUbicacionesSQLServer repoServer;
-        public UbicacionesConmutador(RepoUbicacionesSQLServer _repoServer, RepoUbicacionesSQLite _repoLocal)
+        private readonly RepoCategoriasSQLite repoLocal;
+        private readonly RepoCategoriasSQLServer repoServer;
+        public CategoriasConmutador(RepoCategoriasSQLServer _repoServer, RepoCategoriasSQLite _repoLocal)
         {
             repoLocal = _repoLocal;
             repoServer = _repoServer;
         }
-        public async IAsyncEnumerable<Ubicaciones> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Categorias> RecuperarStreamAsync()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -30,7 +30,7 @@ namespace WPFApp1.Conmutadores
                 }
             }
         }
-        public List<Ubicaciones> RecuperarList()
+        public List<Categorias> RecuperarList()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -52,7 +52,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Eliminar(ID, Caso);
             }
         }
-        public bool Modificar(Ubicaciones marcaModificada)
+        public bool Modificar(Categorias marcaModificada)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -63,7 +63,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Modificar(marcaModificada);
             }
         }
-        public string Insertar(Ubicaciones nuevaMarca)
+        public string Insertar(Categorias nuevaMarca)
         {
             Guid id = Guid.NewGuid();
             nuevaMarca.ID = id.ToString();
@@ -84,7 +84,7 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Insertar(nuevaMarca);
             }
         }
-        public Ubicaciones Recuperar(string ID)
+        public Categorias Recuperar(string ID)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
