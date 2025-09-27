@@ -36,9 +36,38 @@
                 <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
                     <StackPanel Margin="5,7,10,15" Orientation="Vertical">
                         <TextBlock Text="NOMBRE" FontWeight="Bold" FontSize="12" Margin="3"/>
-                        <TextBox x:Name="CampoNombre" Text="{Binding NombreProducto}"/>
-                        <TextBlock Text="MARCA" FontWeight="Bold" FontSize="12" Margin="3"/>
-                        <TextBox x:Name="CampoMarca" Text="{Binding MarcaNombre}"/>
+                        <TextBox x:Name="CampoNombre" Text="{Binding NombreProducto}"
+                                AcceptsReturn="True"
+                                TextWrapping="Wrap"
+                                VerticalScrollBarVisibility="Auto"
+                                HorizontalScrollBarVisibility="Disabled"
+                                MinLines="1"
+                                MaxLines="2"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="MARCA" FontWeight="Bold" FontSize="12" Margin="3"/>
+                            <Button x:Name="EditarMarca" BorderThickness="0" Command="{Binding ModificarMarcaCommand}">
+                                <Button.Background>
+                                    <SolidColorBrush Color="Transparent"/>
+                                </Button.Background>
+                                <Image Width="14" Height="14" Source="{Binding iconoEdicion}" Style="{StaticResource ImagenHover}"/>
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="CampoMarca" Text="{Binding MarcaNombre}" 
+                                Visibility="{Binding ToggleEdicionMarca, Converter={StaticResource BooleanToVisibility}}"
+                                AcceptsReturn="True"
+                                TextWrapping="Wrap"
+                                VerticalScrollBarVisibility="Auto"
+                                HorizontalScrollBarVisibility="Disabled"
+                                MinLines="1"
+                                MaxLines="2"/>
+                        <ComboBox x:Name="MarcaElegida" 
+                              DisplayMemberPath="Nombre" 
+                              SelectedValuePath="ID" 
+                              SelectedValue="{Binding MarcaProductoID, Mode=TwoWay}"
+                              ItemsSource="{Binding Marcas}"
+                              Margin="2" 
+                              Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}">
+                        </ComboBox>
                     </StackPanel>
                 </Border>
             </StackPanel>

@@ -23,12 +23,40 @@ namespace WPFApp1.ViewModels
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
         private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
+        private readonly IConmutadorEntidadGenerica<Marcas> servicioMarcas;
         private readonly OrquestadorProductos OrquestadorProductos;
         public ObservableCollection<Formatos> Formatos { get; } = new();
+        public ObservableCollection<Marcas> Marcas { get; } = new();
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
+        private bool _ToggleEdicionMarca;
+        public bool ToggleEdicionMarca
+        {
+            get { return _ToggleEdicionMarca; }
+            set
+            {
+                if (_ToggleEdicionMarca != value)
+                {
+                    _ToggleEdicionMarca = value;
+                    OnPropertyChanged(nameof(ToggleEdicionMarca));
+                }
+            }
+        }
+        private bool _ToggleSeleccionMarca;
+        public bool ToggleSeleccionMarca
+        {
+            get { return _ToggleSeleccionMarca; }
+            set
+            {
+                if (_ToggleSeleccionMarca != value)
+                {
+                    _ToggleSeleccionMarca = value;
+                    OnPropertyChanged(nameof(ToggleSeleccionMarca));
+                }
+            }
+        }
 
         private int _altoImagenSeleccionada;
         public int AltoImagenSeleccionada 
@@ -53,6 +81,19 @@ namespace WPFApp1.ViewModels
                 {
                     _anchoImagenSeleccionada = value;
                     OnPropertyChanged(nameof(AnchoImagenSeleccionada));
+                }
+            }
+        }
+        private string _iconoEdicion;
+        public string iconoEdicion
+        {
+            get { return _iconoEdicion; }
+            set
+            {
+                if (_iconoEdicion != value)
+                {
+                    _iconoEdicion = value;
+                    OnPropertyChanged(nameof(iconoEdicion));
                 }
             }
         }
@@ -377,13 +418,15 @@ namespace WPFApp1.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
         private ServicioSFX _servicioSFX { get; set; }
+        public ICommand ModificarMarcaCommand{ get; }
         public ICommand ElegirImagenCommand{ get; }
         public ICommand AniadirProductoCommand { get; }
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
         public ICommand ModificarCantidadStockCommand { get; }
 
-        public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos)
+        public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
+            IConmutadorEntidadGenerica<Marcas> _servicioMarcas)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -402,11 +445,16 @@ namespace WPFApp1.ViewModels
             CantidadEnStock = 0;
 
             NombreDeVentana = "Añadir Producto";
+            _ToggleEdicionMarca = false;
+            _ToggleSeleccionMarca = true;
+            _iconoEdicion = "/iconos/lapizEdicion.png";
+
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
             CerrarVistaCommand = new RelayCommand<object>(CerrarVista);
             BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
             ModificarCantidadStockCommand = new RelayCommand<object>(ModificarCantidadStock);
+            ModificarMarcaCommand = new RelayCommand<object>(ModificarMarca);
 
             Messenger.Default.Subscribir<VistaAniadirProductosCantidadModificada>(OnCantidadModificada);
 
@@ -432,6 +480,19 @@ namespace WPFApp1.ViewModels
             { 
                 Formatos.Add(formato); 
             } 
+        }
+        private async Task CargarMarcas()
+        {
+            await foreach (var marca in servicioMarcas.RecuperarStreamAsync())
+            {
+                Marcas.Add(marca);
+            }
+        }
+        public async Task InicializarFormulario()
+        {
+            // Poblar cbox para seleccion asistida
+            await CargarFormatos();
+            await CargarMarcas();
         }
         public async Task ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
         {
@@ -511,9 +572,6 @@ namespace WPFApp1.ViewModels
                         break;
                 }
             }
-
-            // Poblar Combobox de formatos
-            await CargarFormatos();
         }
         public void EditarProducto(object parameter)
         {
@@ -805,6 +863,20 @@ namespace WPFApp1.ViewModels
                 {
                     CantidadEnStock--;
                 }
+            }
+        }
+        public void ModificarMarca(object parameter)
+        {
+            ToggleEdicionMarca = !ToggleEdicionMarca;
+            ToggleSeleccionMarca = !ToggleSeleccionMarca;
+
+            if(ToggleEdicionMarca)
+            {
+                iconoEdicion = "/iconos/seleccion1.png";
+            }
+            else
+            {
+                iconoEdicion = "/iconos/lapizEdicion.png";
             }
         }
         public void OnCantidadModificada(VistaAniadirProductosCantidadModificada _mensaje)

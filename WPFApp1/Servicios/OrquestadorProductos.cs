@@ -114,6 +114,10 @@ namespace WPFApp1.Servicios
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {
+            // Insercion condicional de nuevos registros para entidades auxiliares
+
+
+            // Insertar nuevo registro
             string nuevaId = productoServicio.CrearProducto(productoNuevo);
             indexacionServicio.IndexarProducto(productoNuevo);
             return nuevaId;
