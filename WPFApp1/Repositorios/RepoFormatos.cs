@@ -284,9 +284,33 @@ namespace WPFApp1.Repositorios
                 @profundidad,
                 @peso,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS ID FROM Productos_formatos 
+                WHERE Alto = @alto
+                    AND Peso = @peso
+                    AND Profundidad = @profundidad
+                    AND Largo = @largo
+                    AND Descripcion = @formatoNombre;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@peso", nuevoRegistro.Peso);
+                    comandoBusqueda.Parameters.AddWithValue("@profundidad", nuevoRegistro.Profundidad);
+                    comandoBusqueda.Parameters.AddWithValue("@largo", nuevoRegistro.Largo);
+                    comandoBusqueda.Parameters.AddWithValue("@alto", nuevoRegistro.Alto);
+                    comandoBusqueda.Parameters.AddWithValue("@formatoNombre", nuevoRegistro.Nombre);
+
+                    using (SqliteDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("ID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);
@@ -585,9 +609,33 @@ namespace WPFApp1.Repositorios
                 @profundidad,
                 @peso,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS ID FROM Productos_formatos 
+                WHERE Alto = @alto
+                    AND Peso = @peso
+                    AND Profundidad = @profundidad
+                    AND Largo = @largo
+                    AND Nombre = @formatoNombre;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@peso", nuevoRegistro.Peso);
+                    comandoBusqueda.Parameters.AddWithValue("@profundidad", nuevoRegistro.Profundidad);
+                    comandoBusqueda.Parameters.AddWithValue("@largo", nuevoRegistro.Largo);
+                    comandoBusqueda.Parameters.AddWithValue("@alto", nuevoRegistro.Alto);
+                    comandoBusqueda.Parameters.AddWithValue("@formatoNombre", nuevoRegistro.Nombre);
+
+                    using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("ID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);

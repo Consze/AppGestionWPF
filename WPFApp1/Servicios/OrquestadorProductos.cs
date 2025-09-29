@@ -1,6 +1,4 @@
-﻿using System.Security.AccessControl;
-using WPFApp1.Conmutadores;
-using WPFApp1.Entidades;
+﻿using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
 namespace WPFApp1.Servicios
@@ -55,13 +53,15 @@ namespace WPFApp1.Servicios
                 {"MarcaNombre", ServicioAsociado.Marcas },
                 {"CategoriaNombre", ServicioAsociado.Categorias },
                 {"UbicacionNombre", ServicioAsociado.Ubicaciones },
+                
                 {"FormatoNombre", ServicioAsociado.Formatos },
-                {"ID", ServicioAsociado.Producto},
-                {"Nombre", ServicioAsociado.Producto },
                 {"Alto", ServicioAsociado.Formatos},
                 {"Largo", ServicioAsociado.Formatos},
                 {"Profundidad", ServicioAsociado.Formatos},
                 {"Peso", ServicioAsociado.Formatos},
+
+                {"ID", ServicioAsociado.Producto},
+                {"Nombre", ServicioAsociado.Producto },
 
                 // Propiedades de registro Stock
                 {"Categoria", ServicioAsociado.Stock},
@@ -87,6 +87,9 @@ namespace WPFApp1.Servicios
             //Banderas
             bool ActualizarVersion = false;
             bool ActualizarArquetipo = false;
+            bool ActualizarMarca = false;
+            bool ActualizarUbicacion = false;
+            bool ActualizarFormato = false;
 
             //1 - Bucle de relevamiento
             foreach (var propiedad in propiedadesEntidad)
@@ -104,16 +107,57 @@ namespace WPFApp1.Servicios
                         case ServicioAsociado.Producto:
                             ActualizarArquetipo = true;
                             break;
+
+                        case ServicioAsociado.Marcas:
+                            ActualizarMarca = true;
+                            break;
+
+                        case ServicioAsociado.Ubicaciones:
+                            ActualizarUbicacion = true;
+                            break;
+
+                        case ServicioAsociado.Formatos:
+                            ActualizarFormato = true;
+                            break;
                     }
                 }
             }
 
-            //2- Llamada a servicios condicional
-            if (ActualizarVersion)
+            //2 - Llamada a servicios condicional
+            if(ActualizarMarca)
             {
-                string nuevaVersionID = ModificarVersion(productoModificado);
-                productoModificado.ProductoVersionID = nuevaVersionID;
+                Marcas _marcas = new Marcas
+                {
+                    Nombre = productoModificado.MarcaNombre
+                };
+                string nuevaMarcaID = marcasServicio.Insertar(_marcas);
+                productoModificado.MarcaID = nuevaMarcaID;
             }
+
+            if(ActualizarFormato)
+            {
+                Formatos _formato = new Formatos
+                {
+                    Alto = productoModificado.Alto,
+                    Largo = productoModificado.Largo,
+                    Profundidad = productoModificado.Profundidad,
+                    Peso = productoModificado.Peso,
+                    Nombre = productoModificado.FormatoNombre
+                };
+                string nuevoFormatoID = formatoServicio.Insertar(_formato);
+                productoModificado.FormatoProductoID = nuevoFormatoID;
+            }
+
+            if(ActualizarUbicacion)
+            {
+                Ubicaciones _ubicacion = new Ubicaciones
+                {
+                    Nombre = productoModificado.UbicacionNombre
+                };
+                string nuevaUbicacionID = ubicacionesServicio.Insertar(_ubicacion);
+                productoModificado.UbicacionID = nuevaUbicacionID;
+            }
+
             if(ActualizarArquetipo)
             {
                 Arquetipos _registro = new Arquetipos
@@ -132,11 +176,17 @@ namespace WPFApp1.Servicios
                 indexacionServicio.IndexarProducto(_producto);
             }
 
+            if (ActualizarVersion)
+            {
+                string nuevaVersionID = ModificarVersion(productoModificado);
+                productoModificado.ProductoVersionID = nuevaVersionID;
+            }
+
             //3 - Llamada a conmutador para asentar cambios en Stock
             bool ActualizacionStock = productoServicio.ModificarProducto(productoModificado);
 
 
-            return ActualizacionStock || ActualizarVersion || ActualizarArquetipo;
+            return ActualizacionStock || ActualizarVersion || ActualizarArquetipo || ActualizarUbicacion || ActualizarMarca;
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {
@@ -158,13 +208,15 @@ namespace WPFApp1.Servicios
             };
             productoNuevo.ProductoVersionID = versionesServicio.Insertar(version);
 
-            // ubicacion, marca, formato
+            /**
+            // Marca
             if (string.IsNullOrEmpty(productoNuevo.MarcaID) && !string.IsNullOrEmpty(productoNuevo.MarcaNombre))
             {
                 Marcas nuevaMarca = new Marcas { Nombre = productoNuevo.MarcaNombre };
                 productoNuevo.MarcaID = marcasServicio.Insertar(nuevaMarca);
             }
 
+            // Formato
             if(string.IsNullOrEmpty(productoNuevo.FormatoProductoID) && !string.IsNullOrEmpty(productoNuevo.FormatoNombre))
             {
                 Formatos nuevoFormato = new Formatos
@@ -178,11 +230,15 @@ namespace WPFApp1.Servicios
                 productoNuevo.FormatoProductoID = formatoServicio.Insertar(nuevoFormato);
             }
 
+            // Ubicacion
             if (string.IsNullOrEmpty(productoNuevo.UbicacionID) && !string.IsNullOrEmpty(productoNuevo.UbicacionNombre))
             {
                 Ubicaciones nuevaUbicacion = new Ubicaciones { Nombre = productoNuevo.UbicacionNombre };
                 productoNuevo.UbicacionID = ubicacionesServicio.Insertar(nuevaUbicacion);
             }
+
+            // Categoria
+            */
 
             // Insertar nuevo registro
             string nuevaId = productoServicio.CrearProducto(productoNuevo);

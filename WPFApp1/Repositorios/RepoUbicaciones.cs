@@ -72,9 +72,24 @@ namespace WPFApp1.Repositorios
                 @UbicacionID,
                 @Descripcion,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS UbicacionID FROM Ubicaciones_inventario
+                WHERE Descripcion = @NombreUbicacion";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@NombreUbicacion", nuevaUbicacion.ID);
+                    using (SqliteDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("UbicacionID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@UbicacionID", nuevaUbicacion.ID);
@@ -314,9 +329,24 @@ namespace WPFApp1.Repositorios
                 @UbicacionID,
                 @Descripcion,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS UbicacionID FROM Ubicaciones_inventario
+                WHERE Descripcion = @NombreUbicacion";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@NombreUbicacion", nuevaUbicacion.ID);
+                    using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("UbicacionID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@UbicacionID", nuevaUbicacion.ID);

@@ -61,6 +61,11 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
+        /// <summary>
+        /// Si no existe crea un nuevo registro para la entidad 'Marcas'
+        /// </summary>
+        /// <param name="nuevaMarca"></param>
+        /// <returns>ID de registro nuevo o Pre-existente</returns>
         public string Insertar(Marcas nuevaMarca)
         {
             string consulta = @"INSERT INTO Marcas (
@@ -71,12 +76,27 @@ namespace WPFApp1.Repositorios
                 @MarcaID,
                 @NombreMarca,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS MarcaID FROM Marcas
+                WHERE Nombre = @NombreMarca";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
-                using (SqliteCommand comando = new SqliteCommand(consulta,conexion))
+                using (SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda,conexion))
                 {
-                    comando.Parameters.AddWithValue("@MarcaID",nuevaMarca.ID);
+                    comandoBusqueda.Parameters.AddWithValue("@NombreMarca",nuevaMarca.ID);
+                    using (SqliteDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("MarcaID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
+                using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("@MarcaID", nuevaMarca.ID);
                     comando.Parameters.AddWithValue("@NombreMarca", nuevaMarca.Nombre);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
@@ -313,9 +333,24 @@ namespace WPFApp1.Repositorios
                 @MarcaID,
                 @NombreMarca,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS MarcaID FROM Marcas
+                WHERE Nombre = @NombreMarca";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@NombreMarca", nuevaMarca.ID);
+                    using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("MarcaID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@MarcaID", nuevaMarca.ID);

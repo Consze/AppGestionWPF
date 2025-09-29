@@ -223,10 +223,11 @@ namespace WPFApp1.Repositorios
 
         CREATE TABLE IF NOT EXISTS Productos_categorias (
             ID VARCHAR(36) PRIMARY KEY,
-            Nombre TEXT NOT NULL,
+            Nombre TEXT NOT NULL COLLATE NOCASE,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME
+            FechaCreacion DATETIME,
+            UNIQUE (Nombre) ON CONFLICT IGNORE
         );
 
         CREATE TABLE IF NOT EXISTS Productos_titulos (
@@ -263,14 +264,15 @@ namespace WPFApp1.Repositorios
 
         CREATE TABLE IF NOT EXISTS Productos_formatos (
             ID VARCHAR(36) PRIMARY KEY,
-            descripcion TEXT,
+            descripcion TEXT NOT NULL COLLATE NOCASE,
             alto NUMERIC(18, 1) NOT NULL,
             ancho NUMERIC(18, 1) NOT NULL,
             largo NUMERIC(18, 1) NOT NULL,
             peso NUMERIC(18, 1) DEFAULT 1,
             EsEliminado BOOLEAN DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME
+            FechaCreacion DATETIME,
+            UNIQUE (alto, ancho, largo, peso, descripcion) ON CONFLICT IGNORE
         );
 
         CREATE TABLE IF NOT EXISTS Productos_Stock (
@@ -290,18 +292,20 @@ namespace WPFApp1.Repositorios
 
         CREATE TABLE IF NOT EXISTS Marcas (
             ID VARCHAR(36) PRIMARY KEY,
-            Nombre TEXT NOT NULL,
+            Nombre TEXT NOT NULL COLLATE NOCASE,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME
+            FechaCreacion DATETIME,
+            UNIQUE (Nombre) ON CONFLICT IGNORE
         );
 
         CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
             ID VARCHAR(36) PRIMARY KEY,
-            Descripcion TEXT NOT NULL,
+            Descripcion TEXT NOT NULL COLLATE NOCASE,
             EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
             FechaModificacion DATETIME,
-            FechaCreacion DATETIME
+            FechaCreacion DATETIME,
+            UNIQUE (Descripcion) ON CONFLICT IGNORE
         );";
         public SqliteConnection Conexion { get; private set; }
         public ConexionDBSQLite()
