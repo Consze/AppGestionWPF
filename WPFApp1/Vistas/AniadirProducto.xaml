@@ -59,7 +59,17 @@
                                 VerticalScrollBarVisibility="Auto"
                                 HorizontalScrollBarVisibility="Disabled"
                                 MinLines="1"
-                                MaxLines="2"/>
+                                MaxLines="2">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="Visibility" Value="Visible">
+                                            <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
                         <ComboBox x:Name="MarcaElegida" 
                               DisplayMemberPath="Nombre" 
                               SelectedValuePath="ID" 
@@ -87,30 +97,47 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        
-                        <StackPanel Orientation="Vertical" Grid.Row="1" Margin="5" Grid.ColumnSpan="3">
 
+                        <StackPanel Orientation="Vertical" Grid.Row="1" Margin="5" Grid.ColumnSpan="3">
                             <TextBlock Text="PRECIO" FontWeight="Bold" FontSize="12" Margin="3"/>
                             <TextBox x:Name="campoPrecio" Text="{Binding PrecioProducto}" Grid.Column="1" Margin="0,0,0,7"/>
                             <TextBlock Text="HABER" FontWeight="Bold" FontSize="12" Margin="3"/>
-                        <StackPanel Orientation="Horizontal">
-                            <Button x:Name="Restar" Margin="0" BorderThickness="0" Command="{Binding ModificarCantidadStockCommand }" CommandParameter="RESTAR">
-                                <Button.Background>
-                                    <SolidColorBrush Color="Transparent"/>
-                                </Button.Background>
-                                <Image Width="20" Height="24" Source="/iconos/restar1.png" Style="{StaticResource ImagenHover}"/>
-                            </Button>
-                            <Border MouseLeftButtonDown="DobleClickModificarStock">
-                                <TextBlock x:Name="CampoCantidad" Text="{Binding CantidadEnStock}" FontWeight="Medium" Margin="5"/>
-                            </Border>
-                            <Button x:Name="Aniadir" Margin="0" BorderThickness="0" Command="{Binding ModificarCantidadStockCommand }" CommandParameter="SUMAR">
-                                <Button.Background>
-                                    <SolidColorBrush Color="Transparent"/>
-                                </Button.Background>
-                                <Image Width="24" Height="24" Source="/iconos/sumar1.png" Style="{StaticResource ImagenHover}"/>
-                            </Button>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="Restar" Margin="0" BorderThickness="0" Command="{Binding ModificarCantidadStockCommand }" CommandParameter="RESTAR">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="20" Height="24" Source="/iconos/restar1.png" Style="{StaticResource ImagenHover}"/>
+                                </Button>
+                                <Border MouseLeftButtonDown="DobleClickModificarStock">
+                                    <TextBlock x:Name="CampoCantidad" Text="{Binding CantidadEnStock}" FontWeight="Medium" Margin="5"/>
+                                </Border>
+                                <Button x:Name="Aniadir" Margin="0" BorderThickness="0" Command="{Binding ModificarCantidadStockCommand }" CommandParameter="SUMAR">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="24" Height="24" Source="/iconos/sumar1.png" Style="{StaticResource ImagenHover}"/>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="UBICACION" FontWeight="Bold" FontSize="12" Margin="3"/>
+                                <Button x:Name="EditarUbicacion" BorderThickness="0" Command="{Binding ModificarUbicacionCommand}">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="14" Height="14" Source="{Binding iconoEdicionUbicacion}" Style="{StaticResource ImagenHover}"/>
+                                </Button>
+                            </StackPanel>
+                            <TextBox x:Name="campoUbicacion" Text="{Binding UbicacionNombre}" Grid.Column="1" Margin="0,0,0,7" Visibility="{Binding ToggleEdicionUbicacion, Converter={StaticResource BooleanToVisibility}}"/>
+                            <ComboBox x:Name="ubicacionElegida" 
+                              DisplayMemberPath="Nombre" 
+                              SelectedValuePath="ID" 
+                              SelectedValue="{Binding UbicacionID, Mode=TwoWay}"
+                              ItemsSource="{Binding Ubicaciones}"
+                              Margin="2" 
+                              Visibility="{Binding ToggleSeleccionUbicacion, Converter={StaticResource BooleanToVisibility}}">
+                            </ComboBox>
                         </StackPanel>
-                    </StackPanel>
                     </Grid>
                     
                 </Border>
@@ -157,7 +184,7 @@
                 Width="{Binding AnchoImagenSeleccionada}" Height="{Binding AltoImagenSeleccionada}" Grid.RowSpan="2" Grid.Row="0">
                             <Image x:Name="PlaceHolder" Source="{Binding RutaImagenSeleccionada}"/>
                         </Border>
-                        <Button x:Name="ElegirImagen" Content="Añadir imagen" Command="{Binding ElegirImagenCommand}" Margin="5" FontSize="13" FontWeight="Light" Grid.Row="2"/>
+                        <Button x:Name="ElegirImagen" Content="{Binding leyendaBotonImagen}" Command="{Binding ElegirImagenCommand}" Margin="5" FontSize="13" FontWeight="Light" Grid.Row="2"/>
                     </Grid>
                 </Border>
             </StackPanel>
@@ -174,16 +201,42 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="PESO" FontWeight="Bold" FontSize="12" Margin="3"/>
-                            <TextBox x:Name="campoPeso" Text="{Binding Peso}" Margin="0,0,0,7"/>
-                            <TextBlock Text="DIMENSIONES" FontWeight="Bold" FontSize="12" Margin="3"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="FORMATO" FontWeight="Bold" FontSize="12" Margin="3"/>
+                                <Button x:Name="EditarFormato" BorderThickness="0" Command="{Binding ModificarFormatoCommand}">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="14" Height="14" Source="{Binding iconoEdicionFormato}" Style="{StaticResource ImagenHover}"/>
+                                </Button>
+                            </StackPanel>
                             <ComboBox x:Name="FormatoElegido" 
                                       DisplayMemberPath="Nombre" 
                                       SelectedValuePath="ID" 
                                       SelectedValue="{Binding FormatoID, Mode=TwoWay}"
                                       ItemsSource="{Binding Formatos}"
-                                      Margin="2">
+                                      Margin="2"
+                                      Visibility="{Binding ToggleSeleccionFormato, Converter={StaticResource BooleanToVisibility}}">
                             </ComboBox>
+                            <TextBox x:Name="formatoNombre" Text="{Binding FormatoNombre}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Visibility" Value="Visible">
+                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <TextBlock Text="ALTO" FontWeight="Bold" FontSize="12" Margin="3" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBox x:Name="campoAltura" Text="{Binding Alto}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBlock Text="LARGO" FontWeight="Bold" FontSize="12" Margin="3" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBox x:Name="campoLargo" Text="{Binding Largo}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBlock Text="PROFUNDIDAD" FontWeight="Bold" FontSize="12" Margin="3" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBox x:Name="campoProfundidad" Text="{Binding Profundidad}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBlock Text="PESO" FontWeight="Bold" FontSize="12" Margin="3" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
+                            <TextBox x:Name="campoPeso" Text="{Binding Peso}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -201,8 +254,34 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="CATEGORIA" FontWeight="Bold" FontSize="12" Margin="3"/>
-                            <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaNombre}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="CATEGORIA" FontWeight="Bold" FontSize="12" Margin="3"/>
+                                <Button x:Name="EditarCategoria" BorderThickness="0" Command="{Binding ModificarCategoriaCommand}">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="14" Height="14" Source="{Binding iconoEdicionCategoria}" Style="{StaticResource ImagenHover}"/>
+                                </Button>
+                            </StackPanel>
+                            <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaNombre}" Visibility="{Binding ToggleEdicionCategoria, Converter={StaticResource BooleanToVisibility}}">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Visibility" Value="Visible">
+                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <ComboBox x:Name="CategoriaElegida" 
+                              DisplayMemberPath="Nombre" 
+                              SelectedValuePath="ID" 
+                              SelectedValue="{Binding CategoriaProductoID, Mode=TwoWay}"
+                              ItemsSource="{Binding Categorias}"
+                              Margin="2" 
+                              Visibility="{Binding ToggleSeleccionCategoria, Converter={StaticResource BooleanToVisibility}}">
+                            </ComboBox>
                         </StackPanel>
                     </Grid>
                 </Border>

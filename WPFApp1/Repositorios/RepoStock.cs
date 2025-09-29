@@ -60,16 +60,19 @@ namespace WPFApp1.Repositorios
                 f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
                 p.nombre AS ProductoNombre,
                 p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
-                m.nombre AS MarcaNombre
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
             FROM Productos_stock AS s
             INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
             INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
             INNER JOIN Productos AS p ON v.producto_id = p.id
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
             WHERE s.SKU_Producto = @IdBuscada
                 AND s.haber > 0;";
 
@@ -86,6 +89,7 @@ namespace WPFApp1.Repositorios
                             int IDXAlto = lector.GetOrdinal("Alto");
                             int IDXProfundidad = lector.GetOrdinal("Profundidad");
                             int IDXLargo = lector.GetOrdinal("Largo");
+                            int IDXPeso = lector.GetOrdinal("Peso");
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                             int IDXNombre = lector.GetOrdinal("ProductoNombre");
@@ -97,6 +101,8 @@ namespace WPFApp1.Repositorios
                             int IDXMarcaID = lector.GetOrdinal("MarcaID");
                             int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
                             int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                            int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                            int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
                             int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
                             int IDXProductoID = lector.GetOrdinal("ProductoID");
                             int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
@@ -114,6 +120,7 @@ namespace WPFApp1.Repositorios
                             registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber);
                             registro.Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio);
+                            registro.Peso= lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso);
 
                             //Cadena
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
@@ -121,6 +128,8 @@ namespace WPFApp1.Repositorios
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
                             registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre);
+                            registro.UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre);
+                            registro.FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre);
 
                             //Claves
                             registro.UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID);
@@ -209,16 +218,19 @@ namespace WPFApp1.Repositorios
                 f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
                 p.nombre AS ProductoNombre,
                 p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
-                m.nombre AS MarcaNombre
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
             FROM Productos_stock AS s
             INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
             INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
             INNER JOIN Productos AS p ON v.producto_id = p.id
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
             WHERE s.EsEliminado = False
                 AND s.haber > 0;";
 
@@ -233,6 +245,7 @@ namespace WPFApp1.Repositorios
                             int IDXAlto = lector.GetOrdinal("Alto");
                             int IDXProfundidad = lector.GetOrdinal("Profundidad");
                             int IDXLargo = lector.GetOrdinal("Largo");
+                            int IDXPeso = lector.GetOrdinal("Peso");
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                             int IDXNombre = lector.GetOrdinal("ProductoNombre");
@@ -241,9 +254,11 @@ namespace WPFApp1.Repositorios
                             int IDXEan = lector.GetOrdinal("EAN");
                             int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
                             int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                            int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
                             int IDXMarcaID = lector.GetOrdinal("MarcaID");
                             int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
                             int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                            int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
                             int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
                             int IDXProductoID = lector.GetOrdinal("ProductoID");
                             int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
@@ -265,6 +280,7 @@ namespace WPFApp1.Repositorios
                                     Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                     Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                     Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                    Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
 
                                     //Cadena
                                     Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -272,6 +288,8 @@ namespace WPFApp1.Repositorios
                                     EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
                                     RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                     MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                    UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                    FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
 
                                     //Claves
                                     UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
@@ -319,15 +337,19 @@ namespace WPFApp1.Repositorios
                 f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
                 p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
-                m.nombre AS MarcaNombre
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
             FROM Productos_stock AS s
             INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
             INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
             INNER JOIN Productos AS p ON v.producto_id = p.id
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
             WHERE s.EsEliminado = False
                 AND s.haber > 0;";
             List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
@@ -341,9 +363,11 @@ namespace WPFApp1.Repositorios
                         int IDXAlto = lector.GetOrdinal("Alto");
                         int IDXProfundidad = lector.GetOrdinal("Profundidad");
                         int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXPeso = lector.GetOrdinal("Peso");
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                         int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
                         int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
                         int IDXEan = lector.GetOrdinal("EAN");
                         int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
@@ -351,6 +375,8 @@ namespace WPFApp1.Repositorios
                         int IDXMarcaID = lector.GetOrdinal("MarcaID");
                         int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
                         int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                        int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
                         int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
                         int IDXProductoID = lector.GetOrdinal("ProductoID");
                         int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
@@ -372,13 +398,16 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
                                 RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
 
                                 //Claves
                                 UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
@@ -386,6 +415,7 @@ namespace WPFApp1.Repositorios
                                 FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
                                 ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
 
                                 //Datetime
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -423,10 +453,12 @@ namespace WPFApp1.Repositorios
                 "Nombre",
                 "ID",
                 "FormatoProductoID",
+                "FormatoNombre",
+                "UbicacionID",
                 "Categoria",
                 "MarcaID",
-                "Altura",
-                "Ancho",
+                "Alto",
+                "Profundidad",
                 "Largo",
                 "Peso"
             };
@@ -535,8 +567,7 @@ namespace WPFApp1.Repositorios
         public ProductoCatalogo RecuperarProductoPorID(string ProductoID)
         {
             ProductoCatalogo registro = new ProductoCatalogo();
-            string Consulta = @"
-            SELECT 
+            string Consulta = @"SELECT 
                 s.SKU_Producto AS ProductoSKU,
                 s.ubicacion_id AS ProductoHaberUbicacionID,
                 s.producto_version_id AS ProductoVersionID,
@@ -556,16 +587,19 @@ namespace WPFApp1.Repositorios
                 f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
                 p.nombre AS ProductoNombre,
                 p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
-                m.nombre AS MarcaNombre
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
             FROM Productos_stock AS s
             INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
             INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
             INNER JOIN Productos AS p ON v.producto_id = p.id
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
             WHERE s.SKU_Producto = @IdBuscada
                 AND s.haber > 0;";
 
@@ -582,6 +616,7 @@ namespace WPFApp1.Repositorios
                             int IDXAlto = lector.GetOrdinal("Alto");
                             int IDXProfundidad = lector.GetOrdinal("Profundidad");
                             int IDXLargo = lector.GetOrdinal("Largo");
+                            int IDXPeso = lector.GetOrdinal("Peso");
                             int IDXHaber = lector.GetOrdinal("ProductoHaber");
                             int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                             int IDXNombre = lector.GetOrdinal("ProductoNombre");
@@ -593,6 +628,8 @@ namespace WPFApp1.Repositorios
                             int IDXMarcaID = lector.GetOrdinal("MarcaID");
                             int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
                             int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                            int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                            int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
                             int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
                             int IDXProductoID = lector.GetOrdinal("ProductoID");
                             int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
@@ -603,12 +640,14 @@ namespace WPFApp1.Repositorios
                             int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
                             //__
 
+
                             //Numericos
                             registro.Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto);
                             registro.Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad);
                             registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber);
                             registro.Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio);
+                            registro.Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso);
 
                             //Cadena
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
@@ -616,6 +655,8 @@ namespace WPFApp1.Repositorios
                             registro.EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan);
                             registro.RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen));
                             registro.MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre);
+                            registro.UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre);
+                            registro.FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre);
 
                             //Claves
                             registro.UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID);
@@ -704,16 +745,19 @@ namespace WPFApp1.Repositorios
                 f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
                 p.nombre AS ProductoNombre,
                 p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
-                m.nombre AS MarcaNombre
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
             FROM Productos_stock AS s
             INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
             INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
             INNER JOIN Productos AS p ON v.producto_id = p.id
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
             WHERE s.EsEliminado = False
                 AND s.haber > 0;";
 
@@ -728,6 +772,7 @@ namespace WPFApp1.Repositorios
                         int IDXAlto = lector.GetOrdinal("Alto");
                         int IDXProfundidad = lector.GetOrdinal("Profundidad");
                         int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXPeso = lector.GetOrdinal("Peso");
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                         int IDXNombre = lector.GetOrdinal("ProductoNombre");
@@ -736,9 +781,11 @@ namespace WPFApp1.Repositorios
                         int IDXEan = lector.GetOrdinal("EAN");
                         int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
                         int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                        int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
                         int IDXMarcaID = lector.GetOrdinal("MarcaID");
                         int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
                         int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
                         int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
                         int IDXProductoID = lector.GetOrdinal("ProductoID");
                         int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
@@ -760,6 +807,7 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -767,6 +815,8 @@ namespace WPFApp1.Repositorios
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
                                 RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
 
                                 //Claves
                                 UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
@@ -814,18 +864,21 @@ namespace WPFApp1.Repositorios
                 f.profundidad AS Profundidad,
                 f.largo AS Largo,
                 f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
                 p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
                 c.nombre AS ProductoCategoria,
-                m.nombre AS MarcaNombre
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
             FROM Productos_stock AS s
             INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
             INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
             INNER JOIN Productos AS p ON v.producto_id = p.id
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
             WHERE s.EsEliminado = False
                 AND s.haber > 0;";
-
             List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
             using (SqlConnection conexion = _accesoDB.ObtenerConexionDB())
             {
@@ -837,9 +890,11 @@ namespace WPFApp1.Repositorios
                         int IDXAlto = lector.GetOrdinal("Alto");
                         int IDXProfundidad = lector.GetOrdinal("Profundidad");
                         int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXPeso = lector.GetOrdinal("Peso");
                         int IDXHaber = lector.GetOrdinal("ProductoHaber");
                         int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
                         int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
                         int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
                         int IDXEan = lector.GetOrdinal("EAN");
                         int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
@@ -847,6 +902,8 @@ namespace WPFApp1.Repositorios
                         int IDXMarcaID = lector.GetOrdinal("MarcaID");
                         int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
                         int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                        int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
                         int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
                         int IDXProductoID = lector.GetOrdinal("ProductoID");
                         int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
@@ -868,13 +925,16 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Categoria = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
                                 EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
                                 RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
                                 MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
 
                                 //Claves
                                 UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
@@ -882,6 +942,7 @@ namespace WPFApp1.Repositorios
                                 FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
                                 ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
                                 ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
 
                                 //Datetime
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -910,7 +971,23 @@ namespace WPFApp1.Repositorios
             {
                 "SKU_Producto",
                 "FechaCreacion",
-                "FechaModificacion"
+                "FechaModificacion",
+                "CategoriaNombre",
+                "UbicacionNombre",
+                "MarcaNombre",
+                "EAN",
+                "RutaImagen",
+                "Nombre",
+                "ID",
+                "FormatoProductoID",
+                "FormatoNombre",
+                "UbicacionID",
+                "Categoria",
+                "MarcaID",
+                "Alto",
+                "Profundidad",
+                "Largo",
+                "Peso"
             };
             var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
             var listaPropiedadesModificadas = new List<string>();

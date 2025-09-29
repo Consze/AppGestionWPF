@@ -131,8 +131,8 @@ namespace WPFApp1.ViewModels
             ColeccionProductos = new ObservableCollection<ProductoBase>();
             EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
-            ItemDoubleClickCommand = new RelayCommand<object>(EjecutarDobleClickItem);
-            AniadirProductoCommand = new RelayCommand<object>(MostrarAniadirProducto);
+            ItemDoubleClickCommand = new RelayCommand<object>(async (param) => await EjecutarDobleClickItem(param));
+            AniadirProductoCommand = new RelayCommand<object>(async (param) => await MostrarAniadirProducto());
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
             BuscarTituloCommand = new RelayCommand<object>(async (param) => await BuscarTitulo());
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
@@ -258,7 +258,7 @@ namespace WPFApp1.ViewModels
             _servicioSFX.Shutter();
             PersistenciaConfiguracion.GuardarUltimaVista(vista);
         }
-        public void MostrarAniadirProducto(object parameter)
+        public async Task MostrarAniadirProducto()
         {
             if (AniadirProducto.Instancias < 1)
             {
@@ -266,6 +266,7 @@ namespace WPFApp1.ViewModels
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 MostrarVentanaAniadirProducto = true;
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
+                await _viewModel.InicializarFormulario();
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
                 AniadirProductoInstanciado.Show();
             }
@@ -294,7 +295,7 @@ namespace WPFApp1.ViewModels
         /// Inicia la vista de edición de productos
         /// </summary>
         /// <param name="ProductoClickeado"></param>
-        private void EjecutarDobleClickItem(object ProductoClickeado)
+        private async Task EjecutarDobleClickItem(object ProductoClickeado)
         {
             if(AniadirProducto.Instancias > 0)
             {
@@ -307,6 +308,7 @@ namespace WPFApp1.ViewModels
                 Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
                 var _viewModel = App.GetService<AniadirProductoViewModel>();
                 AniadirProducto AniadirProductoInstanciado = new AniadirProducto(_viewModel);
+                await _viewModel.InicializarFormulario();
                 _viewModel.ConfigurarEdicionDeProducto(producto);
                 AniadirProductoInstanciado.Show();
             }

@@ -194,6 +194,32 @@
                 }
             }
         }
+        private string _formatoNombre;
+        public string FormatoNombre
+        {
+            get => _formatoNombre;
+            set
+            {
+                if (_formatoNombre != value)
+                {
+                    _formatoNombre = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string _ubicacionNombre;
+        public string UbicacionNombre
+        {
+            get => _ubicacionNombre;
+            set
+            {
+                if (_ubicacionNombre != value)
+                {
+                    _ubicacionNombre = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
     }
 }

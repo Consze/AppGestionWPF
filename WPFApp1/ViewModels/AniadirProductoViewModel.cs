@@ -24,9 +24,13 @@ namespace WPFApp1.ViewModels
     {
         private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
         private readonly IConmutadorEntidadGenerica<Marcas> servicioMarcas;
+        private readonly IConmutadorEntidadGenerica<Categorias> servicioCategorias;
+        private readonly IConmutadorEntidadGenerica<Ubicaciones> servicioUbicaciones;
         private readonly OrquestadorProductos OrquestadorProductos;
         public ObservableCollection<Formatos> Formatos { get; } = new();
         public ObservableCollection<Marcas> Marcas { get; } = new();
+        public ObservableCollection<Categorias> Categorias { get; } = new();
+        public ObservableCollection<Ubicaciones> Ubicaciones { get; } = new();
         public bool EsModoEdicion { get; set; }
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
@@ -57,7 +61,84 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-
+        private bool _ToggleEdicionFormato;
+        public bool ToggleEdicionFormato
+        {
+            get { return _ToggleEdicionFormato; }
+            set
+            {
+                if (_ToggleEdicionFormato != value)
+                {
+                    _ToggleEdicionFormato = value;
+                    OnPropertyChanged(nameof(ToggleEdicionFormato));
+                }
+            }
+        }
+        private bool _ToggleSeleccionFormato;
+        public bool ToggleSeleccionFormato
+        {
+            get { return _ToggleSeleccionFormato; }
+            set
+            {
+                if (_ToggleSeleccionFormato != value)
+                {
+                    _ToggleSeleccionFormato = value;
+                    OnPropertyChanged(nameof(ToggleSeleccionFormato));
+                }
+            }
+        }
+        private bool _ToggleEdicionCategoria;
+        public bool ToggleEdicionCategoria
+        {
+            get { return _ToggleEdicionCategoria; }
+            set
+            {
+                if (_ToggleEdicionCategoria != value)
+                {
+                    _ToggleEdicionCategoria = value;
+                    OnPropertyChanged(nameof(ToggleEdicionCategoria));
+                }
+            }
+        }
+        private bool _ToggleSeleccionCategoria;
+        public bool ToggleSeleccionCategoria
+        {
+            get { return _ToggleSeleccionCategoria; }
+            set
+            {
+                if (_ToggleSeleccionCategoria != value)
+                {
+                    _ToggleSeleccionCategoria = value;
+                    OnPropertyChanged(nameof(ToggleSeleccionCategoria));
+                }
+            }
+        }
+        private bool _ToggleEdicionUbicacion;
+        public bool ToggleEdicionUbicacion
+        {
+            get { return _ToggleEdicionUbicacion; }
+            set
+            {
+                if (_ToggleEdicionUbicacion != value)
+                {
+                    _ToggleEdicionUbicacion = value;
+                    OnPropertyChanged(nameof(ToggleEdicionUbicacion));
+                }
+            }
+        }
+        private bool _ToggleSeleccionUbicacion;
+        public bool ToggleSeleccionUbicacion
+        {
+            get { return _ToggleSeleccionUbicacion; }
+            set
+            {
+                if (_ToggleSeleccionUbicacion != value)
+                {
+                    _ToggleSeleccionUbicacion = value;
+                    OnPropertyChanged(nameof(ToggleSeleccionUbicacion));
+                }
+            }
+        }
         private int _altoImagenSeleccionada;
         public int AltoImagenSeleccionada 
         {
@@ -94,6 +175,58 @@ namespace WPFApp1.ViewModels
                 {
                     _iconoEdicion = value;
                     OnPropertyChanged(nameof(iconoEdicion));
+                }
+            }
+        }
+        private string _iconoEdicionFormato;
+        public string iconoEdicionFormato
+        {
+            get { return _iconoEdicionFormato; }
+            set
+            {
+                if (_iconoEdicionFormato != value)
+                {
+                    _iconoEdicionFormato = value;
+                    OnPropertyChanged(nameof(iconoEdicionFormato));
+                }
+            }
+        }
+        private string _iconoEdicionCategoria;
+        public string iconoEdicionCategoria
+        {
+            get { return _iconoEdicionCategoria; }
+            set
+            {
+                if (_iconoEdicionCategoria != value)
+                {
+                    _iconoEdicionCategoria = value;
+                    OnPropertyChanged(nameof(iconoEdicionCategoria));
+                }
+            }
+        }
+        private string _iconoEdicionUbicacion;
+        public string iconoEdicionUbicacion
+        {
+            get { return _iconoEdicionUbicacion; }
+            set
+            {
+                if (_iconoEdicionUbicacion != value)
+                {
+                    _iconoEdicionUbicacion = value;
+                    OnPropertyChanged(nameof(iconoEdicionUbicacion));
+                }
+            }
+        }
+        private string _leyendaBotonImagen;
+        public string leyendaBotonImagen
+        {
+            get { return _leyendaBotonImagen; }
+            set
+            {
+                if (_leyendaBotonImagen != value)
+                {
+                    _leyendaBotonImagen = value;
+                    OnPropertyChanged(nameof(leyendaBotonImagen));
                 }
             }
         }
@@ -166,6 +299,19 @@ namespace WPFApp1.ViewModels
                 {
                     _ean = value;
                     OnPropertyChanged(nameof(EAN));
+                }
+            }
+        }
+        private string _formatoNombre;
+        public string FormatoNombre
+        {
+            get { return _formatoNombre; }
+            set
+            {
+                if (_formatoNombre != value)
+                {
+                    _formatoNombre = value;
+                    OnPropertyChanged(nameof(FormatoNombre));
                 }
             }
         }
@@ -342,6 +488,8 @@ namespace WPFApp1.ViewModels
             {
                 if (_marcaProductoID != value)
                 {
+                    Marcas _registro = Marcas.FirstOrDefault(m => m.ID == value);
+                    MarcaNombre = _registro.Nombre;
                     _marcaProductoID = value;
                     OnPropertyChanged(nameof(MarcaProductoID));
                 }
@@ -356,6 +504,13 @@ namespace WPFApp1.ViewModels
                 if (_formato != value)
                 {
                     _formato = value;
+                    Formatos _registro = Formatos.FirstOrDefault(f => f.ID == value);
+                    Alto = _registro.Alto;
+                    Largo = _registro.Largo;
+                    Profundidad = _registro.Profundidad;
+                    Peso = _registro.Peso;
+                    FormatoNombre = _registro.Nombre;
+
                     OnPropertyChanged(nameof(FormatoID));
                 }
             }
@@ -381,6 +536,8 @@ namespace WPFApp1.ViewModels
             {
                 if (_ubicacionID != value)
                 {
+                    Ubicaciones _registro = Ubicaciones.FirstOrDefault(u => u.ID == value);
+                    UbicacionNombre = _registro.Nombre;
                     _ubicacionID = value;
                     OnPropertyChanged(nameof(UbicacionID));
                 }
@@ -394,6 +551,8 @@ namespace WPFApp1.ViewModels
             {
                 if (_categoriaProductoID != value)
                 {
+                    Categorias _registro = Categorias.FirstOrDefault(f => f.ID == value);
+                    CategoriaNombre = _registro.Nombre;
                     _categoriaProductoID = value;
                     OnPropertyChanged(nameof(CategoriaProductoID));
                 }
@@ -424,9 +583,13 @@ namespace WPFApp1.ViewModels
         public ICommand BotonPresionadoCommand { get; }
         public ICommand CerrarVistaCommand { get; }
         public ICommand ModificarCantidadStockCommand { get; }
+        public ICommand ModificarFormatoCommand { get; }
+        public ICommand ModificarCategoriaCommand { get; }
+        public ICommand ModificarUbicacionCommand { get; }
 
         public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
-            IConmutadorEntidadGenerica<Marcas> _servicioMarcas)
+            IConmutadorEntidadGenerica<Marcas> _servicioMarcas, IConmutadorEntidadGenerica<Categorias> _servicioCategorias,
+            IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -443,11 +606,24 @@ namespace WPFApp1.ViewModels
             VisibilidadWeb = false;
             PrecioPublico = false;
             CantidadEnStock = 0;
+            EAN = "";
 
             NombreDeVentana = "Añadir Producto";
             _ToggleEdicionMarca = false;
             _ToggleSeleccionMarca = true;
+            _ToggleEdicionFormato = false;
+            _ToggleSeleccionFormato = true;
+            _ToggleEdicionCategoria = false;
+            _ToggleSeleccionCategoria = true;
+            _ToggleEdicionUbicacion = false;
+            _ToggleSeleccionUbicacion = true;
+
             _iconoEdicion = "/iconos/lapizEdicion.png";
+            _iconoEdicionFormato = "/iconos/lapizEdicion.png";
+            _iconoEdicionCategoria = "/iconos/lapizEdicion.png";
+            _iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
+
+            _leyendaBotonImagen = "Añadir imagen";
 
             ElegirImagenCommand = new RelayCommand<object>(ElegirImagen);
             AniadirProductoCommand = new RelayCommand<object>(AniadirProducto);
@@ -455,6 +631,9 @@ namespace WPFApp1.ViewModels
             BotonPresionadoCommand = new RelayCommand<object>(BotonPresionado);
             ModificarCantidadStockCommand = new RelayCommand<object>(ModificarCantidadStock);
             ModificarMarcaCommand = new RelayCommand<object>(ModificarMarca);
+            ModificarFormatoCommand = new RelayCommand<object>(ModificarFormato);
+            ModificarCategoriaCommand = new RelayCommand<object>(ModificarCategoria);
+            ModificarUbicacionCommand = new RelayCommand<object>(ModificarUbicacion);
 
             Messenger.Default.Subscribir<VistaAniadirProductosCantidadModificada>(OnCantidadModificada);
 
@@ -462,6 +641,9 @@ namespace WPFApp1.ViewModels
             OrquestadorProductos = _orquestador;
             _servicioSFX = new ServicioSFX();
             servicioFormatos = _servicioFormatos;
+            servicioMarcas = _servicioMarcas;
+            servicioCategorias = _servicioCategorias;
+            servicioUbicaciones = _servicioUbicaciones;
         }
 
         public void BotonPresionado(object parameter)
@@ -488,17 +670,34 @@ namespace WPFApp1.ViewModels
                 Marcas.Add(marca);
             }
         }
+        private async Task CargarCategorias()
+        {
+            await foreach (var categoria in servicioCategorias.RecuperarStreamAsync())
+            {
+                Categorias.Add(categoria);
+            }
+        }
+        private async Task CargarUbicaciones()
+        {
+            await foreach (var ubicacion in servicioUbicaciones.RecuperarStreamAsync())
+            {
+                Ubicaciones.Add(ubicacion);
+            }
+        }
         public async Task InicializarFormulario()
         {
-            // Poblar cbox para seleccion asistida
+            // Poblar colecciones para seleccion asistida
             await CargarFormatos();
             await CargarMarcas();
+            await CargarCategorias();
+            await CargarUbicaciones();
         }
         public async Task ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
         {
             // Configurar Bindings
             EsModoEdicion = true;
             NombreDeVentana = "Editar Producto";
+            leyendaBotonImagen = "Cambiar imagen";
 
             //--PK--
             ProductoSKU = Producto.ProductoSKU;
@@ -613,6 +812,8 @@ namespace WPFApp1.ViewModels
                 Nombre = NombreProducto,
                 RutaImagen = RutaImagenSeleccionada,
                 CategoriaNombre = CategoriaNombre,
+                UbicacionNombre = UbicacionNombre,
+                FormatoNombre = FormatoNombre,
                 MarcaNombre = MarcaNombre,
                 EAN = EAN,
 
@@ -812,6 +1013,8 @@ namespace WPFApp1.ViewModels
                 RutaImagen = RutaImagenSalida,
                 CategoriaNombre = CategoriaNombre,
                 MarcaNombre = MarcaNombre,
+                FormatoNombre = FormatoNombre,
+                UbicacionNombre = UbicacionNombre,
                 EAN = EAN,
 
                 VisibilidadWeb = VisibilidadWeb,
@@ -877,6 +1080,48 @@ namespace WPFApp1.ViewModels
             else
             {
                 iconoEdicion = "/iconos/lapizEdicion.png";
+            }
+        }
+        public void ModificarFormato(object parameter)
+        {
+            ToggleEdicionFormato = !ToggleEdicionFormato;
+            ToggleSeleccionFormato = !ToggleSeleccionFormato;
+
+            if (ToggleEdicionFormato)
+            {
+                iconoEdicionFormato = "/iconos/seleccion1.png";
+            }
+            else
+            {
+                iconoEdicionFormato = "/iconos/lapizEdicion.png";
+            }
+        }
+        public void ModificarCategoria(object parameter)
+        {
+            ToggleEdicionCategoria = !ToggleEdicionCategoria;
+            ToggleSeleccionCategoria = !ToggleSeleccionCategoria;
+
+            if (ToggleEdicionCategoria)
+            {
+                iconoEdicionCategoria = "/iconos/seleccion1.png";
+            }
+            else
+            {
+                iconoEdicionCategoria = "/iconos/lapizEdicion.png";
+            }
+        }
+        public void ModificarUbicacion(object parameter)
+        {
+            ToggleEdicionUbicacion = !ToggleEdicionUbicacion;
+            ToggleSeleccionUbicacion = !ToggleSeleccionUbicacion;
+
+            if (ToggleEdicionUbicacion)
+            {
+                iconoEdicionUbicacion = "/iconos/seleccion1.png";
+            }
+            else
+            {
+                iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
             }
         }
         public void OnCantidadModificada(VistaAniadirProductosCantidadModificada _mensaje)

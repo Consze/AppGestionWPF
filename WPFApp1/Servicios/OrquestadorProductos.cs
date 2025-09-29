@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Security.AccessControl;
 using WPFApp1.Conmutadores;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -53,7 +53,9 @@ namespace WPFApp1.Servicios
 
                 // Inserción de nueva entidad auxiliar
                 {"MarcaNombre", ServicioAsociado.Marcas },
-                {"CategoriaNombre",ServicioAsociado.Categorias },
+                {"CategoriaNombre", ServicioAsociado.Categorias },
+                {"UbicacionNombre", ServicioAsociado.Ubicaciones },
+                {"FormatoNombre", ServicioAsociado.Formatos },
                 {"ID", ServicioAsociado.Producto},
                 {"Nombre", ServicioAsociado.Producto },
                 {"Alto", ServicioAsociado.Formatos},
@@ -68,7 +70,7 @@ namespace WPFApp1.Servicios
                 {"Precio", ServicioAsociado.Stock},
                 {"EsEliminado", ServicioAsociado.Stock },
                 {"VisibilidadWeb", ServicioAsociado.Stock},
-                {"PrecioPublcio", ServicioAsociado.Stock},
+                {"PrecioPublico", ServicioAsociado.Stock},
 
                 // Ignoradas
                 {"ProductoSKU", ServicioAsociado.Null},
@@ -84,6 +86,7 @@ namespace WPFApp1.Servicios
 
             //Banderas
             bool ActualizarVersion = false;
+            bool ActualizarArquetipo = false;
 
             //1 - Bucle de relevamiento
             foreach (var propiedad in propiedadesEntidad)
@@ -97,6 +100,10 @@ namespace WPFApp1.Servicios
                         case ServicioAsociado.Versiones:
                             ActualizarVersion = true;
                             break;
+
+                        case ServicioAsociado.Producto:
+                            ActualizarArquetipo = true;
+                            break;
                     }
                 }
             }
@@ -107,18 +114,79 @@ namespace WPFApp1.Servicios
                 string nuevaVersionID = ModificarVersion(productoModificado);
                 productoModificado.ProductoVersionID = nuevaVersionID;
             }
+            if(ActualizarArquetipo)
+            {
+                Arquetipos _registro = new Arquetipos
+                {
+                    ID = productoModificado.ID,
+                    Nombre = productoModificado.Nombre,
+                    CategoriaID = productoModificado.Categoria
+                };
+                arquetiposServicio.Modificar(_registro);
 
+                ProductoBase _producto = new ProductoBase
+                {
+                    ID = productoModificado.ID,
+                    Nombre = productoModificado.Nombre
+                };
+                indexacionServicio.IndexarProducto(_producto);
+            }
 
             //3 - Llamada a conmutador para asentar cambios en Stock
-            return productoServicio.ModificarProducto(productoModificado);
+            bool ActualizacionStock = productoServicio.ModificarProducto(productoModificado);
+
+
+            return ActualizacionStock || ActualizarVersion || ActualizarArquetipo;
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {
-            // Insercion condicional de nuevos registros para entidades auxiliares
+            Arquetipos nuevoProducto = new Arquetipos
+            {
+                CategoriaID = productoNuevo.Categoria,
+                Nombre = productoNuevo.Nombre
+            };
+            string arquetipoID = arquetiposServicio.Insertar(nuevoProducto);
+            productoNuevo.ID = arquetipoID;
 
+            Versiones version = new Versiones
+            {
+                ProductoID = arquetipoID,
+                RutaRelativaImagen = productoNuevo.RutaImagen,
+                FormatoID = productoNuevo.FormatoProductoID,
+                MarcaID = productoNuevo.MarcaID,
+                EAN = productoNuevo.EAN
+            };
+            productoNuevo.ProductoVersionID = versionesServicio.Insertar(version);
+
+            // ubicacion, marca, formato
+            if (string.IsNullOrEmpty(productoNuevo.MarcaID) && !string.IsNullOrEmpty(productoNuevo.MarcaNombre))
+            {
+                Marcas nuevaMarca = new Marcas { Nombre = productoNuevo.MarcaNombre };
+                productoNuevo.MarcaID = marcasServicio.Insertar(nuevaMarca);
+            }
+
+            if(string.IsNullOrEmpty(productoNuevo.FormatoProductoID) && !string.IsNullOrEmpty(productoNuevo.FormatoNombre))
+            {
+                Formatos nuevoFormato = new Formatos
+                {
+                    Alto = productoNuevo.Alto,
+                    Largo = productoNuevo.Largo,
+                    Profundidad = productoNuevo.Profundidad,
+                    Peso = productoNuevo.Peso,
+                    Nombre = productoNuevo.FormatoNombre
+                };
+                productoNuevo.FormatoProductoID = formatoServicio.Insertar(nuevoFormato);
+            }
+
+            if (string.IsNullOrEmpty(productoNuevo.UbicacionID) && !string.IsNullOrEmpty(productoNuevo.UbicacionNombre))
+            {
+                Ubicaciones nuevaUbicacion = new Ubicaciones { Nombre = productoNuevo.UbicacionNombre };
+                productoNuevo.UbicacionID = ubicacionesServicio.Insertar(nuevaUbicacion);
+            }
 
             // Insertar nuevo registro
             string nuevaId = productoServicio.CrearProducto(productoNuevo);
+            productoNuevo.ProductoSKU = nuevaId;
             indexacionServicio.IndexarProducto(productoNuevo);
             return nuevaId;
         }

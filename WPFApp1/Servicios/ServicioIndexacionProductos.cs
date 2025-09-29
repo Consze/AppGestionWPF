@@ -24,11 +24,11 @@ namespace WPFApp1.Servicios
         public void IndexarProducto(ProductoBase Producto)
         {
             string titulo = Producto.Nombre;
-            string ID = Producto.ProductoSKU;
+            string ID = Producto.ID;
             if (!string.IsNullOrWhiteSpace(titulo))
             {
                 List<string> TituloPalabras = _indexadorServicio.ObtenerPalabrasAtomicasFiltradas(titulo);
-                LimpiarReferenciasObsoletas(Producto.ProductoSKU, TituloPalabras);
+                LimpiarReferenciasObsoletas(Producto.ID, TituloPalabras);
 
                 foreach (string palabra in TituloPalabras)
                 {
@@ -39,7 +39,6 @@ namespace WPFApp1.Servicios
         public void LimpiarReferenciasObsoletas(string producto_id, List<string> PalabrasTitulo)
         {
             List<IDX_Prod_Titulos> registrosIDX = _repositorioIndexacion.RecuperarIndicesPorProductoID(producto_id);
-            //List<string> palabras = registrosIDX.Select(idx => idx.palabra).ToList();
             List<int> registrosAEliminar = new List<int>();
 
             if(registrosIDX.Count > 0)

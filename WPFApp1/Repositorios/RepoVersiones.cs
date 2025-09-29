@@ -283,13 +283,37 @@ namespace WPFApp1.Repositorios
                     @FechaCreacion,
                     @formato_id,
                     @RutaRelativaImagen);";
+            string consultaBusqueda = @"SELECT ID AS VersionID FROM Productos_versiones 
+                WHERE Producto_id = @productoID
+                AND EAN = @eanProducto
+                AND Marca_id = @marcaID
+                AND formato_id = @formatoID
+                AND RutaRelativaImagen = @rutaImagen;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
-                using (SqliteCommand comando = new SqliteCommand(consulta,conexion))
+                using (SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda, conexion))
                 {
-                    comando.Parameters.AddWithValue("@ID",nuevoRegistro.ID);
-                    comando.Parameters.AddWithValue("@Producto_id",nuevoRegistro.ProductoID);
+                    comandoBusqueda.Parameters.AddWithValue("@productoID", nuevoRegistro.ProductoID);
+                    comandoBusqueda.Parameters.AddWithValue("@eanProducto", nuevoRegistro.EAN);
+                    comandoBusqueda.Parameters.AddWithValue("@marcaID",nuevoRegistro.MarcaID);
+                    comandoBusqueda.Parameters.AddWithValue("@formatoID",nuevoRegistro.FormatoID);
+                    comandoBusqueda.Parameters.AddWithValue("@rutaImagen",nuevoRegistro.RutaRelativaImagen);
+
+                    using(SqliteDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("VersionID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
+                using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);
+                    comando.Parameters.AddWithValue("@Producto_id", nuevoRegistro.ProductoID);
                     comando.Parameters.AddWithValue("@EAN", nuevoRegistro.EAN);
                     comando.Parameters.AddWithValue("@Marca_id", nuevoRegistro.MarcaID);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
@@ -578,9 +602,33 @@ namespace WPFApp1.Repositorios
                     @FechaCreacion,
                     @formato_id,
                     @RutaRelativaImagen);";
+            string consultaBusqueda = @"SELECT ID AS VersionID FROM Productos_versiones 
+                WHERE Producto_id = @productoID
+                AND EAN = @eanProducto
+                AND Marca_id = @marcaID
+                AND formato_id = @formatoID
+                AND RutaRelativaImagen = @rutaImagen;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@productoID", nuevoRegistro.ProductoID);
+                    comandoBusqueda.Parameters.AddWithValue("@eanProducto", nuevoRegistro.EAN);
+                    comandoBusqueda.Parameters.AddWithValue("@marcaID", nuevoRegistro.MarcaID);
+                    comandoBusqueda.Parameters.AddWithValue("@formatoID", nuevoRegistro.FormatoID);
+                    comandoBusqueda.Parameters.AddWithValue("@rutaImagen", nuevoRegistro.RutaRelativaImagen);
+
+                    using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("VersionID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);
