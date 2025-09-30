@@ -44,6 +44,12 @@
                     <StackPanel Margin="12,20,0,0" Orientation="Horizontal">
                         <Image Source="/ico128.ico" Width="15" Height="15" Margin="3,0,3,0"/>
                         <TextBlock FontSize="16" Text="Bienvenido" FontWeight="ExtraLight"  VerticalAlignment="Center"/>
+                        <Button x:Name="ColapsarFormato" BorderThickness="0" Command="{Binding ColapsarPanelCommand}" IsTabStop="False">
+                            <Button.Background>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Button.Background>
+                            <Image Margin="4"  Width="12" Height="12" Source="{Binding iconoTogglePanel}"/>
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="36" Text="{Binding TituloActivo}" FontWeight="Regular" Margin="10,0,10,0"/>
@@ -183,12 +189,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!--
-                        <Button x:Name="verLista" Content="Ver Personas" Margin="10" Command="{Binding VerListaCommand}"/>
-                        <Button x:Name="aniadirPersona" Content="Añadir Persona" Margin="10" Command="{Binding AniadirPersonaCommand}"/>
-                        <Button x:Name="eliminarPersona" Content="Eliminar Persona" Margin="10" Command="{Binding EliminarPersonaCommand}"/>
-                        <Button x:Name="editarPersona" Content="Editar Persona" Margin="10" Command="{Binding EditarPersonaCommand}"/>
-                        -->
                 </StackPanel>
 
                 <ItemsControl x:Name="PanelNotificaciones" ItemsSource="{Binding ColeccionNotificaciones}" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
@@ -204,13 +204,13 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" Style="{StaticResource EstiloBorderConAnimacion}" CornerRadius="10" Background="White">
-                                 <Border.InputBindings>
+                                <Border.InputBindings>
                                     <MouseBinding MouseAction="LeftDoubleClick"
                                     Command="{Binding DataContext.DobleClickNotificacionCommand,
                                             RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}"/>
-                                    </Border.InputBindings>
-                                    <Border.Effect>
+                                </Border.InputBindings>
+                                <Border.Effect>
                                     <DropShadowEffect BlurRadius="10"
                                        ShadowDepth="0.1"
                                        Direction="0"
@@ -229,18 +229,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
-                <!--<StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" x:Name="PanelNotificacion">
-
-                    <Button x:Name="Ordenar" Margin="15" BorderThickness="0" >
-                        <Button.Background>
-                            <SolidColorBrush Color="Transparent"/>
-                        </Button.Background>
-                        <Image Width="30" Height="30" Source="/iconos/notificaciones.png" Style="{StaticResource ImagenHover}"/>
-                    </Button>
-                    
-                </StackPanel>-->
-
+                
             </Grid>
         </Border>
 

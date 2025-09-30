@@ -16,7 +16,9 @@
     <None Remove="Fonts\Roboto-Regular.ttf" />
     <None Remove="Fonts\Roboto\Roboto-Regular.ttf" />
     <None Remove="ico128.ico" />
+    <None Remove="iconos\abajo1.png" />
     <None Remove="iconos\aniadir-registro.png" />
+    <None Remove="iconos\arriba1.png" />
     <None Remove="iconos\ascending-sort.png" />
     <None Remove="iconos\busqueda1.png" />
     <None Remove="iconos\check.png" />
@@ -24,6 +26,8 @@
     <None Remove="iconos\dotted line face.png" />
     <None Remove="iconos\exportar_xlsx.png" />
     <None Remove="iconos\lapizEdicion.png" />
+    <None Remove="iconos\layout1.png" />
+    <None Remove="iconos\layout2.png" />
     <None Remove="iconos\lista1.png" />
     <None Remove="iconos\notificaciones.png" />
     <None Remove="iconos\papelera.png" />
@@ -46,10 +50,19 @@
     <Content Include="datos\base.db">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
+    <Content Include="iconos\abajo1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\arriba1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="iconos\busqueda1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\check.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\layout2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\lista1.png">
@@ -137,6 +150,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\restar1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="iconos\layout1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

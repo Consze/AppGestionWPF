@@ -83,6 +83,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _iconoTogglePanel;
+        public string iconoTogglePanel
+        {
+            get { return _iconoTogglePanel; }
+            set
+            {
+                if (_iconoTogglePanel != value)
+                {
+                    _iconoTogglePanel = value;
+                    OnPropertyChanged(nameof(iconoTogglePanel));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public MainWindowViewModel()
         {
@@ -90,6 +103,7 @@ namespace WPFApp1.ViewModels
             _isAniadirProductoActivo = false;
             _vistaActual = null;
             _procesando = false;
+            _iconoTogglePanel = "/iconos/layout1.png";
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();

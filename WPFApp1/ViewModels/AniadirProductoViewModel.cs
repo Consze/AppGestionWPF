@@ -34,6 +34,19 @@ namespace WPFApp1.ViewModels
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
+        private bool _SubmitHabilitado;
+        public bool SubmitHabilitado
+        {
+            get { return _SubmitHabilitado; }
+            set
+            {
+                if (_SubmitHabilitado != value)
+                {
+                    _SubmitHabilitado = value;
+                    OnPropertyChanged(nameof(SubmitHabilitado));
+                }
+            }
+        }
         private bool _ToggleEdicionMarca;
         public bool ToggleEdicionMarca
         {
@@ -138,6 +151,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _ToggleColapsarSeccionEnvios;
+        public bool ToggleColapsarSeccionEnvios
+        {
+            get { return _ToggleColapsarSeccionEnvios; }
+            set
+            {
+                if (_ToggleColapsarSeccionEnvios != value)
+                {
+                    _ToggleColapsarSeccionEnvios = value;
+                    OnPropertyChanged(nameof(ToggleColapsarSeccionEnvios));
+                }
+            }
+        }
         private int _altoImagenSeleccionada;
         public int AltoImagenSeleccionada 
         {
@@ -213,6 +239,19 @@ namespace WPFApp1.ViewModels
                 {
                     _iconoEdicionUbicacion = value;
                     OnPropertyChanged(nameof(iconoEdicionUbicacion));
+                }
+            }
+        }
+        private string _iconoToggleSeccionEnvios;
+        public string iconoToggleSeccionEnvios
+        {
+            get { return _iconoToggleSeccionEnvios; }
+            set
+            {
+                if (_iconoToggleSeccionEnvios != value)
+                {
+                    _iconoToggleSeccionEnvios = value;
+                    OnPropertyChanged(nameof(iconoToggleSeccionEnvios));
                 }
             }
         }
@@ -585,6 +624,7 @@ namespace WPFApp1.ViewModels
         public ICommand ModificarFormatoCommand { get; }
         public ICommand ModificarCategoriaCommand { get; }
         public ICommand ModificarUbicacionCommand { get; }
+        public ICommand ColapsarSeccionEnviosCommand { get; }
 
         public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
             IConmutadorEntidadGenerica<Marcas> _servicioMarcas, IConmutadorEntidadGenerica<Categorias> _servicioCategorias,
@@ -616,11 +656,13 @@ namespace WPFApp1.ViewModels
             _ToggleSeleccionCategoria = true;
             _ToggleEdicionUbicacion = false;
             _ToggleSeleccionUbicacion = true;
+            _ToggleColapsarSeccionEnvios = false;
 
             _iconoEdicion = "/iconos/lapizEdicion.png";
             _iconoEdicionFormato = "/iconos/lapizEdicion.png";
             _iconoEdicionCategoria = "/iconos/lapizEdicion.png";
             _iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
+            _iconoToggleSeccionEnvios = "/iconos/abajo1.png";
 
             _leyendaBotonImagen = "Añadir imagen";
 
@@ -633,6 +675,7 @@ namespace WPFApp1.ViewModels
             ModificarFormatoCommand = new RelayCommand<object>(ModificarFormato);
             ModificarCategoriaCommand = new RelayCommand<object>(ModificarCategoria);
             ModificarUbicacionCommand = new RelayCommand<object>(ModificarUbicacion);
+            ColapsarSeccionEnviosCommand = new RelayCommand<object> (ToggleSeccionEnvios);
 
             Messenger.Default.Subscribir<VistaAniadirProductosCantidadModificada>(OnCantidadModificada);
 
@@ -643,6 +686,8 @@ namespace WPFApp1.ViewModels
             servicioMarcas = _servicioMarcas;
             servicioCategorias = _servicioCategorias;
             servicioUbicaciones = _servicioUbicaciones;
+
+            SubmitHabilitado = false;
         }
 
         public void BotonPresionado(object parameter)
@@ -770,6 +815,8 @@ namespace WPFApp1.ViewModels
                         break;
                 }
             }
+
+            SubmitHabilitado = true;
         }
         public void EditarProducto(object parameter)
         {
@@ -1123,6 +1170,19 @@ namespace WPFApp1.ViewModels
             else
             {
                 iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
+            }
+        }
+        public void ToggleSeccionEnvios(object parameter)
+        {
+            ToggleColapsarSeccionEnvios = !ToggleColapsarSeccionEnvios;
+
+            if (ToggleColapsarSeccionEnvios)
+            {
+                iconoToggleSeccionEnvios = "/iconos/arriba1.png";
+            }
+            else
+            {
+                iconoToggleSeccionEnvios = "/iconos/abajo1.png";
             }
         }
         public void OnCantidadModificada(VistaAniadirProductosCantidadModificada _mensaje)
