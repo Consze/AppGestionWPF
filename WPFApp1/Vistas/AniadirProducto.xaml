@@ -78,6 +78,8 @@
                               Margin="2" 
                               Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}">
                         </ComboBox>
+                        <TextBlock Text="CODIGO DE BARRA" FontWeight="Bold" FontSize="12" Margin="3"/>
+                        <TextBox x:Name="campoEAN" Text="{Binding EAN}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -167,6 +169,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+            
             <!--Imagen-->
             <StackPanel Margin="5">
                 <TextBlock Margin="2" FontSize="19">Imagenes</TextBlock>
@@ -185,6 +188,51 @@
                             <Image x:Name="PlaceHolder" Source="{Binding RutaImagenSeleccionada}"/>
                         </Border>
                         <Button x:Name="ElegirImagen" Content="{Binding leyendaBotonImagen}" Command="{Binding ElegirImagenCommand}" Margin="5" FontSize="13" FontWeight="Light" Grid.Row="2"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <!--Clasificacion-->
+            <StackPanel Margin="5">
+                <TextBlock Margin="2" FontSize="19">Clasificación</TextBlock>
+                <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="CATEGORIA" FontWeight="Bold" FontSize="12" Margin="3"/>
+                                <Button x:Name="EditarCategoria" BorderThickness="0" Command="{Binding ModificarCategoriaCommand}">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="14" Height="14" Source="{Binding iconoEdicionCategoria}" Style="{StaticResource ImagenHover}"/>
+                                </Button>
+                            </StackPanel>
+                            <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaNombre}" Visibility="{Binding ToggleEdicionCategoria, Converter={StaticResource BooleanToVisibility}}">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Visibility" Value="Visible">
+                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <ComboBox x:Name="CategoriaElegida" 
+                  DisplayMemberPath="Nombre" 
+                  SelectedValuePath="ID" 
+                  SelectedValue="{Binding CategoriaProductoID, Mode=TwoWay}"
+                  ItemsSource="{Binding Categorias}"
+                  Margin="2" 
+                  Visibility="{Binding ToggleSeleccionCategoria, Converter={StaticResource BooleanToVisibility}}">
+                            </ComboBox>
+                        </StackPanel>
                     </Grid>
                 </Border>
             </StackPanel>
@@ -237,51 +285,6 @@
                             <TextBox x:Name="campoProfundidad" Text="{Binding Profundidad}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
                             <TextBlock Text="PESO" FontWeight="Bold" FontSize="12" Margin="3" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
                             <TextBox x:Name="campoPeso" Text="{Binding Peso}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </StackPanel>
-            
-            <!--Clasificacion-->
-            <StackPanel Margin="5">
-                <TextBlock Margin="2" FontSize="19">Clasificación</TextBlock>
-                <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="CATEGORIA" FontWeight="Bold" FontSize="12" Margin="3"/>
-                                <Button x:Name="EditarCategoria" BorderThickness="0" Command="{Binding ModificarCategoriaCommand}">
-                                    <Button.Background>
-                                        <SolidColorBrush Color="Transparent"/>
-                                    </Button.Background>
-                                    <Image Width="14" Height="14" Source="{Binding iconoEdicionCategoria}" Style="{StaticResource ImagenHover}"/>
-                                </Button>
-                            </StackPanel>
-                            <TextBox x:Name="CampoCategoria" Text="{Binding CategoriaNombre}" Visibility="{Binding ToggleEdicionCategoria, Converter={StaticResource BooleanToVisibility}}">
-                                <TextBox.Style>
-                                    <Style TargetType="TextBox">
-                                        <Style.Triggers>
-                                            <Trigger Property="Visibility" Value="Visible">
-                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBox.Style>
-                            </TextBox>
-                            <ComboBox x:Name="CategoriaElegida" 
-                              DisplayMemberPath="Nombre" 
-                              SelectedValuePath="ID" 
-                              SelectedValue="{Binding CategoriaProductoID, Mode=TwoWay}"
-                              ItemsSource="{Binding Categorias}"
-                              Margin="2" 
-                              Visibility="{Binding ToggleSeleccionCategoria, Converter={StaticResource BooleanToVisibility}}">
-                            </ComboBox>
                         </StackPanel>
                     </Grid>
                 </Border>

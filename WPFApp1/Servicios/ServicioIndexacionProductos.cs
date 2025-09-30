@@ -1,7 +1,6 @@
 ﻿using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
-using WPFApp1.Entidades;
 
 namespace WPFApp1.Servicios
 {

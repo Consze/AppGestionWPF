@@ -1,5 +1,4 @@
 ﻿using WPFApp1.DTOS;
-using WPFApp1.Entidades;
 
 namespace WPFApp1.Interfaces
 {

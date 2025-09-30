@@ -1,7 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.IO;
 using Microsoft.Data.Sqlite;
-using WPFApp1.Entidades;
+using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
@@ -454,7 +454,6 @@ namespace WPFApp1.Repositorios
                 "ID",
                 "FormatoProductoID",
                 "FormatoNombre",
-                "UbicacionID",
                 "Categoria",
                 "MarcaID",
                 "Alto",
@@ -981,7 +980,6 @@ namespace WPFApp1.Repositorios
                 "ID",
                 "FormatoProductoID",
                 "FormatoNombre",
-                "UbicacionID",
                 "Categoria",
                 "MarcaID",
                 "Alto",

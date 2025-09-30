@@ -17,7 +17,6 @@ namespace WPFApp1.ViewModels
         Ancho,
         Alto
     }
-
     public class AbrirVistaAniadirProductoMensaje { }
     public class CerrarVistaAniadirProductoMensaje { }
     public class AniadirProductoViewModel : INotifyPropertyChanged
@@ -836,6 +835,7 @@ namespace WPFApp1.ViewModels
 
             if (OrquestadorProductos.ModificarProducto(ProductoModificado))
             {
+                ProductoMensaje.FechaModificacion = DateTime.Now;
                 ProductoMensaje.Categoria = ProductoModificado.CategoriaNombre;
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoMensaje });
@@ -1036,6 +1036,7 @@ namespace WPFApp1.ViewModels
             string NuevoProductoSKU = OrquestadorProductos.CrearProducto(_nuevoProducto);
             if (NuevoProductoSKU != null)
             {
+                ProductoMensaje.FechaCreacion = DateTime.Now;
                 ProductoMensaje.Categoria = _nuevoProducto.CategoriaNombre;
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen)  ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });

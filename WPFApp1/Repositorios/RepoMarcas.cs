@@ -83,7 +83,7 @@ namespace WPFApp1.Repositorios
             {
                 using (SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda,conexion))
                 {
-                    comandoBusqueda.Parameters.AddWithValue("@NombreMarca",nuevaMarca.ID);
+                    comandoBusqueda.Parameters.AddWithValue("@NombreMarca",nuevaMarca.Nombre);
                     using (SqliteDataReader lector = comandoBusqueda.ExecuteReader())
                     {
                         if (lector.Read())
@@ -340,7 +340,7 @@ namespace WPFApp1.Repositorios
             {
                 using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
                 {
-                    comandoBusqueda.Parameters.AddWithValue("@NombreMarca", nuevaMarca.ID);
+                    comandoBusqueda.Parameters.AddWithValue("@NombreMarca", nuevaMarca.Nombre);
                     using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
                     {
                         if (lector.Read())

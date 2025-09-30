@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace WPFApp1.Entidades
+namespace WPFApp1.DTOS
 {
     public class ProductoBase : INotifyPropertyChanged
     {

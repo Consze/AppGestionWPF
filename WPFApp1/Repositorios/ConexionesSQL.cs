@@ -215,7 +215,7 @@ namespace WPFApp1.Repositorios
             id VARCHAR(36) PRIMARY KEY,
             Nombre VARCHAR(255) NOT NULL,
             categoria_id VARCHAR(36),
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            EsEliminado BOOLEAN NOT NULL DEFAULT 0,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
             FOREIGN KEY(categoria_id) REFERENCES Productos_categorias(ID)
@@ -224,7 +224,7 @@ namespace WPFApp1.Repositorios
         CREATE TABLE IF NOT EXISTS Productos_categorias (
             ID VARCHAR(36) PRIMARY KEY,
             Nombre TEXT NOT NULL COLLATE NOCASE,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            EsEliminado BOOLEAN NOT NULL DEFAULT 0,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
             UNIQUE (Nombre) ON CONFLICT IGNORE
@@ -253,7 +253,7 @@ namespace WPFApp1.Repositorios
             Marca_id VARCHAR(36),
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
-            EsEliminado BOOLEAN DEFAULT FALSE,
+            EsEliminado BOOLEAN DEFAULT 0,
             formato_id VARCHAR(36),
             RutaRelativaImagen TEXT,
             UNIQUE (producto_id, EAN, Marca_id, formato_id, RutaRelativaImagen) ON CONFLICT IGNORE,
@@ -269,7 +269,7 @@ namespace WPFApp1.Repositorios
             ancho NUMERIC(18, 1) NOT NULL,
             largo NUMERIC(18, 1) NOT NULL,
             peso NUMERIC(18, 1) DEFAULT 1,
-            EsEliminado BOOLEAN DEFAULT FALSE,
+            EsEliminado BOOLEAN DEFAULT 0,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
             UNIQUE (alto, ancho, largo, peso, descripcion) ON CONFLICT IGNORE
@@ -281,9 +281,9 @@ namespace WPFApp1.Repositorios
             producto_version_id VARCHAR(36) NOT NULL,
             Haber INT,
             Precio NUMERIC(18,2),
-            EsEliminado BOOLEAN DEFAULT FALSE,
-            SeMuestraOnline BOOLEAN DEFAULT FALSE,
-            PrecioPublico BOOLEAN DEFAULT FALSE,
+            EsEliminado BOOLEAN DEFAULT 0,
+            SeMuestraOnline BOOLEAN DEFAULT 0,
+            PrecioPublico BOOLEAN DEFAULT 0,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME, 
             FOREIGN KEY(producto_version_id) REFERENCES Productos_versiones(ID),
@@ -293,7 +293,7 @@ namespace WPFApp1.Repositorios
         CREATE TABLE IF NOT EXISTS Marcas (
             ID VARCHAR(36) PRIMARY KEY,
             Nombre TEXT NOT NULL COLLATE NOCASE,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            EsEliminado BOOLEAN NOT NULL DEFAULT 0,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
             UNIQUE (Nombre) ON CONFLICT IGNORE
@@ -302,7 +302,7 @@ namespace WPFApp1.Repositorios
         CREATE TABLE IF NOT EXISTS Ubicaciones_inventario (
             ID VARCHAR(36) PRIMARY KEY,
             Descripcion TEXT NOT NULL COLLATE NOCASE,
-            EsEliminado BOOLEAN NOT NULL DEFAULT FALSE,
+            EsEliminado BOOLEAN NOT NULL DEFAULT 0,
             FechaModificacion DATETIME,
             FechaCreacion DATETIME,
             UNIQUE (Descripcion) ON CONFLICT IGNORE

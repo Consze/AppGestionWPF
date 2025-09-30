@@ -1,4 +1,4 @@
-﻿using WPFApp1.Entidades;
+﻿using WPFApp1.DTOS;
 
 namespace WPFApp1.Mensajes
 {

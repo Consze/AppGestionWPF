@@ -1,4 +1,4 @@
-﻿using WPFApp1.Entidades;
+﻿using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
 

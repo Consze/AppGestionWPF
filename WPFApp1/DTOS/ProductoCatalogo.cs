@@ -1,4 +1,4 @@
-﻿namespace WPFApp1.Entidades
+﻿namespace WPFApp1.DTOS
 {
     public class ProductoCatalogo : ProductoBase
     {

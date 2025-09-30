@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
+using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
@@ -64,7 +65,7 @@ namespace WPFApp1.Repositorios
                                 ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
                                 Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -117,7 +118,7 @@ namespace WPFApp1.Repositorios
                                 ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
                                 Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -192,7 +193,7 @@ namespace WPFApp1.Repositorios
                             registro.ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID);
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
                             registro.Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto);
-                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto);
+                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad);
                             registro.Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso);
                             registro.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
@@ -389,7 +390,7 @@ namespace WPFApp1.Repositorios
                                 ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
                                 Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -442,7 +443,7 @@ namespace WPFApp1.Repositorios
                                 ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
                                 Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
-                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
                                 Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
@@ -517,7 +518,7 @@ namespace WPFApp1.Repositorios
                             registro.ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID);
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
                             registro.Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto);
-                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXAlto);
+                            registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad);
                             registro.Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso);
                             registro.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);

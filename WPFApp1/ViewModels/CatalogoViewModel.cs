@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
 using WPFApp1.DTOS;
-using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Repositorios;
@@ -286,7 +285,9 @@ namespace WPFApp1.ViewModels
                     Precio = producto.Precio,
                     Categoria = producto.CategoriaNombre,
                     RutaImagen = producto.RutaImagen,
-                    ProductoSKU = producto.ProductoSKU
+                    ProductoSKU = producto.ProductoSKU,
+                    FechaCreacion = producto.FechaCreacion,
+                    FechaModificacion = producto.FechaModificacion
                 };
                 ColeccionProductos.Add(_registro);
             }
@@ -332,6 +333,8 @@ namespace WPFApp1.ViewModels
                     productoAEditar.Precio= ProductoModificado.Precio;
                     productoAEditar.Categoria= ProductoModificado.Categoria;
                     productoAEditar.RutaImagen= string.IsNullOrWhiteSpace(productoAEditar.RutaImagen) ? string.Empty : System.IO.Path.GetFullPath(ProductoModificado.RutaImagen);
+                    productoAEditar.FechaModificacion = ProductoModificado.FechaModificacion;
+                    productoAEditar.FechaCreacion = ProductoModificado.FechaCreacion;
                 }  
             }
         }

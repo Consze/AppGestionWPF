@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.IO;
 using WPFApp1.DTOS;
-using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios

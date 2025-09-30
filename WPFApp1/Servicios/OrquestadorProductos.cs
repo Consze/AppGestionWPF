@@ -1,4 +1,6 @@
-﻿using WPFApp1.Entidades;
+﻿using WPFApp1.Conmutadores;
+using WPFApp1.DTOS;
+using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
 namespace WPFApp1.Servicios
@@ -12,7 +14,7 @@ namespace WPFApp1.Servicios
         Marcas,
         Categorias,
         Indexacion,
-        Producto,
+        Arquetipo,
         Null
     }
     public class OrquestadorProductos
@@ -48,7 +50,7 @@ namespace WPFApp1.Servicios
                 {"EAN", ServicioAsociado.Versiones },
                 {"MarcaID", ServicioAsociado.Versiones },
                 {"FormatoProductoID", ServicioAsociado.Versiones },
-
+                
                 // Inserción de nueva entidad auxiliar
                 {"MarcaNombre", ServicioAsociado.Marcas },
                 {"CategoriaNombre", ServicioAsociado.Categorias },
@@ -60,11 +62,11 @@ namespace WPFApp1.Servicios
                 {"Profundidad", ServicioAsociado.Formatos},
                 {"Peso", ServicioAsociado.Formatos},
 
-                {"ID", ServicioAsociado.Producto},
-                {"Nombre", ServicioAsociado.Producto },
-
+                // Arquetipo
+                {"Nombre", ServicioAsociado.Arquetipo },
+                {"Categoria", ServicioAsociado.Arquetipo},
+                
                 // Propiedades de registro Stock
-                {"Categoria", ServicioAsociado.Stock},
                 {"UbicacionID", ServicioAsociado.Stock},
                 {"Haber", ServicioAsociado.Stock},
                 {"Precio", ServicioAsociado.Stock},
@@ -73,6 +75,8 @@ namespace WPFApp1.Servicios
                 {"PrecioPublico", ServicioAsociado.Stock},
 
                 // Ignoradas
+                {"ID", ServicioAsociado.Null},
+                {"ProductoVersionID", ServicioAsociado.Null},
                 {"ProductoSKU", ServicioAsociado.Null},
                 {"FechaModificacion", ServicioAsociado.Null},
                 {"FechaCreacion",ServicioAsociado.Null}
@@ -90,6 +94,7 @@ namespace WPFApp1.Servicios
             bool ActualizarMarca = false;
             bool ActualizarUbicacion = false;
             bool ActualizarFormato = false;
+            bool ActualizarCategoria = false;
 
             //1 - Bucle de relevamiento
             foreach (var propiedad in propiedadesEntidad)
@@ -104,7 +109,7 @@ namespace WPFApp1.Servicios
                             ActualizarVersion = true;
                             break;
 
-                        case ServicioAsociado.Producto:
+                        case ServicioAsociado.Arquetipo:
                             ActualizarArquetipo = true;
                             break;
 
@@ -119,6 +124,11 @@ namespace WPFApp1.Servicios
                         case ServicioAsociado.Formatos:
                             ActualizarFormato = true;
                             break;
+
+                        case ServicioAsociado.Categorias:
+                            ActualizarCategoria = true;
+                            break;
+
                     }
                 }
             }
@@ -158,6 +168,17 @@ namespace WPFApp1.Servicios
                 productoModificado.UbicacionID = nuevaUbicacionID;
             }
 
+            if(ActualizarCategoria)
+            {
+                Categorias _categoria = new Categorias
+                {
+                    Nombre = productoModificado.CategoriaNombre
+                };
+                string nuevaCategoriaID = categoriasServicio.Insertar(_categoria);
+                productoModificado.Categoria = nuevaCategoriaID;
+                ActualizarArquetipo = true;
+            }
+
             if(ActualizarArquetipo)
             {
                 Arquetipos _registro = new Arquetipos
@@ -190,17 +211,51 @@ namespace WPFApp1.Servicios
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {
-            Arquetipos nuevoProducto = new Arquetipos
+            Formatos formato = new Formatos
+            {
+                Alto = productoNuevo.Alto,
+                Largo = productoNuevo.Largo,
+                Profundidad = productoNuevo.Profundidad,
+                Peso = productoNuevo.Peso,
+                Nombre = productoNuevo.FormatoNombre
+            };
+            productoNuevo.FormatoProductoID = formatoServicio.Insertar(formato);
+
+            Categorias categoria = new Categorias
+            {
+                Nombre = productoNuevo.CategoriaNombre
+            };
+            productoNuevo.Categoria = categoriasServicio.Insertar(categoria);
+
+            Ubicaciones ubicacion = new Ubicaciones
+            {
+                Nombre = productoNuevo.UbicacionNombre
+            };
+            productoNuevo.UbicacionID = ubicacionesServicio.Insertar(ubicacion);
+
+            Marcas marca = new Marcas
+            {
+                Nombre = productoNuevo.MarcaNombre
+            };
+            productoNuevo.MarcaID = marcasServicio.Insertar(marca);
+
+            Arquetipos arquetipo = new Arquetipos
             {
                 CategoriaID = productoNuevo.Categoria,
                 Nombre = productoNuevo.Nombre
             };
-            string arquetipoID = arquetiposServicio.Insertar(nuevoProducto);
-            productoNuevo.ID = arquetipoID;
+            ProductoBase nuevoArquetipo = new ProductoBase
+            {
+                Nombre = arquetipo.Nombre,
+                Categoria = arquetipo.CategoriaID
+            };
+            productoNuevo.ID = arquetiposServicio.Insertar(arquetipo);
+            nuevoArquetipo.ID = productoNuevo.ID;
+            indexacionServicio.IndexarProducto(nuevoArquetipo);
 
             Versiones version = new Versiones
             {
-                ProductoID = arquetipoID,
+                ProductoID = productoNuevo.ID,
                 RutaRelativaImagen = productoNuevo.RutaImagen,
                 FormatoID = productoNuevo.FormatoProductoID,
                 MarcaID = productoNuevo.MarcaID,
@@ -208,43 +263,9 @@ namespace WPFApp1.Servicios
             };
             productoNuevo.ProductoVersionID = versionesServicio.Insertar(version);
 
-            /**
-            // Marca
-            if (string.IsNullOrEmpty(productoNuevo.MarcaID) && !string.IsNullOrEmpty(productoNuevo.MarcaNombre))
-            {
-                Marcas nuevaMarca = new Marcas { Nombre = productoNuevo.MarcaNombre };
-                productoNuevo.MarcaID = marcasServicio.Insertar(nuevaMarca);
-            }
-
-            // Formato
-            if(string.IsNullOrEmpty(productoNuevo.FormatoProductoID) && !string.IsNullOrEmpty(productoNuevo.FormatoNombre))
-            {
-                Formatos nuevoFormato = new Formatos
-                {
-                    Alto = productoNuevo.Alto,
-                    Largo = productoNuevo.Largo,
-                    Profundidad = productoNuevo.Profundidad,
-                    Peso = productoNuevo.Peso,
-                    Nombre = productoNuevo.FormatoNombre
-                };
-                productoNuevo.FormatoProductoID = formatoServicio.Insertar(nuevoFormato);
-            }
-
-            // Ubicacion
-            if (string.IsNullOrEmpty(productoNuevo.UbicacionID) && !string.IsNullOrEmpty(productoNuevo.UbicacionNombre))
-            {
-                Ubicaciones nuevaUbicacion = new Ubicaciones { Nombre = productoNuevo.UbicacionNombre };
-                productoNuevo.UbicacionID = ubicacionesServicio.Insertar(nuevaUbicacion);
-            }
-
-            // Categoria
-            */
-
             // Insertar nuevo registro
-            string nuevaId = productoServicio.CrearProducto(productoNuevo);
-            productoNuevo.ProductoSKU = nuevaId;
-            indexacionServicio.IndexarProducto(productoNuevo);
-            return nuevaId;
+            productoNuevo.ProductoSKU = productoServicio.CrearProducto(productoNuevo);
+            return productoNuevo.ProductoSKU;
         }
         public string ModificarVersion(ProductoCatalogo productoModificado)
         {

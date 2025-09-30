@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using Microsoft.Data.Sqlite;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -71,9 +72,24 @@ namespace WPFApp1.Repositorios
                 @CategoriaID,
                 @Nombre,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS CategoriaID FROM Productos_categorias
+                WHERE Nombre = @NombreCategoria;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@NombreCategoria", nuevaCategoria.Nombre);
+                    using (SqliteDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("CategoriaID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@CategoriaID", nuevaCategoria.ID);
@@ -313,9 +329,24 @@ namespace WPFApp1.Repositorios
                 @CategoriaID,
                 @Nombre,
                 @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID AS CategoriaID FROM Productos_categorias
+                WHERE Nombre = @NombreCategoria;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@NombreCategoria", nuevaCategoria.Nombre);
+                    using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXid = lector.GetOrdinal("CategoriaID");
+                            return lector.GetString(IDXid);
+                        }
+                    }
+                }
+
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@CategoriaID", nuevaCategoria.ID);
