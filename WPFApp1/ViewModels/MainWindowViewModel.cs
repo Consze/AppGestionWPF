@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using WPFApp1.DTOS;
-using WPFApp1.Entidades;
 using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 
@@ -17,6 +16,7 @@ namespace WPFApp1.ViewModels
         public ICommand AbrirConfiguracionesCommand { get; }
         public ICommand CambiarVistaCommand { get; }
         public ICommand DobleClickNotificacionCommand { get; }
+        public ICommand ColapsarPanelCommand { get; }
         private bool _procesando;
         public bool Procesando
         {
@@ -83,6 +83,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _toggleMostrarPanel;
+        public bool ToggleMostrarPanel
+        {
+            get { return _toggleMostrarPanel; }
+            set
+            {
+                if (_toggleMostrarPanel != value)
+                {
+                    _toggleMostrarPanel = value;
+                    OnPropertyChanged(nameof(ToggleMostrarPanel));
+                }
+            }
+        }
         private string _iconoTogglePanel;
         public string iconoTogglePanel
         {
@@ -96,6 +109,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private int _panelNotificacionesColumnas;
+        public int panelNotificacionesColumnas
+        {
+            get { return _panelNotificacionesColumnas; }
+            set
+            {
+                if (_panelNotificacionesColumnas != value)
+                {
+                    _panelNotificacionesColumnas = value;
+                    OnPropertyChanged(nameof(panelNotificacionesColumnas));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public MainWindowViewModel()
         {
@@ -103,7 +129,9 @@ namespace WPFApp1.ViewModels
             _isAniadirProductoActivo = false;
             _vistaActual = null;
             _procesando = false;
-            _iconoTogglePanel = "/iconos/layout1.png";
+            _iconoTogglePanel = "/iconos/layout2.png";
+            _toggleMostrarPanel = true;
+            _panelNotificacionesColumnas = 1;
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();
@@ -115,6 +143,7 @@ namespace WPFApp1.ViewModels
             VerExportarProductosCommand = new RelayCommand<object>(VerExportarProductos);
             ConfigurarServidorCommand = new RelayCommand<object>(ConfigurarServidor);
             DobleClickNotificacionCommand = new RelayCommand<object>(InspeccionarNotificacion);
+            ColapsarPanelCommand = new RelayCommand<object>(ColapsarPanel);
 
             Messenger.Default.Subscribir<AbrirVistaAniadirProductoMensaje>(OnAbrirAniadirProducto);
             Messenger.Default.Subscribir<CerrarVistaAniadirProductoMensaje>(OnCerrarAniadirProducto);
@@ -179,6 +208,20 @@ namespace WPFApp1.ViewModels
                 ConfigurarSQLServerViewModel viewModel = App.GetService<ConfigurarSQLServerViewModel>();
                 ConfigurarSQLServer vista = new ConfigurarSQLServer(viewModel);
                 CambiarVistaAsync(vista);
+            }
+        }
+        private void ColapsarPanel(object parameter)
+        {
+            ToggleMostrarPanel = !ToggleMostrarPanel;
+            if(ToggleMostrarPanel)
+            {
+                iconoTogglePanel = "/iconos/layout1.png";
+                panelNotificacionesColumnas = 1;
+            }
+            else
+            {
+                iconoTogglePanel = "/iconos/layout2.png";
+                panelNotificacionesColumnas = 2;
             }
         }
         private async Task VerCatalogoAsync()
