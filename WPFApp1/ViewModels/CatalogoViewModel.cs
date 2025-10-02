@@ -5,7 +5,7 @@ using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
-using WPFApp1.Repositorios;
+using WPFApp1.Enums;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -19,6 +19,7 @@ namespace WPFApp1.ViewModels
     public class CatalogoViewModel : INotifyPropertyChanged
     {
         private readonly IProductosServicio _productoServicio;
+        private readonly OrquestadorProductos OrquestadorProductos;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
         public bool _mostrarBotonRegresar;
@@ -117,12 +118,14 @@ namespace WPFApp1.ViewModels
         public ICommand BuscarTituloCommand { get; private set; }
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
+        public ICommand DuplicarItemCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
-        public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion)
+        public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
             _productoServicio = productoServicio;
+            OrquestadorProductos = _orquestador;
             _tituloVista = "Catálogo";
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
@@ -130,6 +133,7 @@ namespace WPFApp1.ViewModels
             ColeccionProductos = new ObservableCollection<ProductoBase>();
             EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
+            DuplicarItemCommand = new RelayCommand<ProductoBase>(DuplicarItem);
             ItemDoubleClickCommand = new RelayCommand<object>(async (param) => await EjecutarDobleClickItem(param));
             AniadirProductoCommand = new RelayCommand<object>(async (param) => await MostrarAniadirProducto());
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
@@ -170,7 +174,8 @@ namespace WPFApp1.ViewModels
         }
         public void EliminarItem(ProductoBase ProductoEliminar)
         {
-            if(ProductoEliminar != null)
+            Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
+            if (ProductoEliminar != null)
             {
                 DialogResult eleccionUsuario = MessageBox.Show("¿Eliminar Producto?", "Eliminar Item", MessageBoxButtons.YesNo);
                 if (eleccionUsuario == DialogResult.Yes)
@@ -182,6 +187,27 @@ namespace WPFApp1.ViewModels
                     Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
                 } 
             }
+            Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
+        }
+        public void DuplicarItem(ProductoBase ProductoDuplicar)
+        {
+            Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
+            if (ProductoDuplicar != null)
+            {
+                DialogResult eleccionUsuario = MessageBox.Show("¿Duplicar Item?", "Confirmar Operación", MessageBoxButtons.YesNo);
+                if (eleccionUsuario == DialogResult.Yes)
+                {
+                    ProductoCatalogo productoCompleto = _productoServicio.RecuperarProductoPorID(ProductoDuplicar.ProductoSKU);
+                    ProductoBase ProductoMensaje = productoCompleto;
+                    ProductoMensaje.ProductoSKU = OrquestadorProductos.CrearProducto(productoCompleto);
+                    ProductoMensaje.Categoria = productoCompleto.CategoriaNombre;
+                    Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });
+                    _servicioSFX.Confirmar();
+                    Notificacion _notificacion = new Notificacion { Mensaje = "Item Duplicado!", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
+                    Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                }
+            }
+            Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
         }
         private async Task BuscarTitulo()
         {

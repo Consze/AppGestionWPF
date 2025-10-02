@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -34,16 +35,29 @@ namespace WPFApp1.ViewModels
         public string NombreDeVentana { get; set; }
         private int CalculoAlturaMarco;
         private int CalculoAnchoMarco;
-        private bool _SubmitHabilitado;
-        public bool SubmitHabilitado
+        private bool _Conflicto;
+        public bool Conflicto
         {
-            get { return _SubmitHabilitado; }
+            get { return _Conflicto; }
             set
             {
-                if (_SubmitHabilitado != value)
+                if (_Conflicto != value)
                 {
-                    _SubmitHabilitado = value;
-                    OnPropertyChanged(nameof(SubmitHabilitado));
+                    _Conflicto = value;
+                    OnPropertyChanged(nameof(Conflicto));
+                }
+            }
+        }
+        private bool _BotonHabilitado;
+        public bool BotonHabilitado
+        {
+            get { return _BotonHabilitado; }
+            set
+            {
+                if (_BotonHabilitado != value)
+                {
+                    _BotonHabilitado = value;
+                    OnPropertyChanged(nameof(BotonHabilitado));
                 }
             }
         }
@@ -268,6 +282,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _iconoSeleccionRapida;
+        public string iconoSeleccionRapida
+        {
+            get { return _iconoSeleccionRapida; }
+            set
+            {
+                if (_iconoSeleccionRapida != value)
+                {
+                    _iconoSeleccionRapida = value;
+                    OnPropertyChanged(nameof(iconoSeleccionRapida));
+                }
+            }
+        }
 
 
         //---- Propiedades de registro -----
@@ -281,6 +308,7 @@ namespace WPFApp1.ViewModels
                 {
                     _nombreProducto = value;
                     OnPropertyChanged(nameof(NombreProducto));
+                    ValidarBotonSubmit();
                 }
             }
         }
@@ -350,6 +378,7 @@ namespace WPFApp1.ViewModels
                 {
                     _formatoNombre = value;
                     OnPropertyChanged(nameof(FormatoNombre));
+                    ValidarBotonSubmit();
                 }
             }
         }
@@ -363,6 +392,7 @@ namespace WPFApp1.ViewModels
                 {
                     _marcaNombre = value;
                     OnPropertyChanged(nameof(MarcaNombre));
+                    ValidarBotonSubmit();
                 }
             }
         }
@@ -376,6 +406,7 @@ namespace WPFApp1.ViewModels
                 {
                     _categoriaNombre = value;
                     OnPropertyChanged(nameof(CategoriaNombre));
+                    ValidarBotonSubmit();
                 }
             }
         }
@@ -389,6 +420,7 @@ namespace WPFApp1.ViewModels
                 {
                     _ubicacionNombre = value;
                     OnPropertyChanged(nameof(UbicacionNombre));
+                    ValidarBotonSubmit();
                 }
             }
         }
@@ -418,6 +450,7 @@ namespace WPFApp1.ViewModels
                 {
                     _cantidadEnStock = value;
                     OnPropertyChanged(nameof(CantidadEnStock));
+                    ValidarBotonSubmit();
                 }
             }
         }
@@ -610,8 +643,6 @@ namespace WPFApp1.ViewModels
             }
         }
         public string ProductoSKU { get; set; }
-
-
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
         private ServicioSFX _servicioSFX { get; set; }
@@ -625,6 +656,10 @@ namespace WPFApp1.ViewModels
         public ICommand ModificarCategoriaCommand { get; }
         public ICommand ModificarUbicacionCommand { get; }
         public ICommand ColapsarSeccionEnviosCommand { get; }
+        public ICommand SeleccionRapidaFormatosCommand { get; }
+        public ICommand SeleccionRapidaMarcasCommand { get; }
+        public ICommand SeleccionRapidaCategoriasCommand { get; }
+        public ICommand SeleccionRapidaUbicacionesCommand { get; }
 
         public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
             IConmutadorEntidadGenerica<Marcas> _servicioMarcas, IConmutadorEntidadGenerica<Categorias> _servicioCategorias,
@@ -663,6 +698,7 @@ namespace WPFApp1.ViewModels
             _iconoEdicionCategoria = "/iconos/lapizEdicion.png";
             _iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
             _iconoToggleSeccionEnvios = "/iconos/abajo1.png";
+            _iconoSeleccionRapida = "/iconos/lista1.png";
 
             _leyendaBotonImagen = "Añadir imagen";
 
@@ -676,6 +712,7 @@ namespace WPFApp1.ViewModels
             ModificarCategoriaCommand = new RelayCommand<object>(ModificarCategoria);
             ModificarUbicacionCommand = new RelayCommand<object>(ModificarUbicacion);
             ColapsarSeccionEnviosCommand = new RelayCommand<object> (ToggleSeccionEnvios);
+            SeleccionRapidaUbicacionesCommand = new RelayCommand<object>(SeleccionRapida);
 
             Messenger.Default.Subscribir<VistaAniadirProductosCantidadModificada>(OnCantidadModificada);
 
@@ -687,18 +724,32 @@ namespace WPFApp1.ViewModels
             servicioCategorias = _servicioCategorias;
             servicioUbicaciones = _servicioUbicaciones;
 
-            SubmitHabilitado = false;
+            Conflicto = true;
+            BotonHabilitado = false;
+            EsModoEdicion = false;
         }
 
         public void BotonPresionado(object parameter)
         {
-            if(EsModoEdicion)
+            if(BotonHabilitado)
             {
-                EditarProducto(0);
+                if (EsModoEdicion)
+                {
+                    EditarProducto(0);
+                }
+                else
+                {
+                    AniadirProducto(0);
+                }
             }
             else
             {
-                AniadirProducto(0);
+                // El proposito es forzar la animación
+                Conflicto = false;
+                Conflicto = true;
+                _servicioSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = "Debe completar todos los campos requeridos", Titulo = "Operación Interrumpida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
         }
         private async Task CargarFormatos() { 
@@ -816,7 +867,8 @@ namespace WPFApp1.ViewModels
                 }
             }
 
-            SubmitHabilitado = true;
+            Conflicto = false;
+            BotonHabilitado = true;
         }
         public void EditarProducto(object parameter)
         {
@@ -992,12 +1044,6 @@ namespace WPFApp1.ViewModels
         }
         public void AniadirProducto(object parameter)
         {
-            if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(CategoriaNombre) || PrecioProducto == 0)
-            {
-                System.Windows.MessageBox.Show("Por favor, complete todos los campos.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
             string RutaImagenSalida = string.Empty;
             if (RutaImagenSeleccionada != string.Empty)
             { 
@@ -1197,6 +1243,56 @@ namespace WPFApp1.ViewModels
             {
                 CantidadEnStock = Cantidad;
             }
+        }
+        public void SeleccionRapida(object parameter)
+        {
+            return;
+        }
+        public void ValidarBotonSubmit()
+        {
+            ProductoCatalogo ProductoVigente = new ProductoCatalogo
+            {
+                ID = ProductoID,
+                UbicacionID = UbicacionID,
+                ProductoSKU = ProductoSKU,
+                FormatoProductoID = FormatoID,
+                Categoria = CategoriaProductoID,
+                ProductoVersionID = ProductoVersionID,
+                MarcaID = MarcaProductoID,
+
+                Nombre = NombreProducto,
+                RutaImagen = RutaImagenSeleccionada,
+                CategoriaNombre = CategoriaNombre,
+                UbicacionNombre = UbicacionNombre,
+                FormatoNombre = FormatoNombre,
+                MarcaNombre = MarcaNombre,
+                EAN = EAN,
+
+                VisibilidadWeb = VisibilidadWeb,
+                PrecioPublico = PrecioPublico,
+                EsEliminado = EsProductoEliminado,
+
+                FechaCreacion = FechaCreacionProducto,
+                FechaModificacion = FechaModificacionProducto,
+
+                Precio = PrecioProducto,
+                Haber = CantidadEnStock,
+                Alto = Alto,
+                Profundidad = Profundidad,
+                Largo = Largo,
+                Peso = Peso
+
+            };
+
+            bool tituloValido = !string.IsNullOrEmpty(ProductoVigente.Nombre);
+            bool categoriaValida = !string.IsNullOrEmpty(ProductoVigente.CategoriaNombre);
+            bool cantidadValida = ProductoVigente.Haber > 0;
+            bool marcaValida = !string.IsNullOrEmpty(ProductoVigente.MarcaNombre);
+            bool formatoValido = !string.IsNullOrEmpty(FormatoNombre);
+            bool ubicacionValida = !string.IsNullOrEmpty(ProductoVigente.UbicacionNombre);
+
+            BotonHabilitado = tituloValido && categoriaValida && cantidadValida && marcaValida && formatoValido && ubicacionValida;
+            Conflicto = !BotonHabilitado;
         }
         public void CerrarVista(object parameter)
         {

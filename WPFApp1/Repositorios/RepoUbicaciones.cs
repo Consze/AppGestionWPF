@@ -2,6 +2,7 @@
 using Microsoft.Data.Sqlite;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
+using WPFApp1.Enums;
 
 namespace WPFApp1.Repositorios
 {

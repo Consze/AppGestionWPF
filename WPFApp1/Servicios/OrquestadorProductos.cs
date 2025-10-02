@@ -1,6 +1,7 @@
 ﻿using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
+using WPFApp1.Enums;
 
 namespace WPFApp1.Servicios
 {
@@ -81,7 +82,10 @@ namespace WPFApp1.Servicios
                 {"FechaCreacion",ServicioAsociado.Null}
             };
         }
-
+        public bool EliminarProducto (string ProductoID, TipoEliminacion TipoEliminacion)
+        {
+            return true;
+        }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
         {
             ProductoCatalogo productoActual = productoServicio.RecuperarProductoPorID(productoModificado.ProductoSKU);
@@ -292,5 +296,6 @@ namespace WPFApp1.Servicios
             }
             return IDNuevaVersion;
         }
+
     }
 }

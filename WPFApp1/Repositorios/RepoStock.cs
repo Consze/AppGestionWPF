@@ -3,15 +3,10 @@ using System.IO;
 using Microsoft.Data.Sqlite;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
+using WPFApp1.Enums;
 
 namespace WPFApp1.Repositorios
 {
-    public enum TipoEliminacion
-    {
-        Logica,
-        Fisica
-    };
-
     /// <summary>
     /// Implementación para DBMS local SQLite
     /// </summary>

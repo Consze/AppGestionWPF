@@ -1,5 +1,5 @@
 ﻿using WPFApp1.DTOS;
-using WPFApp1.Repositorios;
+using WPFApp1.Enums;
 
 namespace WPFApp1.Interfaces
 {

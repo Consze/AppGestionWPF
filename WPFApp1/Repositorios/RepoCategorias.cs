@@ -1,5 +1,5 @@
 ﻿using System.Data.SqlClient;
-using System.Data.SqlTypes;
+using WPFApp1.Enums;
 using Microsoft.Data.Sqlite;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;

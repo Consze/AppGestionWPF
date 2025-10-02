@@ -215,12 +215,12 @@ namespace WPFApp1.ViewModels
             ToggleMostrarPanel = !ToggleMostrarPanel;
             if(ToggleMostrarPanel)
             {
-                iconoTogglePanel = "/iconos/layout1.png";
+                iconoTogglePanel = "/iconos/layout2.png";
                 panelNotificacionesColumnas = 1;
             }
             else
             {
-                iconoTogglePanel = "/iconos/layout2.png";
+                iconoTogglePanel = "/iconos/layout1.png";
                 panelNotificacionesColumnas = 2;
             }
         }

@@ -31,7 +31,7 @@
         </Grid.RowDefinitions>
 
         <ItemsControl x:Name="PanelNotificaciones" ItemsSource="{Binding ColeccionNotificaciones}" 
-            SnapsToDevicePixels="True" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" 
+            SnapsToDevicePixels="True" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,0,25"
             HorizontalAlignment="Center" Panel.ZIndex="1000" Grid.ColumnSpan="{Binding panelNotificacionesColumnas}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>

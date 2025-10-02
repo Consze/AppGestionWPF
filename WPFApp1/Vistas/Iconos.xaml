@@ -259,4 +259,82 @@
             </EventTrigger>
         </Style.Triggers>
     </Style>
+
+    <Style x:Key="CBOXValidable" TargetType="ComboBox">
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TranslateTransform X="0" Y="0"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Conflicto}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+
+                            <ColorAnimation Storyboard.TargetProperty="(ComboBox.BorderBrush).(SolidColorBrush.Color)"
+                             To="Red"
+                             Duration="0:0:0.1"/>
+
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                             From="-5" To="5" 
+                             Duration="0:0:0.05" 
+                             AutoReverse="True" 
+                             RepeatBehavior="3x" 
+                             EasingFunction="{StaticResource SmoothEase}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(ComboBox.BorderBrush).(SolidColorBrush.Color)"
+                             To="Gray"
+                             Duration="0:0:0.3"/>
+
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                             To="0" 
+                             Duration="0:0:0.3"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <SolidColorBrush x:Key="ColorPrimario" Color="#FFA500"/>
+
+    <Style x:Key="BotonToggleEstilo" TargetType="Button">
+        <Setter Property="Padding" Value="10"/>
+
+        <Setter Property="Background" Value="LightGray"/>
+        
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding BotonHabilitado}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                              To="Orange" From="LightGray" Duration="0:0:0.2" EasingFunction="{StaticResource SmoothEase}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                             To="LightGray" Duration="0:0:0.2"
+                             EasingFunction="{StaticResource SmoothEase}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

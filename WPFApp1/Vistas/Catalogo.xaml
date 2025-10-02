@@ -23,7 +23,9 @@
                     CommandParameter="{Binding}" />
                 <MenuItem Header="Registrar Venta"/>
                 <Separator/>
-                <MenuItem Header="Duplicar"/>
+                <MenuItem Header="Duplicar"
+                    Command="{Binding DataContext.DuplicarItemCommand, Source={x:Reference CatalogoItems}}"
+                    CommandParameter="{Binding}" />
                 <MenuItem Header="Reservar"/>
                 <Separator/>
                 <MenuItem Header="Exportar"/>
@@ -38,7 +40,9 @@
                     CommandParameter="{Binding}" />
                 <MenuItem Header="Registrar Venta"/>
                 <Separator/>
-                <MenuItem Header="Duplicar"/>
+                <MenuItem Header="Duplicar"
+                    Command="{Binding Path=DataContext.DuplicarItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                    CommandParameter="{Binding}" />
                 <MenuItem Header="Reservar"/>
                 <Separator/>
                 <MenuItem Header="Exportar"/>
@@ -177,19 +181,12 @@
                     </Button.Background>
                     <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png" Style="{StaticResource ImagenHover}"/>
                 </Button>
-                
+
                 <Button x:Name="Ordenar" Margin="0,0,10,0" BorderThickness="0">
                     <Button.Background>
                         <SolidColorBrush Color="Transparent"/>
                     </Button.Background>
-                        <Image Width="24" Height="24" Source="/iconos/ascending-sort.png" Style="{StaticResource ImagenHover}"/>
-                </Button>
-
-                <Button x:Name="Eliminar" Margin="0,0,10,0" BorderThickness="0" Command="{Binding EliminarProductoCommand}">
-                    <Button.Background>
-                        <SolidColorBrush Color="Transparent"/>
-                    </Button.Background>
-                    <Image Width="24" Height="24" Source="/iconos/papelera.png" Style="{StaticResource ImagenHover}"/>
+                    <Image Width="24" Height="24" Source="/iconos/ascending-sort.png" Style="{StaticResource ImagenHover}"/>
                 </Button>
             </StackPanel>
         </Grid>
