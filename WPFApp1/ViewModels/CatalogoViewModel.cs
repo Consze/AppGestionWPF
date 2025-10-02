@@ -141,6 +141,8 @@ namespace WPFApp1.ViewModels
         public ICommand EliminarItemCommand { get; private set; }
         public ICommand DuplicarItemCommand { get; }
         public ICommand EliminarTextoBusquedaCommand { get; }
+        public ICommand BusquedaRecibeFocoCommand { get; }
+        public ICommand BusquedaPierdeFocoCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
@@ -163,11 +165,21 @@ namespace WPFApp1.ViewModels
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
             BuscarTituloCommand = new RelayCommand<object>(async (param) => await BuscarTitulo());
             EliminarTextoBusquedaCommand = new RelayCommand<object>(EliminarTextoBusqueda);
+            BusquedaRecibeFocoCommand = new RelayCommand<object>(BusquedaRecibeFoco);
+            BusquedaPierdeFocoCommand = new RelayCommand<object>(BusquedaPierdeFoco);
 
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             Procesando = false;
             _servicioSFX = new ServicioSFX();
+        }
+        public void BusquedaPierdeFoco(object parameter)
+        {
+            Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
+        }
+        public void BusquedaRecibeFoco(object parameter)
+        {
+            Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
         }
         public void EliminarTextoBusqueda(object parameter)
         {
