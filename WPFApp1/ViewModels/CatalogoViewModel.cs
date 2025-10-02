@@ -72,6 +72,14 @@ namespace WPFApp1.ViewModels
                 {
                     _textoBusqueda = value;
                     OnPropertyChanged(nameof(TextoBusqueda));
+                    if(string.IsNullOrEmpty(value))
+                    {
+                        BotonCruzVisible = false;
+                    }
+                    else
+                    {
+                        BotonCruzVisible = true;
+                    }
                 }
             }
         }
@@ -99,6 +107,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _botonCruzVisible;
+        public bool BotonCruzVisible
+        {
+            get { return _botonCruzVisible; }
+            set
+            {
+                if (_botonCruzVisible != value)
+                {
+                    _botonCruzVisible = value;
+                    OnPropertyChanged(nameof(BotonCruzVisible));
+                }
+            }
+        }
         private bool _procesando = true;
         public bool Procesando {
             get { return _procesando; }
@@ -119,6 +140,7 @@ namespace WPFApp1.ViewModels
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
         public ICommand DuplicarItemCommand { get; }
+        public ICommand EliminarTextoBusquedaCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
@@ -130,6 +152,8 @@ namespace WPFApp1.ViewModels
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
+            _botonCruzVisible = false;
+
             ColeccionProductos = new ObservableCollection<ProductoBase>();
             EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
@@ -138,10 +162,16 @@ namespace WPFApp1.ViewModels
             AniadirProductoCommand = new RelayCommand<object>(async (param) => await MostrarAniadirProducto());
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
             BuscarTituloCommand = new RelayCommand<object>(async (param) => await BuscarTitulo());
+            EliminarTextoBusquedaCommand = new RelayCommand<object>(EliminarTextoBusqueda);
+
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             Procesando = false;
             _servicioSFX = new ServicioSFX();
+        }
+        public void EliminarTextoBusqueda(object parameter)
+        {
+            TextoBusqueda = string.Empty;
         }
         public async Task InicializarAsync()
         {
@@ -223,20 +253,22 @@ namespace WPFApp1.ViewModels
                 if (ColeccionProductos.Count < 1)
                 {
                     _servicioSFX.Suspenso();
-                    cuerpoNotificacion = "No se hallaron resultados para la busqueda...";
+                    cuerpoNotificacion = "No se hallaron resultados para la busqueda";
                     IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
                     TituloVista = "Sin coincidencias...";
                 }
                 else
                 {
                     _servicioSFX.Confirmar();
-                    cuerpoNotificacion = $"Se hallaron {ColeccionProductos.Count} coincidencias!";
+                    string verbo = ColeccionProductos.Count > 1 ? "hallaron" : "hallo";
+                    string palabra = ColeccionProductos.Count > 1 ? "coincidencias" : "coincidencia";
+                    cuerpoNotificacion = $"Se {verbo} {ColeccionProductos.Count} {palabra}!";
                     IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
-                    TituloVista = "Resultados de Busqueda";
+                    TituloVista = "Coincidencias";
                 }
                 
                 MostrarBotonRegresar = true;
-                Notificacion _notificacion = new Notificacion { Mensaje = cuerpoNotificacion, Titulo = "Operación Completada", IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
+                Notificacion _notificacion = new Notificacion { Mensaje = cuerpoNotificacion, Titulo = TituloVista, IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
             TextoBusqueda = string.Empty;
