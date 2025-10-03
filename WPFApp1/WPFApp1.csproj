@@ -33,6 +33,7 @@
     <None Remove="iconos\lista1.png" />
     <None Remove="iconos\notificaciones.png" />
     <None Remove="iconos\papelera.png" />
+    <None Remove="iconos\Reciente1.png" />
     <None Remove="iconos\restar1.png" />
     <None Remove="iconos\retroceso1.png" />
     <None Remove="iconos\seleccion1.png" />
@@ -80,6 +81,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\papelera.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\Reciente1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\retroceso1.png">

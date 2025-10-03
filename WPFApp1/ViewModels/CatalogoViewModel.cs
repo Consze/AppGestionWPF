@@ -22,6 +22,7 @@ namespace WPFApp1.ViewModels
         private readonly OrquestadorProductos OrquestadorProductos;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
+        public ObservableCollection<string> BusquedasRecientes{ get; set; }
         public bool _mostrarBotonRegresar;
         public bool MostrarBotonRegresar
         {
@@ -120,6 +121,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _historialVisible;
+        public bool HistorialVisible
+        {
+            get { return _historialVisible; }
+            set
+            {
+                if (_historialVisible != value)
+                {
+                    _historialVisible = value;
+                    OnPropertyChanged(nameof(HistorialVisible));
+                }
+            }
+        }
         private bool _procesando = true;
         public bool Procesando {
             get { return _procesando; }
@@ -146,6 +160,10 @@ namespace WPFApp1.ViewModels
         private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
+            BusquedasRecientes = new ObservableCollection<string>();
+            BusquedasRecientes.Add("Item 1");
+            BusquedasRecientes.Add("Item 2");
+
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
             _productoServicio = productoServicio;
@@ -155,6 +173,7 @@ namespace WPFApp1.ViewModels
             _mostrarVistaTabular = false;
             _mostrarVistaGaleria = true;
             _botonCruzVisible = false;
+            _historialVisible = false;
 
             ColeccionProductos = new ObservableCollection<ProductoBase>();
             EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
@@ -175,10 +194,12 @@ namespace WPFApp1.ViewModels
         }
         public void BusquedaPierdeFoco(object parameter)
         {
+            HistorialVisible = false;
             Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
         }
         public void BusquedaRecibeFoco(object parameter)
         {
+            HistorialVisible = true;
             Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
         }
         public void EliminarTextoBusqueda(object parameter)
