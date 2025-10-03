@@ -188,17 +188,17 @@ namespace WPFApp1.ViewModels
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             Procesando = false;
             _servicioSFX = new ServicioSFX();
+            BusquedasRecientes.Add("item 1");
         }
         public void BusquedaPierdeFoco(object parameter)
         {
             HistorialVisible = false;
-            Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
+            //Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
         }
         public void BusquedaRecibeFoco(object parameter)
         {
-            BusquedasRecientes.Add("item 1");
             HistorialVisible = true;
-            Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
+            //Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
         }
         public void EliminarTextoBusqueda(object parameter)
         {
