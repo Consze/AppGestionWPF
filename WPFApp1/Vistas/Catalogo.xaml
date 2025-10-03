@@ -175,38 +175,27 @@
                             </TextBox.Style>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="GotFocus">
-                                    <i:InvokeCommandAction Command="{Binding BusquedaRecibeFocoCommand}"
-                                   CommandParameter="{Binding ElementName=MiCampo}"/>
+                                    <i:InvokeCommandAction Command="{Binding BusquedaRecibeFocoCommand}"/>
                                 </i:EventTrigger>
 
                                 <i:EventTrigger EventName="LostFocus">
-                                    <i:InvokeCommandAction Command="{Binding BusquedaPierdeFocoCommand}"
-                                   CommandParameter="{Binding ElementName=MiCampo}"/>
+                                    <i:InvokeCommandAction Command="{Binding BusquedaPierdeFocoCommand}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
 
-                        <ItemsControl ItemsSource="{Binding BusquedasRecientes}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10"
-                                      Visibility="{Binding HistorialVisible, Converter={StaticResource BooleanToVisibility}}">
-                            <ItemsControl.ItemContainerStyle>
-                                <StaticResource ResourceKey="NotificationItemEnterAnimation"/>
-                            </ItemsControl.ItemContainerStyle>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" ContextMenu="{StaticResource MenuContextualGaleria}">
-                                        <Border.InputBindings>
-                                            
-                                        </Border.InputBindings>
+                        <Popup IsOpen="{Binding HistorialVisible}"
+                           PlacementTarget="{Binding ElementName=BusquedaTextbox}"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           AllowsTransparency="True"
+                           PopupAnimation="Slide">
+                            <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="5"
+                                Width="{Binding ElementName=BusquedaTextbox, Path=ActualWidth}">
+                                <ListBox ItemsSource="{Binding BusquedasRecientes}" />
+                            </Border>
+                        </Popup>
 
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="/iconos/Reciente1.png"/>
-                                            <TextBlock FontSize="12" Text="{Binding}"/>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        
                         <Button x:Name="BorrarTexto" Margin="10,5" BorderThickness="0" Command="{Binding EliminarTextoBusquedaCommand}" 
                             HorizontalAlignment="Left" Grid.Column="2" Visibility="{Binding BotonCruzVisible, Converter={StaticResource BooleanToVisibility}}">
                             <Button.Background>

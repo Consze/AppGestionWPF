@@ -160,10 +160,6 @@ namespace WPFApp1.ViewModels
         private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
-            BusquedasRecientes = new ObservableCollection<string>();
-            BusquedasRecientes.Add("Item 1");
-            BusquedasRecientes.Add("Item 2");
-
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
             _productoServicio = productoServicio;
@@ -175,6 +171,7 @@ namespace WPFApp1.ViewModels
             _botonCruzVisible = false;
             _historialVisible = false;
 
+            BusquedasRecientes = new ObservableCollection<string>();
             ColeccionProductos = new ObservableCollection<ProductoBase>();
             EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
@@ -199,6 +196,7 @@ namespace WPFApp1.ViewModels
         }
         public void BusquedaRecibeFoco(object parameter)
         {
+            BusquedasRecientes.Add("item 1");
             HistorialVisible = true;
             Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
         }
