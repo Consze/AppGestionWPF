@@ -147,6 +147,7 @@ namespace WPFApp1.ViewModels
             }        
         }
         public event PropertyChangedEventHandler PropertyChanged;
+        public ICommand SeleccionarBusquedaPreviaCommand { get; }
         public ICommand ItemDoubleClickCommand { get; private set; }
         public ICommand AniadirProductoCommand { get; private set; }
         public ICommand AlternarFormatoVistaCommand { get; private set; }
@@ -183,12 +184,20 @@ namespace WPFApp1.ViewModels
             EliminarTextoBusquedaCommand = new RelayCommand<object>(EliminarTextoBusqueda);
             BusquedaRecibeFocoCommand = new RelayCommand<object>(BusquedaRecibeFoco);
             BusquedaPierdeFocoCommand = new RelayCommand<object>(BusquedaPierdeFoco);
+            SeleccionarBusquedaPreviaCommand = new RelayCommand<object>(async (param) => await SeleccionarBusquedaPrevia(param));
 
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
             Procesando = false;
             _servicioSFX = new ServicioSFX();
-            BusquedasRecientes.Add("item 1");
+        }
+        public async Task SeleccionarBusquedaPrevia(object EntradaElegida)
+        {
+            if(EntradaElegida is string termino)
+            {
+                TextoBusqueda = termino;
+                await BuscarTitulo();
+            }
         }
         public void BusquedaPierdeFoco(object parameter)
         {
@@ -280,6 +289,16 @@ namespace WPFApp1.ViewModels
                 this.Procesando = false;
                 string cuerpoNotificacion = string.Empty;
                 string IconoAUtilizar = string.Empty;
+
+                if (!string.IsNullOrEmpty(TextoBusqueda) && !BusquedasRecientes.Contains(TextoBusqueda))
+                {
+                    BusquedasRecientes.Insert(0, TextoBusqueda);
+                    if (BusquedasRecientes.Count > 7)
+                    {
+                        BusquedasRecientes.RemoveAt(BusquedasRecientes.Count -1);
+                    }
+                }
+                
 
                 if (ColeccionProductos.Count < 1)
                 {

@@ -191,19 +191,33 @@
                            AllowsTransparency="True"
                            PopupAnimation="Fade"
                            Panel.ZIndex="1000"
-                           VerticalOffset="4">
-                            <Border Background="White" BorderBrush="#CCC" BorderThickness="1" Padding="2"
-                                Width="{Binding ElementName=BusquedaTextbox, Path=ActualWidth}" CornerRadius="0,0,6,6" >
+                           VerticalOffset="10" Cursor="">
+                            <Border Background="White" BorderBrush="#CCC" BorderThickness="0.5" Padding="2"
+                                Width="{Binding ElementName=BusquedaTextbox, Path=ActualWidth}" >
                                 <ListBox ItemsSource="{Binding BusquedasRecientes}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="2">
-                                                <Image Source="/iconos/Reciente1.png" Width="14" Height="14" Opacity="0.7" Margin="0,0,7,0" VerticalAlignment="Center"/>
-                                                <TextBlock Text="{Binding}"
-                                                   FontSize="16"
-                                                   Foreground="Gray"
-                                                   VerticalAlignment="Center"/> 
-                                            </StackPanel>
+                                            <Button Command="{Binding DataContext.SeleccionarBusquedaPreviaCommand,
+                                                    RelativeSource={RelativeSource AncestorType=Popup}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Padding="6,4"
+                                                    Cursor="Hand"
+                                                    HorizontalAlignment="Stretch"
+                                                    HorizontalContentAlignment="Stretch">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="/iconos/Reciente1.png"
+                                                       Width="14" Height="14"
+                                                       Opacity="0.7"
+                                                       Margin="0,0,7,0"
+                                                       VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding}"
+                                                       FontSize="16"
+                                                       Foreground="Gray"
+                                                       VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
