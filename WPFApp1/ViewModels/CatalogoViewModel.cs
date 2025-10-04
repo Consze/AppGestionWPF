@@ -206,7 +206,8 @@ namespace WPFApp1.ViewModels
         }
         public void BusquedaRecibeFoco(object parameter)
         {
-            HistorialVisible = true;
+            if(BusquedasRecientes.Count > 0)
+                HistorialVisible = true;
             //Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
         }
         public void EliminarTextoBusqueda(object parameter)
