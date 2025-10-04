@@ -18,6 +18,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
@@ -111,16 +112,69 @@
                                     <Image Width="12" Height="12" Source="{Binding iconoSeleccionRapida}"/>
                                 </Button>
                             </Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="MARCA" FontWeight="Bold" FontSize="12" Margin="3"/>
+                                <Button x:Name="EditarMarca" BorderThickness="0" Command="{Binding ModificarMarcaCommand}">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="14" Height="14" Source="{Binding iconoEdicion}"/>
+                                </Button>
+                            </StackPanel>
+                            <TextBox x:Name="CampoMarca" Text="{Binding MarcaNombre}" 
+                                    Visibility="{Binding ToggleEdicionMarca, Converter={StaticResource BooleanToVisibility}}"
+                                    AcceptsReturn="True"
+                                    TextWrapping="Wrap"
+                                    VerticalScrollBarVisibility="Auto"
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    MinLines="1"
+                                    MaxLines="2">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Visibility" Value="Visible">
+                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <ComboBox x:Name="MarcaElegida" Grid.Column="0"
+                                      Style="{StaticResource CBOXValidable}"
+                                      DisplayMemberPath="Nombre" 
+                                      SelectedValuePath="ID" 
+                                      SelectedValue="{Binding MarcaProductoID, Mode=TwoWay}"
+                                      ItemsSource="{Binding Marcas}"
+                                      Margin="2" 
+                                      Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}">
+                                </ComboBox>
+                                <Button x:Name="listaMarcas" BorderThickness="0" Command="{Binding SeleccionRapidaMarcasCommand}"
+            Grid.Column="1" Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </Button.Background>
+                                    <Image Width="12" Height="12" Source="{Binding iconoSeleccionRapida}"/>
+                                </Button>
+                            </Grid>
 
                         </StackPanel>
                     </Grid>
                 </Border>
             </StackPanel>
 
-            <!--Envios-->
+            <!--Detalles-->
             <StackPanel Margin="5">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="2" FontSize="19">Envios</TextBlock>
+                    <TextBlock Margin="2" FontSize="19">Detalles</TextBlock>
                     <Button x:Name="ColapsarFormato" BorderThickness="0" Command="{Binding ColapsarSeccionEnviosCommand}" IsTabStop="False">
                         <Button.Background>
                             <SolidColorBrush Color="Transparent"/>
@@ -138,6 +192,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         
                         
@@ -152,7 +207,7 @@
                             </Grid.RowDefinitions>
                             
                             <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                <TextBlock Text="FORMATO" FontWeight="Bold" FontSize="12" Margin="3"/>
+                                <TextBlock Text="DIMENSIONES" FontWeight="Bold" FontSize="12" Margin="3"/>
                                 <Button x:Name="EditarFormato" BorderThickness="0" Command="{Binding ModificarFormatoCommand}">
                                     <Button.Background>
                                         <SolidColorBrush Color="Transparent"/>
@@ -205,13 +260,19 @@
                             <TextBlock Text="PESO" FontWeight="Bold" FontSize="12" Margin="3" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
                             <TextBox x:Name="campoPeso" Text="{Binding Peso}" Margin="0,0,0,2" Visibility="{Binding ToggleEdicionFormato, Converter={StaticResource BooleanToVisibility}}"/>
                         </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Grid.Row="3" Grid.ColumnSpan="3">
+                           <TextBlock Text="CODIGO DE BARRA" FontWeight="Bold" FontSize="12" Margin="3"/>
+                            <TextBox x:Name="campoEAN" Text="{Binding EAN}"/> 
+                        </StackPanel>
+                        
                     </Grid>
                 </Border>
             </StackPanel>
         </StackPanel>
 
         <!---Columna 2-->
-        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
+        <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Vertical">
             <!--General-->
             <StackPanel Margin="5">
                 <TextBlock Margin="2" FontSize="19">General</TextBlock>
@@ -225,64 +286,8 @@
                                 HorizontalScrollBarVisibility="Disabled"
                                 MinLines="1"
                                 MaxLines="2"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="MARCA" FontWeight="Bold" FontSize="12" Margin="3"/>
-                            <Button x:Name="EditarMarca" BorderThickness="0" Command="{Binding ModificarMarcaCommand}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="Transparent"/>
-                                </Button.Background>
-                                <Image Width="14" Height="14" Source="{Binding iconoEdicion}"/>
-                            </Button>
-                        </StackPanel>
-                        <TextBox x:Name="CampoMarca" Text="{Binding MarcaNombre}" 
-                                Visibility="{Binding ToggleEdicionMarca, Converter={StaticResource BooleanToVisibility}}"
-                                AcceptsReturn="True"
-                                TextWrapping="Wrap"
-                                VerticalScrollBarVisibility="Auto"
-                                HorizontalScrollBarVisibility="Disabled"
-                                MinLines="1"
-                                MaxLines="2">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Style.Triggers>
-                                        <Trigger Property="Visibility" Value="Visible">
-                                            <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                            </Grid.RowDefinitions>
-                            <ComboBox x:Name="MarcaElegida" Grid.Column="0"
-                              Style="{StaticResource CBOXValidable}"
-                              DisplayMemberPath="Nombre" 
-                              SelectedValuePath="ID" 
-                              SelectedValue="{Binding MarcaProductoID, Mode=TwoWay}"
-                              ItemsSource="{Binding Marcas}"
-                              Margin="2" 
-                              Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}">
-                            </ComboBox>
-                            <Button x:Name="listaMarcas" BorderThickness="0" Command="{Binding SeleccionRapidaMarcasCommand}"
-                                    Grid.Column="1" Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="Transparent"/>
-                                </Button.Background>
-                                <Image Width="12" Height="12" Source="{Binding iconoSeleccionRapida}"/>
-                            </Button>
-                        </Grid>
-
                         <TextBlock Text="PRECIO" FontWeight="Bold" FontSize="12" Margin="3"/>
                         <TextBox x:Name="campoPrecio" Text="{Binding PrecioProducto}" Margin="0,0,0,7"/>
-                        <TextBlock Text="CODIGO DE BARRA" FontWeight="Bold" FontSize="12" Margin="3"/>
-                        <TextBox x:Name="campoEAN" Text="{Binding EAN}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -373,7 +378,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <CheckBox IsChecked="{Binding VisibilidadWeb}" Grid.Row="0">
-                            <TextBlock FontWeight="Regular" FontSize="14">Visibilidad Web</TextBlock>
+                            <TextBlock FontWeight="Regular" FontSize="14">Se muestra online</TextBlock>
                         </CheckBox>
                         <CheckBox IsChecked="{Binding PrecioPublico}" Grid.Row="1">
                             <TextBlock FontWeight="Regular" FontSize="14">Precio Publico</TextBlock>
@@ -384,7 +389,7 @@
         </StackPanel>
 
         <!--Boton de Submit-->
-        <Border BorderBrush="Black" BorderThickness="0.25" CornerRadius="2" Grid.Row="3" Grid.Column="1" Margin="5" Grid.ColumnSpan="2">
+        <Border BorderBrush="Black" BorderThickness="0.25" CornerRadius="2" Grid.Row="3" Grid.Column="1" Margin="5" Grid.ColumnSpan="3">
             <Button x:Name="BotonAñadir" Content="Almacenar" FontSize="18" FontWeight="Bold" Command="{Binding BotonPresionadoCommand}" Style="{StaticResource BotonToggleEstilo}"/>
         </Border>
     </Grid>
