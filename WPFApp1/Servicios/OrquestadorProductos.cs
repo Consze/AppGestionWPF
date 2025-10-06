@@ -28,11 +28,13 @@ namespace WPFApp1.Servicios
         private readonly IConmutadorEntidadGenerica<Ubicaciones> ubicacionesServicio;
         private readonly IConmutadorEntidadGenerica<Categorias> categoriasServicio;
         private readonly IConmutadorEntidadGenerica<Marcas> marcasServicio;
+        private readonly IConmutadorEntidadGenerica<Ventas> ventasServicio;
 
         public OrquestadorProductos(IProductosServicio _servicioProductos, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
             IConmutadorEntidadGenerica<Versiones> _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion, 
             IConmutadorEntidadGenerica<Arquetipos> _servicioArquetipo, IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones,
-            IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas)
+            IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas,
+            IConmutadorEntidadGenerica<Ventas> _servicioVentas)
         {
             productoServicio = _servicioProductos;
             indexacionServicio = _servicioIndexacion;
@@ -42,6 +44,7 @@ namespace WPFApp1.Servicios
             ubicacionesServicio = _servicioUbicaciones;
             categoriasServicio = _servicioCategorias;
             marcasServicio = _servicioMarcas;
+            ventasServicio = _servicioVentas;
 
             MapeoPropiedades = new Dictionary<string, ServicioAsociado>(StringComparer.OrdinalIgnoreCase)
             {
@@ -84,6 +87,14 @@ namespace WPFApp1.Servicios
         }
         public bool EliminarProducto (string ProductoID, TipoEliminacion TipoEliminacion)
         {
+            return true;
+        }
+        public bool VenderProducto(Ventas nuevaVenta)
+        {
+            //TODO: Bucle de construccion de consulta para hacer una actualizacion individual 
+
+            ProductoCatalogo productoVendido = productoServicio.RecuperarProductoPorID(nuevaVenta.ProductoSKU);
+            productoVendido.Haber = productoVendido.Haber - nuevaVenta.Cantidad;
             return true;
         }
         public bool ModificarProducto(ProductoCatalogo productoModificado)

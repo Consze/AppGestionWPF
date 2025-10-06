@@ -54,6 +54,9 @@ namespace WPFApp1
             services.AddTransient<RepoCategoriasSQLite>();
             services.AddTransient<RepoCategoriasSQLServer>();
 
+            services.AddTransient<RepoVentasSQLite>();
+            services.AddTransient<RepoVentasSQLServer>();
+
             // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
             services.AddTransient<IConmutadorEntidadGenerica<Versiones>, VersionesConmutador>();
@@ -61,6 +64,7 @@ namespace WPFApp1
             services.AddTransient<IConmutadorEntidadGenerica<Ubicaciones>, UbicacionesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Categorias>, CategoriasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Arquetipos>, ArquetiposConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Ventas>, VentasConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {

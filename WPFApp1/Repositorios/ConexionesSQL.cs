@@ -221,6 +221,40 @@ namespace WPFApp1.Repositorios
             FOREIGN KEY(categoria_id) REFERENCES Productos_categorias(ID)
         );
 
+        CREATE TABLE IF NOT EXISTS Ventas_stock (
+            ID VARCHAR(36) PRIMARY KEY,
+            producto_vendido VARCHAR(36),
+            medio_pago VARCHAR(36),
+            precio_venta NUMERIC(18,2),
+            cantidad INT NOT NULL,
+            EsEliminado BOOLEAN DEFAULT 0,
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            FOREIGN KEY(producto_vendido) REFERENCES Productos_stock(SKU_Producto),
+            FOREIGN KEY(medio_pago) REFERENCES Medios_pago(ID)
+        );
+
+        CREATE TABLE IF NOT EXISTS Medios_pago (
+            ID VARCHAR(36) PRIMARY KEY,
+            cuenta_asociada VARCHAR(36) NOT NULL,
+            Nombre VARCHAR NOT NULL COLLATE NOCASE,
+            EsEliminado BOOLEAN DEFAULT 0,
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            UNIQUE (Nombre) ON CONFLICT IGNORE,
+            FOREIGN KEY(cuenta_asociada) REFERENCES Cuentas(id)
+        );
+
+        CREATE IF NOT EXISTS TABLE Cuentas (
+            ID VARCHAR(36) PRIMARY KEY,
+            nombre VARCHAR(255) COLLATE NOCASE,
+            tipo_cuenta VARCHAR(255) COLLATE NOCASE,
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            EsEliminado BOOLEAN DEFAULT 0,
+            UNIQUE (nombre, tipo_cuenta) ON CONFLICT IGNORE
+        );
+
         CREATE TABLE IF NOT EXISTS Productos_categorias (
             ID VARCHAR(36) PRIMARY KEY,
             Nombre TEXT NOT NULL COLLATE NOCASE,
