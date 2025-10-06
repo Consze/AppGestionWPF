@@ -532,9 +532,40 @@ namespace WPFApp1.Repositorios
                 throw;
             }
         }
-        public bool ModificacionMasiva()
+        public bool ModificacionMasiva(string PropiedadNombre, List<ProductoSKU_Propiedad_Valor> lista)
         {
-            //TODO: Implementacion 
+            Dictionary<string, string> MapeoPropiedades;
+            MapeoPropiedades = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Nombre de Columna
+                //{"ProductoSKU", "SKU_Producto" },
+                {"UbicacionID", "ubicacion_id VARCHAR(36)" },
+                {"ProductoVersionID", "producto_version_id VARCHAR(36)" },
+                {"Haber" , "Haber INT" },
+                {"Precio", "Precio NUMERIC (18,2)" },
+                {"EsEliminado", "EsEliminado BOOLEAN" },
+                {"VisibilidadWeb","VisibilidadWeb BOOLEAN" },
+                {"PrecioPublico","PrecioPublico BOOLEAN" },
+                {"FechaModificacion", "FechaModificacion DATETIME"},
+                {"FechaCreacion","FechaCreacion DATETIME" }
+            };
+
+
+            string consultaCreacion = $@"CREATE TABLE TempActualizacion (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProductoSKU VARCHAR(36),
+                    {MapeoPropiedades[PropiedadNombre]},
+                    FOREIGN KEY(ProductoSKU) REFERENCES Productos_stock(SKU_Producto));";
+
+            foreach (ProductoSKU_Propiedad_Valor item in lista)
+            {
+                string consulta = $@"INSERT INTO TempActualizacion (
+                    ProductoSKU, {MapeoPropiedades[PropiedadNombre]}) VALUES ( 
+                    @productoSKU, @propiedadValor);";
+                
+            }
+
+            return true;
         }
     }
 
