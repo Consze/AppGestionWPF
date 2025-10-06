@@ -20,6 +20,8 @@ namespace WPFApp1.Repositorios
                 {"ProductoSKU", "producto_vendido" },
                 {"MedioPagoID", "medio_pago"},
                 {"precioVenta", "precio_venta"},
+                {"Cantidad","cantidad" },
+                {"SucursalID","sucursal" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
@@ -33,6 +35,7 @@ namespace WPFApp1.Repositorios
                     vt.medio_pago AS MedioPagoID,
                     vt.precio_venta AS PrecioVenta,
                     vt.Cantidad AS Cantidad,
+                    vt.sucursal AS SucursalID,
                     vt.FechaCreacion AS FechaCreacion,
                     vt.FechaModificacion AS FechaModificacion,
                     vt.EsEliminado AS EsEliminado
@@ -51,6 +54,7 @@ namespace WPFApp1.Repositorios
                         int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
                         int IDXPrecioVenta = lector.GetOrdinal("PrecioVenta");
                         int IDXCantidad = lector.GetOrdinal("Cantidad");
+                        int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -63,6 +67,7 @@ namespace WPFApp1.Repositorios
                             Venta.ProductoSKU = lector.IsDBNull(IDXProductoSKU) ? "" : lector.GetString(IDXProductoSKU);
                             Venta.precioVenta = lector.IsDBNull(IDXPrecioVenta) ? 0 : lector.GetDecimal(IDXPrecioVenta);
                             Venta.Cantidad = lector.IsDBNull(IDXCantidad) ? 0 : lector.GetInt32(IDXCantidad);
+                            Venta.SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID);
                             Venta.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
                             Venta.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
                             Venta.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
@@ -76,8 +81,8 @@ namespace WPFApp1.Repositorios
         public string Insertar(Ventas nuevaVenta)
         {
             string consulta = @"INSERT INTO Ventas_stock (
-                ID, producto_vendido, medio_pago, precio_venta, cantidad, FechaCreacion) VALUES (
-                @id, @productoSKU, @medioPagoID, @precioVenta, @cantidad, @FechaCreacion);";
+                ID, producto_vendido, medio_pago, precio_venta, cantidad, sucursal, FechaCreacion) VALUES (
+                @id, @productoSKU, @medioPagoID, @precioVenta, @cantidad, @sucursalID ,@FechaCreacion);";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -88,6 +93,7 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@medioPagoID", nuevaVenta.MedioPagoID);
                     comando.Parameters.AddWithValue("@precioVenta", nuevaVenta.precioVenta);
                     comando.Parameters.AddWithValue("@cantidad", nuevaVenta.Cantidad);
+                    comando.Parameters.AddWithValue("@sucursalID",nuevaVenta.SucursalID);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
 
@@ -102,6 +108,8 @@ namespace WPFApp1.Repositorios
                     vt.producto_vendido AS ProductoSKU,
                     vt.medio_pago AS MedioPagoID,
                     vt.precio_venta AS PrecioVenta,
+                    vt.cantidad AS Cantidad,
+                    vt.sucursal AS SucursalID,
                     vt.FechaCreacion AS FechaCreacion,
                     vt.FechaModificacion AS FechaModificacion,
                     vt.EsEliminado AS EsEliminado
@@ -118,6 +126,8 @@ namespace WPFApp1.Repositorios
                         int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
                         int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
                         int IDXPrecioVenta = lector.GetOrdinal("PrecioVenta");
+                        int IDXCantidad = lector.GetOrdinal("Cantidad");
+                        int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -130,6 +140,8 @@ namespace WPFApp1.Repositorios
                                 MedioPagoID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
                                 ProductoSKU = lector.IsDBNull(IDXProductoSKU) ? "" : lector.GetString(IDXProductoSKU),
                                 precioVenta = lector.IsDBNull(IDXPrecioVenta) ? 0 : lector.GetDecimal(IDXPrecioVenta),
+                                Cantidad = lector.IsDBNull(IDXCantidad) ? 0 : lector.GetInt32(IDXCantidad),
+                                SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
@@ -149,6 +161,8 @@ namespace WPFApp1.Repositorios
                     vt.producto_vendido AS ProductoSKU,
                     vt.medio_pago AS MedioPagoID,
                     vt.precio_venta AS PrecioVenta,
+                    vt.cantidad AS Cantidad,
+                    vt.sucursal AS SucursalID,
                     vt.FechaCreacion AS FechaCreacion,
                     vt.FechaModificacion AS FechaModificacion,
                     vt.EsEliminado AS EsEliminado
@@ -165,6 +179,8 @@ namespace WPFApp1.Repositorios
                         int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
                         int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
                         int IDXPrecioVenta = lector.GetOrdinal("PrecioVenta");
+                        int IDXCantidad = lector.GetOrdinal("Cantidad");
+                        int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -177,6 +193,8 @@ namespace WPFApp1.Repositorios
                                 MedioPagoID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
                                 ProductoSKU = lector.IsDBNull(IDXProductoSKU) ? "" : lector.GetString(IDXProductoSKU),
                                 precioVenta = lector.IsDBNull(IDXPrecioVenta) ? 0 : lector.GetDecimal(IDXPrecioVenta),
+                                Cantidad = lector.IsDBNull(IDXCantidad) ? 0 : lector.GetInt32(IDXCantidad),
+                                SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
@@ -283,6 +301,8 @@ namespace WPFApp1.Repositorios
                 {"ProductoSKU", "producto_vendido" },
                 {"MedioPagoID", "medio_pago"},
                 {"precioVenta", "precio_venta"},
+                {"Cantidad","cantidad" },
+                {"SucursalID","sucursal" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
@@ -295,11 +315,14 @@ namespace WPFApp1.Repositorios
                     vt.producto_vendido AS ProductoSKU,
                     vt.medio_pago AS MedioPagoID,
                     vt.precio_venta AS PrecioVenta,
+                    vt.Cantidad AS Cantidad,
+                    vt.sucursal AS SucursalID,
                     vt.FechaCreacion AS FechaCreacion,
                     vt.FechaModificacion AS FechaModificacion,
                     vt.EsEliminado AS EsEliminado
                 FROM Ventas_stock AS vt
                 WHERE vt.id = @ID;";
+
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
@@ -311,6 +334,8 @@ namespace WPFApp1.Repositorios
                         int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
                         int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
                         int IDXPrecioVenta = lector.GetOrdinal("PrecioVenta");
+                        int IDXCantidad = lector.GetOrdinal("Cantidad");
+                        int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -322,10 +347,13 @@ namespace WPFApp1.Repositorios
                             Venta.MedioPagoID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID);
                             Venta.ProductoSKU = lector.IsDBNull(IDXProductoSKU) ? "" : lector.GetString(IDXProductoSKU);
                             Venta.precioVenta = lector.IsDBNull(IDXPrecioVenta) ? 0 : lector.GetDecimal(IDXPrecioVenta);
+                            Venta.Cantidad = lector.IsDBNull(IDXCantidad) ? 0 : lector.GetInt32(IDXCantidad);
+                            Venta.SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID);
                             Venta.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
                             Venta.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
                             Venta.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
-                        };
+                        }
+                        ;
 
                         return Venta;
                     }
@@ -335,8 +363,8 @@ namespace WPFApp1.Repositorios
         public string Insertar(Ventas nuevaVenta)
         {
             string consulta = @"INSERT INTO Ventas_stock (
-                ID, producto_vendido, medio_pago, precio_venta, FechaCreacion) VALUES (
-                @id, @productoSKU, @medioPagoID, @precioVenta, @FechaCreacion);";
+                ID, producto_vendido, medio_pago, precio_venta, cantidad, sucursal, FechaCreacion) VALUES (
+                @id, @productoSKU, @medioPagoID, @precioVenta, @cantidad, @sucursalID ,@FechaCreacion);";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -346,6 +374,8 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@productoSKU", nuevaVenta.ProductoSKU);
                     comando.Parameters.AddWithValue("@medioPagoID", nuevaVenta.MedioPagoID);
                     comando.Parameters.AddWithValue("@precioVenta", nuevaVenta.precioVenta);
+                    comando.Parameters.AddWithValue("@cantidad", nuevaVenta.Cantidad);
+                    comando.Parameters.AddWithValue("@sucursalID", nuevaVenta.SucursalID);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
 
@@ -360,6 +390,8 @@ namespace WPFApp1.Repositorios
                     vt.producto_vendido AS ProductoSKU,
                     vt.medio_pago AS MedioPagoID,
                     vt.precio_venta AS PrecioVenta,
+                    vt.cantidad AS Cantidad,
+                    vt.sucursal AS SucursalID,
                     vt.FechaCreacion AS FechaCreacion,
                     vt.FechaModificacion AS FechaModificacion,
                     vt.EsEliminado AS EsEliminado
@@ -376,6 +408,8 @@ namespace WPFApp1.Repositorios
                         int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
                         int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
                         int IDXPrecioVenta = lector.GetOrdinal("PrecioVenta");
+                        int IDXCantidad = lector.GetOrdinal("Cantidad");
+                        int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -388,6 +422,8 @@ namespace WPFApp1.Repositorios
                                 MedioPagoID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
                                 ProductoSKU = lector.IsDBNull(IDXProductoSKU) ? "" : lector.GetString(IDXProductoSKU),
                                 precioVenta = lector.IsDBNull(IDXPrecioVenta) ? 0 : lector.GetDecimal(IDXPrecioVenta),
+                                Cantidad = lector.IsDBNull(IDXCantidad) ? 0 : lector.GetInt32(IDXCantidad),
+                                SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
@@ -407,6 +443,8 @@ namespace WPFApp1.Repositorios
                     vt.producto_vendido AS ProductoSKU,
                     vt.medio_pago AS MedioPagoID,
                     vt.precio_venta AS PrecioVenta,
+                    vt.cantidad AS Cantidad,
+                    vt.sucursal AS SucursalID,
                     vt.FechaCreacion AS FechaCreacion,
                     vt.FechaModificacion AS FechaModificacion,
                     vt.EsEliminado AS EsEliminado
@@ -423,6 +461,8 @@ namespace WPFApp1.Repositorios
                         int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
                         int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
                         int IDXPrecioVenta = lector.GetOrdinal("PrecioVenta");
+                        int IDXCantidad = lector.GetOrdinal("Cantidad");
+                        int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -435,6 +475,8 @@ namespace WPFApp1.Repositorios
                                 MedioPagoID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
                                 ProductoSKU = lector.IsDBNull(IDXProductoSKU) ? "" : lector.GetString(IDXProductoSKU),
                                 precioVenta = lector.IsDBNull(IDXPrecioVenta) ? 0 : lector.GetDecimal(IDXPrecioVenta),
+                                Cantidad = lector.IsDBNull(IDXCantidad) ? 0 : lector.GetInt32(IDXCantidad),
+                                SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
@@ -499,7 +541,7 @@ namespace WPFApp1.Repositorios
                     }
                 }
             }
-            catch (SqliteException ex)
+            catch (SqlException ex)
             {
                 throw;
             }

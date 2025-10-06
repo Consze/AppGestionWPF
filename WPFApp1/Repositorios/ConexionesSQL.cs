@@ -223,6 +223,7 @@ namespace WPFApp1.Repositorios
 
         CREATE TABLE IF NOT EXISTS Ventas_stock (
             ID VARCHAR(36) PRIMARY KEY,
+            sucursal VARCHAR(36),
             producto_vendido VARCHAR(36),
             medio_pago VARCHAR(36),
             precio_venta NUMERIC(18,2),
@@ -231,7 +232,8 @@ namespace WPFApp1.Repositorios
             FechaCreacion DATETIME,
             FechaModificacion DATETIME,
             FOREIGN KEY(producto_vendido) REFERENCES Productos_stock(SKU_Producto),
-            FOREIGN KEY(medio_pago) REFERENCES Medios_pago(ID)
+            FOREIGN KEY(medio_pago) REFERENCES Medios_pago(ID),
+            FOREIGN KEY(sucursal) REFERENCES Sucursales(ID)
         );
 
         CREATE TABLE IF NOT EXISTS Medios_pago (
@@ -245,7 +247,22 @@ namespace WPFApp1.Repositorios
             FOREIGN KEY(cuenta_asociada) REFERENCES Cuentas(id)
         );
 
-        CREATE IF NOT EXISTS TABLE Cuentas (
+        CREATE TABLE IF NOT EXISTS Sucursales (
+            ID VARCHAR(36) PRIMARY KEY,
+            Nombre VARCHAR(255) NOT NULL COLLATE NOCASE,
+            Localidad VARCHAR(100) NOT NULL COLLATE NOCASE,    
+            Calle VARCHAR(255) NOT NULL COLLATE NOCASE,
+            Altura INT NOT NULL,
+            Telefono VARCHAR(50),
+            Latitud NUMERIC(8,6),
+            Longitud NUMERIC(9,6),
+            EsEliminado BOOLEAN DEFAULT 0,
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            UNIQUE (Nombre, Localidad) ON CONFLICT IGNORE
+        );
+
+        CREATE IF NOT EXISTS TABLE Cuentas_contables (
             ID VARCHAR(36) PRIMARY KEY,
             nombre VARCHAR(255) COLLATE NOCASE,
             tipo_cuenta VARCHAR(255) COLLATE NOCASE,

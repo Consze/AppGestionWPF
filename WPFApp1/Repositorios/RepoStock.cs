@@ -532,6 +532,10 @@ namespace WPFApp1.Repositorios
                 throw;
             }
         }
+        public bool ModificacionMasiva()
+        {
+            //TODO: Implementacion 
+        }
     }
 
     /// <summary>

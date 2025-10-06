@@ -89,12 +89,26 @@ namespace WPFApp1.Servicios
         {
             return true;
         }
-        public bool VenderProducto(Ventas nuevaVenta)
+        public bool VenderProductos(List<Ventas> nuevaVenta)
         {
-            //TODO: Bucle de construccion de consulta para hacer una actualizacion individual 
+            if (nuevaVenta.Count == 0)
+                return false;
 
-            ProductoCatalogo productoVendido = productoServicio.RecuperarProductoPorID(nuevaVenta.ProductoSKU);
-            productoVendido.Haber = productoVendido.Haber - nuevaVenta.Cantidad;
+            int numVenta = 0;
+
+            List<string> productosSKU = new List<string>();
+            
+            foreach(Ventas registro in nuevaVenta)
+            {
+                productosSKU.Add(registro.ProductoSKU);
+            }
+
+            string ProductosID = string.Join(", ", Enumerable.Range(0, productosSKU.Count).Select(i => $"@SKU{i}"));
+
+            //ProductoCatalogo productoVendido = productoServicio.RecuperarProductoPorID(nuevaVenta.ProductoSKU);
+            //productoVendido.Haber = productoVendido.Haber - nuevaVenta.Cantidad;
+
+
             return true;
         }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
