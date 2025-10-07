@@ -95,5 +95,27 @@ namespace WPFApp1.Conmutadores
                 return _repoLocal.EliminarProducto(ProductoID, TipoEliminacion.Logica);
             }
         }
+        public bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista)
+        {
+            if (_repoServer._accesoDB.LeerConfiguracionManual())
+            {
+                return _repoServer.ModificacionMasiva(lista);
+            }
+            else
+            {
+                return _repoLocal.ModificacionMasiva(lista);
+            }
+        }
+        public List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs)
+        {
+            if (_repoServer._accesoDB.LeerConfiguracionManual())
+            {
+                return _repoServer.RecuperarLotePorID(SKUs);
+            }
+            else
+            {
+                return _repoLocal.RecuperarLotePorID(SKUs);
+            }
+        }
     }
 }

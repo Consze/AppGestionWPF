@@ -2,8 +2,8 @@
 using System.IO;
 using Microsoft.Data.Sqlite;
 using WPFApp1.DTOS;
-using WPFApp1.Interfaces;
 using WPFApp1.Enums;
+using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
@@ -154,6 +154,131 @@ namespace WPFApp1.Repositorios
                 throw;
             }
             return registro;
+        }
+        public List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs)
+        {
+            string parametros = string.Join(", ", Enumerable.Range(0, SKUs.Count).Select(i => $"@sku{i}"));
+            string Consulta = $@"SELECT 
+                s.SKU_Producto AS ProductoSKU,
+                s.ubicacion_id AS ProductoHaberUbicacionID,
+                s.producto_version_id AS ProductoVersionID,
+                s.haber AS ProductoHaber,
+                s.precio AS ProductoPrecio,
+                s.VisibilidadWeb AS ProductoVisibilidadWeb,
+                s.PrecioPublico AS ProductoPrecioPublico,
+                s.FechaModificacion AS ProductoFechaModificacion,
+                s.FechaCreacion AS ProductoFechaCreacion,
+                s.EsEliminado AS ProductoEsEliminado,
+                v.RutaRelativaImagen AS RutaRelativaImagen,
+                v.EAN AS EAN,
+                v.producto_id AS ProductoID,
+                v.Marca_id AS MarcaID,
+                v.formato_id AS FormatoID,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
+                f.largo AS Largo,
+                f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
+                p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
+                c.nombre AS ProductoCategoria,
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
+            FROM Productos_stock AS s
+            INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+            INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
+            INNER JOIN Productos AS p ON v.producto_id = p.id
+            INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+            INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
+            WHERE s.SKU_Producto IN ({parametros});";
+
+            List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
+            using (SqliteConnection conexion = _accesoDB.ObtenerConexionDB())
+            {
+                using (SqliteCommand comando = new SqliteCommand(Consulta, conexion))
+                {
+                    for (int i = 0; i < SKUs.Count; i++)
+                    {
+                        comando.Parameters.AddWithValue($"@sku{i}", SKUs[i]);
+                    }
+
+                    using (SqliteDataReader lector = comando.ExecuteReader())
+                    {
+                        // Indices
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXPeso = lector.GetOrdinal("Peso");
+                        int IDXHaber = lector.GetOrdinal("ProductoHaber");
+                        int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                        int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                        int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("ProductoFechaModificacion");
+                        int IDXProductoEsEliminado = lector.GetOrdinal("ProductoEsEliminado");
+                        int IDXProductoPrecioPublico = lector.GetOrdinal("ProductoPrecioPublico");
+                        int IDXProductoVisibilidadWeb = lector.GetOrdinal("ProductoVisibilidadWeb");
+                        int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
+
+                        while (lector.Read())
+                        {
+                            ProductoCatalogo registroActual = new ProductoCatalogo
+                            {
+                                ProductoSKU = lector.GetString(IDXProductoSKU),
+
+                                //Numericos
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
+                                Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
+                                Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+
+                                //Cadena
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
+                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
+
+                                //Claves
+                                UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
+                                ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
+
+                                //Datetime
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+
+                                //Booleanos
+                                EsEliminado = lector.IsDBNull(IDXProductoEsEliminado) ? false : lector.GetBoolean(IDXProductoEsEliminado),
+                                PrecioPublico = lector.IsDBNull(IDXProductoPrecioPublico) ? false : lector.GetBoolean(IDXProductoPrecioPublico),
+                                VisibilidadWeb = lector.IsDBNull(IDXProductoVisibilidadWeb) ? false : lector.GetBoolean(IDXProductoVisibilidadWeb)
+                            };
+
+                            listaRegistros.Add(registroActual);
+                        }
+                    }
+                }
+            }
+            return listaRegistros;
         }
         public string CrearProducto(ProductoCatalogo nuevoProducto)
         {
@@ -532,40 +657,81 @@ namespace WPFApp1.Repositorios
                 throw;
             }
         }
-        public bool ModificacionMasiva(string PropiedadNombre, List<ProductoSKU_Propiedad_Valor> lista)
+        public bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista)
         {
-            Dictionary<string, string> MapeoPropiedades;
-            MapeoPropiedades = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                //Propiedad de Clase , Nombre de Columna
-                //{"ProductoSKU", "SKU_Producto" },
-                {"UbicacionID", "ubicacion_id VARCHAR(36)" },
-                {"ProductoVersionID", "producto_version_id VARCHAR(36)" },
-                {"Haber" , "Haber INT" },
-                {"Precio", "Precio NUMERIC (18,2)" },
-                {"EsEliminado", "EsEliminado BOOLEAN" },
-                {"VisibilidadWeb","VisibilidadWeb BOOLEAN" },
-                {"PrecioPublico","PrecioPublico BOOLEAN" },
-                {"FechaModificacion", "FechaModificacion DATETIME"},
-                {"FechaCreacion","FechaCreacion DATETIME" }
-            };
+            if (lista.Count == 0)
+                return false;
 
+            string PropiedadNombre = lista[0].PropiedadNombre;
+            Dictionary<string, (string Nombre, string Definicion, SqliteType TipoDriver)> MapeoPropiedades;
+            MapeoPropiedades = new Dictionary<string, (string, string, SqliteType)>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , nombre de Columna, definicion
+                {"UbicacionID", ("ubicacion_id", "VARCHAR(36)", SqliteType.Text)},
+                {"ProductoVersionID", ("producto_version_id", "VARCHAR(36)", SqliteType.Text)},
+                {"Haber" , ("Haber", "INT", SqliteType.Integer)},
+                {"Precio", ("Precio", "NUMERIC (18,2)", SqliteType.Real)},
+                {"EsEliminado", ("EsEliminado", "BOOLEAN", SqliteType.Integer)},
+                {"VisibilidadWeb", ("VisibilidadWeb", "BOOLEAN", SqliteType.Integer)},
+                {"PrecioPublico", ("PrecioPublico", "BOOLEAN", SqliteType.Integer)},
+                {"ProductoSKU", ("SKU_Producto", "VARCHAR(36)", SqliteType.Text)}
+            };
 
             string consultaCreacion = $@"CREATE TABLE TempActualizacion (
                     ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     ProductoSKU VARCHAR(36),
-                    {MapeoPropiedades[PropiedadNombre]},
+                    NuevoValor {MapeoPropiedades[PropiedadNombre].Definicion},
                     FOREIGN KEY(ProductoSKU) REFERENCES Productos_stock(SKU_Producto));";
 
-            foreach (ProductoSKU_Propiedad_Valor item in lista)
+            
+            using(SqliteConnection conexion = _accesoDB.ObtenerConexionDB())
             {
-                string consulta = $@"INSERT INTO TempActualizacion (
-                    ProductoSKU, {MapeoPropiedades[PropiedadNombre]}) VALUES ( 
-                    @productoSKU, @propiedadValor);";
-                
-            }
+                using (SqliteCommand comandoCreacion = new SqliteCommand(consultaCreacion, conexion))
+                {
+                    comandoCreacion.ExecuteNonQuery();
+                }
 
-            return true;
+                using (var transacccion = conexion.BeginTransaction())
+                {
+                    string consulta = @"INSERT INTO TempActualizacion (ProductoSKU, NuevoValor) VALUES (@productoSKU, @propiedadValor);";
+
+                    using (SqliteCommand comando = new SqliteCommand(consulta, conexion, transacccion))
+                    {
+                        comando.Parameters.Add("@productoSKU", MapeoPropiedades["ProductoSKU"].TipoDriver);
+                        comando.Parameters.Add("@propiedadValor", MapeoPropiedades[PropiedadNombre].TipoDriver);
+
+                        foreach (var item in lista)
+                        {
+                            comando.Parameters["@productoSKU"].Value = item.ProductoSKU;
+                            comando.Parameters["@propiedadValor"].Value = item.Valor ?? DBNull.Value;
+                            comando.ExecuteNonQuery();
+                        }
+                        transacccion.Commit();
+                    }
+                }
+
+                string consultaActualizacion = $@"
+                    UPDATE Productos_stock
+                    SET {MapeoPropiedades[PropiedadNombre].Nombre} = T.NuevoValor,
+                        FechaModificacion = datetime('now')
+                    FROM TempActualizacion AS T
+                    WHERE Productos_stock.SKU_Producto = T.ProductoSKU;";
+                string consultaEliminacion = @"DROP TABLE IF EXISTS TempActualizacion;";
+                int filasAfectadas = 0;
+
+
+                using (SqliteCommand comando = new SqliteCommand(consultaActualizacion, conexion))
+                {
+                    filasAfectadas = comando.ExecuteNonQuery();
+                }
+
+                using(SqliteCommand comando = new SqliteCommand(consultaEliminacion, conexion))
+                {
+                    comando.ExecuteNonQuery();
+                }
+
+                return filasAfectadas > 0;
+            }
         }
     }
 
@@ -715,6 +881,131 @@ namespace WPFApp1.Repositorios
                 throw;
             }
             return registro;
+        }
+        public List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs)
+        {
+            string parametros = string.Join(", ", Enumerable.Range(0, SKUs.Count).Select(i => $"@sku{i}"));
+            string Consulta = $@"SELECT 
+                s.SKU_Producto AS ProductoSKU,
+                s.ubicacion_id AS ProductoHaberUbicacionID,
+                s.producto_version_id AS ProductoVersionID,
+                s.haber AS ProductoHaber,
+                s.precio AS ProductoPrecio,
+                s.VisibilidadWeb AS ProductoVisibilidadWeb,
+                s.PrecioPublico AS ProductoPrecioPublico,
+                s.FechaModificacion AS ProductoFechaModificacion,
+                s.FechaCreacion AS ProductoFechaCreacion,
+                s.EsEliminado AS ProductoEsEliminado,
+                v.RutaRelativaImagen AS RutaRelativaImagen,
+                v.EAN AS EAN,
+                v.producto_id AS ProductoID,
+                v.Marca_id AS MarcaID,
+                v.formato_id AS FormatoID,
+                f.alto AS Alto,
+                f.profundidad AS Profundidad,
+                f.largo AS Largo,
+                f.peso AS Peso,
+                f.descripcion AS FormatoNombre,
+                p.nombre AS ProductoNombre,
+                p.categoria_id AS CategoriaID,
+                c.nombre AS ProductoCategoria,
+                m.nombre AS MarcaNombre,
+                u.descripcion AS UbicacionNombre
+            FROM Productos_stock AS s
+            INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+            INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
+            INNER JOIN Productos AS p ON v.producto_id = p.id
+            INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+            INNER JOIN Marcas AS m ON v.Marca_id = m.id
+            INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
+            WHERE s.SKU_Producto IN ({parametros});";
+
+            List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
+            using (SqlConnection conexion = _accesoDB.ObtenerConexionDB())
+            {
+                using (SqlCommand comando = new SqlCommand(Consulta, conexion))
+                {
+                    for (int i = 0; i < SKUs.Count; i++)
+                    {
+                        comando.Parameters.AddWithValue($"@sku{i}", SKUs[i]);
+                    }
+
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        // Indices
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXPeso = lector.GetOrdinal("Peso");
+                        int IDXHaber = lector.GetOrdinal("ProductoHaber");
+                        int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                        int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                        int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("ProductoFechaModificacion");
+                        int IDXProductoEsEliminado = lector.GetOrdinal("ProductoEsEliminado");
+                        int IDXProductoPrecioPublico = lector.GetOrdinal("ProductoPrecioPublico");
+                        int IDXProductoVisibilidadWeb = lector.GetOrdinal("ProductoVisibilidadWeb");
+                        int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
+
+                        while (lector.Read())
+                        {
+                            ProductoCatalogo registroActual = new ProductoCatalogo
+                            {
+                                ProductoSKU = lector.GetString(IDXProductoSKU),
+
+                                //Numericos
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
+                                Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
+                                Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+
+                                //Cadena
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
+                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
+
+                                //Claves
+                                UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
+                                ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
+
+                                //Datetime
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+
+                                //Booleanos
+                                EsEliminado = lector.IsDBNull(IDXProductoEsEliminado) ? false : lector.GetBoolean(IDXProductoEsEliminado),
+                                PrecioPublico = lector.IsDBNull(IDXProductoPrecioPublico) ? false : lector.GetBoolean(IDXProductoPrecioPublico),
+                                VisibilidadWeb = lector.IsDBNull(IDXProductoVisibilidadWeb) ? false : lector.GetBoolean(IDXProductoVisibilidadWeb)
+                            };
+
+                            listaRegistros.Add(registroActual);
+                        }
+                    }
+                }
+            }
+            return listaRegistros;
         }
         public string CrearProducto(ProductoCatalogo nuevoProducto)
         {
@@ -1092,6 +1383,10 @@ namespace WPFApp1.Repositorios
             {
                 throw;
             }
+        }
+        public bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista)
+        {
+            throw new NotImplementedException("Metodo temporalmente sin implementación para SQL Server");
         }
     }
 }

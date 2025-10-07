@@ -11,5 +11,7 @@ namespace WPFApp1.Interfaces
         List<ProductoCatalogo> LeerProductos();
         bool ModificarProducto(ProductoCatalogo productoModificado);
         bool EliminarProducto(string ProductoID, TipoEliminacion TipoEliminacion);
+        bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista);
+        List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs);
     }
 }

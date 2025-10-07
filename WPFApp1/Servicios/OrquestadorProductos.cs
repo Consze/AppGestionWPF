@@ -2,6 +2,7 @@
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Enums;
+using WPFApp1.Conmutadores;
 
 namespace WPFApp1.Servicios
 {
@@ -89,27 +90,41 @@ namespace WPFApp1.Servicios
         {
             return true;
         }
-        public bool VenderProductos(List<Ventas> nuevaVenta)
+        public bool VenderProductos(List<Ventas> Ventas)
         {
-            if (nuevaVenta.Count == 0)
+            if (Ventas.Count == 0)
                 return false;
 
             int numVenta = 0;
+            List<ProductoSKU_Propiedad_Valor> ProductosVendidos = new List<ProductoSKU_Propiedad_Valor>();
+            List<string> SKUProductosEditar = new List<string>();
 
-            List<string> productosSKU = new List<string>();
-            
-            foreach(Ventas registro in nuevaVenta)
+            foreach(Ventas ventaActual in Ventas)
             {
-                productosSKU.Add(registro.ProductoSKU);
+                SKUProductosEditar.Add(ventaActual.ProductoSKU);
             }
 
-            string ProductosID = string.Join(", ", Enumerable.Range(0, productosSKU.Count).Select(i => $"@SKU{i}"));
+            List<ProductoCatalogo> ListaProductos = productoServicio.RecuperarLotePorID(SKUProductosEditar);
+            if (ListaProductos.Count == 0)
+                return false;
+            Dictionary<string, ProductoCatalogo> ProductosEditar = ListaProductos.ToDictionary(p => p.ProductoSKU);
 
-            //ProductoCatalogo productoVendido = productoServicio.RecuperarProductoPorID(nuevaVenta.ProductoSKU);
-            //productoVendido.Haber = productoVendido.Haber - nuevaVenta.Cantidad;
-
-
-            return true;
+            // Bucle principal
+            foreach(Ventas venta in Ventas)
+            {
+                if(ProductosEditar.TryGetValue(venta.ProductoSKU, out ProductoCatalogo producto))
+                {
+                    ProductoSKU_Propiedad_Valor registro = new ProductoSKU_Propiedad_Valor
+                    {
+                        ProductoSKU = venta.ProductoSKU,
+                        PropiedadNombre = "Haber",
+                        Valor = producto.Haber - venta.Cantidad
+                    };
+                    ProductosVendidos.Add(registro);
+                }
+            }
+            
+            return productoServicio.ModificacionMasiva(ProductosVendidos);
         }
         public bool ModificarProducto(ProductoCatalogo productoModificado)
         {
