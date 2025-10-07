@@ -221,25 +221,25 @@ namespace WPFApp1.Repositorios
             FOREIGN KEY(categoria_id) REFERENCES Productos_categorias(ID)
         );
 
-        CREATE TABLE IF NOT EXISTS Ventas (
+        CREATE TABLE IF NOT EXISTS Facturas (
             ID VARCHAR(36) PRIMARY KEY,
             sucursalID VARCHAR(36),
-            facturaID VARCHAR(36),
             EsEliminado BOOLEAN DEFAULT 0,
             FechaCreacion DATETIME,
             FechaModificacion DATETIME,
-            FOREIGN KEY(facturaID) REFERENCES Facturas_detalles (FacturaID),
             FOREIGN KEY(sucursalID) REFERENCES Sucursales(ID)
         );
 
         CREATE TABLE IF NOT EXISTS Facturas_Detalles (
-            FacturaID VARCHAR(36) PRIMARY KEY,
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            FacturaID VARCHAR(36) NOT NULL,
             productoSKU VARCHAR(36) NOT NULL,
-            precio_venta NUMERIC(18,2),
+            precio_venta NUMERIC(18,2) NOT NULL DEFAULT 0,
             cantidad INT,
             FechaCreacion DATETIME,
             FechaModificacion DATETIME,
             EsEliminado BOOLEAN DEFAULT 0,
+            FOREIGN KEY(FacturaID) REFERENCES Facturas(ID),
             FOREIGN KEY(productoSKU) REFERENCES Productos_Stock(SKU_Producto)
         );
 
@@ -248,7 +248,10 @@ namespace WPFApp1.Repositorios
             FacturaID VARCHAR(36),
             medio_pago VARCHAR(36),
             monto NUMERIC(18,2),
-            FOREIGN KEY(FacturaID) REFERENCES Facturas_detalles(FacturaID),
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            EsEliminado BOOLEAN DEFAULT 0,
+            FOREIGN KEY(FacturaID) REFERENCES Facturas(ID),
             FOREIGN KEY(medio_pago) REFERENCES Medios_pago(ID)
         );
 
