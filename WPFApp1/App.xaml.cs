@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using WPFApp1.Conmutadores;
+using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
@@ -57,6 +58,16 @@ namespace WPFApp1
             services.AddTransient<RepoVentasSQLite>();
             services.AddTransient<RepoVentasSQLServer>();
 
+            //Facturas
+            services.AddTransient<RepoFacturaPagosSQLite>();
+            services.AddTransient<RepoFacturaPagosSQLServer>();
+
+            services.AddTransient<RepoFacturaSQLite>();
+            services.AddTransient<RepoFacturaSQLServer>();
+
+            services.AddTransient<RepoFacturaDetallesSQLite>();
+            services.AddTransient<RepoFacturaDetallesSQLServer>();
+
             // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
             services.AddTransient<IConmutadorEntidadGenerica<Versiones>, VersionesConmutador>();
@@ -65,6 +76,9 @@ namespace WPFApp1
             services.AddTransient<IConmutadorEntidadGenerica<Categorias>, CategoriasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Arquetipos>, ArquetiposConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Ventas>, VentasConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Factura>, FacturasConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Factura_Detalles>, FacturasDetallesConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Factura_pagos>, FacturasPagosConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
@@ -110,7 +124,6 @@ namespace WPFApp1
                 ConfiguracionSQLServer configuracionServer = instanciaConexionSqlServer.LeerArchivoConfiguracion();
                 return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
             });
-
 
             // Registrar ViewModels
             services.AddTransient<MainWindowViewModel>();

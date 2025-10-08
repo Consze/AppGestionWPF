@@ -1,37 +1,37 @@
-﻿using WPFApp1.DTOS;
+﻿using WPFApp1.Entidades;
 using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
 
 namespace WPFApp1.Conmutadores
 {
-    public class VentasConmutador : IConmutadorEntidadGenerica<Ventas>
+    public class FacturasDetallesConmutador : IConmutadorEntidadGenerica<Factura_Detalles>
     {
-        private readonly RepoVentasSQLite repoLocal;
-        private readonly RepoVentasSQLServer repoServer;
-        public VentasConmutador(RepoVentasSQLServer _repoServer, RepoVentasSQLite _repoLocal)
+        private readonly RepoFacturaDetallesSQLite repoLocal;
+        private readonly RepoFacturaDetallesSQLServer repoServer;
+        public FacturasDetallesConmutador(RepoFacturaDetallesSQLServer _repoServer, RepoFacturaDetallesSQLite _repoLocal)
         {
             repoLocal = _repoLocal;
             repoServer = _repoServer;
         }
-        public async IAsyncEnumerable<Ventas> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Factura_Detalles> RecuperarStreamAsync()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                await foreach (var venta in repoServer.RecuperarStreamAsync())
+                await foreach (var FacturaDetalle in repoServer.RecuperarStreamAsync())
                 {
-                    yield return venta;
+                    yield return FacturaDetalle;
                 }
             }
             else
             {
-                await foreach (var venta in repoLocal.RecuperarStreamAsync())
+                await foreach (var FacturaDetalle in repoLocal.RecuperarStreamAsync())
                 {
-                    yield return venta;
+                    yield return FacturaDetalle;
                 }
             }
         }
-        public List<Ventas> RecuperarList()
+        public List<Factura_Detalles> RecuperarList()
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
@@ -53,39 +53,39 @@ namespace WPFApp1.Conmutadores
                 return repoLocal.Eliminar(ID, Caso);
             }
         }
-        public bool Modificar(Ventas ventaModificada)
+        public bool Modificar(Factura_Detalles marcaModificada)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
-                return repoServer.Modificar(ventaModificada);
+                return repoServer.Modificar(marcaModificada);
             }
             else
             {
-                return repoLocal.Modificar(ventaModificada);
+                return repoLocal.Modificar(marcaModificada);
             }
         }
-        public string Insertar(Ventas nuevaVenta)
+        public string Insertar(Factura_Detalles nuevoDetalleFactura)
         {
             Guid id = Guid.NewGuid();
-            nuevaVenta.ID = id.ToString();
+            nuevoDetalleFactura.ID = id.ToString();
 
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {
                 try
                 {
-                    return repoServer.Insertar(nuevaVenta);
+                    return repoServer.Insertar(nuevoDetalleFactura);
                 }
                 catch (Exception)
                 {
-                    return repoLocal.Insertar(nuevaVenta);
+                    return repoLocal.Insertar(nuevoDetalleFactura);
                 }
             }
             else
             {
-                return repoLocal.Insertar(nuevaVenta);
+                return repoLocal.Insertar(nuevoDetalleFactura);
             }
         }
-        public Ventas Recuperar(string ID)
+        public Factura_Detalles Recuperar(string ID)
         {
             if (repoServer.accesoDB.LeerConfiguracionManual())
             {

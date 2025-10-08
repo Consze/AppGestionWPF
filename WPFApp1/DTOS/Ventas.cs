@@ -1,4 +1,6 @@
-﻿namespace WPFApp1.Entidades
+﻿using WPFApp1.Entidades;
+
+namespace WPFApp1.DTOS
 {
     public class Ventas : EntidadBase
     {

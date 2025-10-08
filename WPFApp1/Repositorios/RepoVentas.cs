@@ -3,6 +3,7 @@ using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Enums;
 using System.Data.SqlClient;
+using WPFApp1.DTOS;
 
 namespace WPFApp1.Repositorios
 {

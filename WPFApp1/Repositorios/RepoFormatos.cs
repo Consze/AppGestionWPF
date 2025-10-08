@@ -219,7 +219,7 @@ namespace WPFApp1.Repositorios
                 "FechaModificacion",
                 "EsEliminado"
             };
-            var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
+            var propiedadesEntidad = typeof(Formatos).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
 
             try
@@ -544,7 +544,7 @@ namespace WPFApp1.Repositorios
                 "FechaModificacion",
                 "EsEliminado"
             };
-            var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
+            var propiedadesEntidad = typeof(Formatos).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
 
             try
