@@ -58,6 +58,9 @@ namespace WPFApp1
             services.AddTransient<RepoVentasSQLite>();
             services.AddTransient<RepoVentasSQLServer>();
 
+            services.AddTransient<RepoSucursalesSQLite>();
+            services.AddTransient<RepoSucursalesSQLServer>();
+
             //Facturas
             services.AddTransient<RepoFacturaPagosSQLite>();
             services.AddTransient<RepoFacturaPagosSQLServer>();
@@ -79,6 +82,7 @@ namespace WPFApp1
             services.AddTransient<IConmutadorEntidadGenerica<Factura>, FacturasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Factura_Detalles>, FacturasDetallesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Factura_pagos>, FacturasPagosConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Sucursal>, SucursalesConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
