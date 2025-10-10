@@ -96,6 +96,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _TogglePanelSecundario;
+        public bool TogglePanelSecundario
+        {
+            get { return _TogglePanelSecundario; }
+            set
+            {
+                if (_TogglePanelSecundario != value)
+                {
+                    _TogglePanelSecundario = value;
+                    OnPropertyChanged(nameof(TogglePanelSecundario));
+                }
+            }
+        }
         private string _iconoTogglePanel;
         public string iconoTogglePanel
         {
@@ -132,6 +145,7 @@ namespace WPFApp1.ViewModels
             _iconoTogglePanel = "/iconos/layout2.png";
             _toggleMostrarPanel = true;
             _panelNotificacionesColumnas = 1;
+            _TogglePanelSecundario = true;
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();
