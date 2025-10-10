@@ -70,7 +70,7 @@ namespace WPFApp1.Repositorios
                         {
                             sucursal.ID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID);
                             sucursal.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            sucursal.Localidad = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXLocalidad);
+                            sucursal.Localidad = lector.IsDBNull(IDXLocalidad) ? "" : lector.GetString(IDXLocalidad);
                             sucursal.Calle = lector.IsDBNull(IDXCalle) ? "" : lector.GetString(IDXCalle);
                             sucursal.alturaCalle = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura);
                             sucursal.Telefono = lector.IsDBNull(IDXTelefono) ? "" : lector.GetString(IDXTelefono);
@@ -170,7 +170,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Localidad = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXLocalidad),
+                                Localidad = lector.IsDBNull(IDXLocalidad) ? "" : lector.GetString(IDXLocalidad),
                                 Calle = lector.IsDBNull(IDXCalle) ? "" : lector.GetString(IDXCalle),
                                 alturaCalle = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
                                 Telefono = lector.IsDBNull(IDXTelefono) ? "" : lector.GetString(IDXTelefono),
@@ -229,7 +229,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Localidad = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXLocalidad),
+                                Localidad = lector.IsDBNull(IDXLocalidad) ? "" : lector.GetString(IDXLocalidad),
                                 Calle = lector.IsDBNull(IDXCalle) ? "" : lector.GetString(IDXCalle),
                                 alturaCalle = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
                                 Telefono = lector.IsDBNull(IDXTelefono) ? "" : lector.GetString(IDXTelefono),
@@ -390,7 +390,7 @@ namespace WPFApp1.Repositorios
                         {
                             sucursal.ID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID);
                             sucursal.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            sucursal.Localidad = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXLocalidad);
+                            sucursal.Localidad = lector.IsDBNull(IDXLocalidad) ? "" : lector.GetString(IDXLocalidad);
                             sucursal.Calle = lector.IsDBNull(IDXCalle) ? "" : lector.GetString(IDXCalle);
                             sucursal.alturaCalle = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura);
                             sucursal.Telefono = lector.IsDBNull(IDXTelefono) ? "" : lector.GetString(IDXTelefono);
@@ -490,7 +490,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Localidad = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXLocalidad),
+                                Localidad = lector.IsDBNull(IDXLocalidad) ? "" : lector.GetString(IDXLocalidad),
                                 Calle = lector.IsDBNull(IDXCalle) ? "" : lector.GetString(IDXCalle),
                                 alturaCalle = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
                                 Telefono = lector.IsDBNull(IDXTelefono) ? "" : lector.GetString(IDXTelefono),
@@ -549,7 +549,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                Localidad = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXLocalidad),
+                                Localidad = lector.IsDBNull(IDXLocalidad) ? "" : lector.GetString(IDXLocalidad),
                                 Calle = lector.IsDBNull(IDXCalle) ? "" : lector.GetString(IDXCalle),
                                 alturaCalle = lector.IsDBNull(IDXAltura) ? 0 : lector.GetInt32(IDXAltura),
                                 Telefono = lector.IsDBNull(IDXTelefono) ? "" : lector.GetString(IDXTelefono),

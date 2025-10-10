@@ -61,6 +61,12 @@ namespace WPFApp1
             services.AddTransient<RepoSucursalesSQLite>();
             services.AddTransient<RepoSucursalesSQLServer>();
 
+            services.AddTransient<RepoMediosPagoSQLite>();
+            services.AddTransient<RepoMediosPagoSQLServer>();
+
+            services.AddTransient<RepoCuentasContablesSQLite>();
+            services.AddTransient<RepoCuentasContablesSQLServer>();
+
             //Facturas
             services.AddTransient<RepoFacturaPagosSQLite>();
             services.AddTransient<RepoFacturaPagosSQLServer>();
@@ -83,6 +89,8 @@ namespace WPFApp1
             services.AddTransient<IConmutadorEntidadGenerica<Factura_Detalles>, FacturasDetallesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Factura_pagos>, FacturasPagosConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Sucursal>, SucursalesConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Medios_Pago>, MediosPagoConmutador>();
+            services.AddTransient<IConmutadorEntidadGenerica<Cuentas_Contables>, CuentasContablesConmutador>();
 
             services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
             {
@@ -130,6 +138,7 @@ namespace WPFApp1
             });
 
             // Registrar ViewModels
+            services.AddTransient<ServicioVentas>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<ConfigurarSQLServerViewModel>();

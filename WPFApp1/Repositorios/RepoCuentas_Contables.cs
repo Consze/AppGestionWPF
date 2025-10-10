@@ -6,11 +6,11 @@ using WPFApp1.Enums;
 
 namespace WPFApp1.Repositorios
 {
-    public class RepoMediosPagoSQLite : IRepoEntidadGenerica<Medios_Pago>
+    public class RepoCuentasContablesSQLite : IRepoEntidadGenerica<Cuentas_Contables>
     {
         public readonly ConexionDBSQLite accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
-        public RepoMediosPagoSQLite(ConexionDBSQLite _accesoDB)
+        public RepoCuentasContablesSQLite(ConexionDBSQLite _accesoDB)
         {
             accesoDB = _accesoDB;
             MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -18,23 +18,23 @@ namespace WPFApp1.Repositorios
                 //Propiedad de Clase , Nombre de Columna
                 {"ID", "ID" },
                 {"Nombre", "Nombre" },
-                {"CuentaAsociadaID", "cuenta_asociada" },
+                {"TipoCuenta", "tipo_cuenta" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public Medios_Pago Recuperar(string ID)
+        public Cuentas_Contables Recuperar(string ID)
         {
             string consulta = @"SELECT 
-                    mp.id AS MedioPagoID,
-                    mp.Nombre AS Nombre,
-                    mp.cuenta_asociada AS CuentaContableID,
-                    mp.FechaCreacion AS FechaCreacion,
-                    mp.FechaModificacion AS FechaModificacion,
-                    mp.EsEliminado AS EsEliminado
-                FROM Medios_pago AS mp
-                WHERE mp.id = @ID;";
+                    cc.id AS CuentaID,
+                    cc.Nombre AS Nombre,
+                    cc.tipo_cuenta AS TipoCuenta,
+                    cc.FechaCreacion AS FechaCreacion,
+                    cc.FechaModificacion AS FechaModificacion,
+                    cc.EsEliminado AS EsEliminado
+                FROM Cuentas_contables AS cc
+                WHERE cc.id = @ID;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -43,66 +43,67 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@id", ID);
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
+                        int IDXCuentaID = lector.GetOrdinal("CuentaID");
                         int IDXNombre = lector.GetOrdinal("Nombre");
-                        int IDXCuentaAsociadaID = lector.GetOrdinal("CuentaContableID");
+                        int IDXTipoCuenta = lector.GetOrdinal("TipoCuenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        Medios_Pago medioPago = new Medios_Pago();
+                        Cuentas_Contables cuentaContable = new Cuentas_Contables();
 
                         if (lector.Read())
                         {
-                            medioPago.ID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID);
-                            medioPago.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            medioPago.CuentaAsociadaID = lector.IsDBNull(IDXCuentaAsociadaID) ? "" : lector.GetString(IDXCuentaAsociadaID);
-                            medioPago.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
-                            medioPago.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
-                            medioPago.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
-                        };
+                            cuentaContable.ID = lector.IsDBNull(IDXCuentaID) ? "" : lector.GetString(IDXCuentaID);
+                            cuentaContable.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
+                            cuentaContable.TipoCuenta = lector.IsDBNull(IDXTipoCuenta) ? "" : lector.GetString(IDXTipoCuenta);
+                            cuentaContable.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
+                            cuentaContable.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
+                            cuentaContable.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
+                        }
+                        ;
 
-                        return medioPago;
+                        return cuentaContable;
                     }
                 }
             }
         }
-        public string Insertar(Medios_Pago nuevoMedioPago)
+        public string Insertar(Cuentas_Contables nuevaSucursal)
         {
-            string consulta = @"INSERT INTO Medios_pago (
+            string consulta = @"INSERT INTO Sucursales (
                 ID,
                 Nombre,
-                cuenta_asociada,
+                tipo_cuenta,
                 FechaCreacion)
             VALUES (
-                @MedioPagoID,
+                @CuentaID,
                 @Nombre,
-                @CuentaAsociadaID,
+                @tipoCuenta,
                 @FechaCreacion);";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
-                    comando.Parameters.AddWithValue("@MedioPagoID", nuevoMedioPago.ID);
-                    comando.Parameters.AddWithValue("@Nombre", nuevoMedioPago.Nombre);
-                    comando.Parameters.AddWithValue("@CuentaAsociadaID", nuevoMedioPago.CuentaAsociadaID);
+                    comando.Parameters.AddWithValue("@CuentaID", nuevaSucursal.ID);
+                    comando.Parameters.AddWithValue("@Nombre", nuevaSucursal.Nombre);
+                    comando.Parameters.AddWithValue("@tipoCuenta", nuevaSucursal.TipoCuenta);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
-                    return nuevoMedioPago.ID;
+                    return nuevaSucursal.ID;
                 }
             }
         }
-        public async IAsyncEnumerable<Medios_Pago> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Cuentas_Contables> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
-                    mp.id AS MedioPagoID,
-                    mp.Nombre AS Nombre,
-                    mp.cuenta_asociada AS CuentaContableID,
-                    mp.FechaCreacion AS FechaCreacion,
-                    mp.FechaModificacion AS FechaModificacion,
-                    mp.EsEliminado AS EsEliminado
-                FROM Medios_pago AS mp
-                WHERE mp.EsEliminado = 0;";
+                    cc.id AS CuentaID,
+                    cc.Nombre AS Nombre,
+                    cc.tipo_cuenta AS TipoCuenta,
+                    cc.FechaCreacion AS FechaCreacion,
+                    cc.FechaModificacion AS FechaModificacion,
+                    cc.EsEliminado AS EsEliminado
+                FROM Cuentas_contables AS cc
+                WHERE cc.EsEliminado = 0;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -111,43 +112,43 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqliteDataReader lector = await comando.ExecuteReaderAsync())
                     {
-                        int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
+                        int IDXCuentaID = lector.GetOrdinal("CuentaID");
                         int IDXNombre = lector.GetOrdinal("Nombre");
-                        int IDXCuentaAsociadaID = lector.GetOrdinal("CuentaContableID");
+                        int IDXTipoCuenta = lector.GetOrdinal("TipoCuenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (await lector.ReadAsync())
                         {
-                            Medios_Pago medioPago = new Medios_Pago
+                            Cuentas_Contables cuentaContable = new Cuentas_Contables
                             {
-                                ID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
+                                ID = lector.IsDBNull(IDXCuentaID) ? "" : lector.GetString(IDXCuentaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                CuentaAsociadaID = lector.IsDBNull(IDXCuentaAsociadaID) ? "" : lector.GetString(IDXCuentaAsociadaID),
+                                TipoCuenta = lector.IsDBNull(IDXTipoCuenta) ? "" : lector.GetString(IDXTipoCuenta),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
                             };
 
-                            yield return medioPago;
+                            yield return cuentaContable;
                         }
                     }
                 }
             }
         }
-        public List<Medios_Pago> RecuperarList()
+        public List<Cuentas_Contables> RecuperarList()
         {
-            List<Medios_Pago> ListaMediosPago = new List<Medios_Pago>();
+            List<Cuentas_Contables> ListaCuentasContables = new List<Cuentas_Contables>();
             string consulta = @"SELECT 
-                    mp.id AS MedioPagoID,
-                    mp.Nombre AS Nombre,
-                    mp.cuenta_asociada AS CuentaContableID,
-                    mp.FechaCreacion AS FechaCreacion,
-                    mp.FechaModificacion AS FechaModificacion,
-                    mp.EsEliminado AS EsEliminado
-                FROM Medios_pago AS mp
-                WHERE mp.EsEliminado = 0;";
+                    cc.id AS CuentaID,
+                    cc.Nombre AS Nombre,
+                    cc.tipo_cuenta AS TipoCuenta,
+                    cc.FechaCreacion AS FechaCreacion,
+                    cc.FechaModificacion AS FechaModificacion,
+                    cc.EsEliminado AS EsEliminado
+                FROM Cuentas_contables AS cc
+                WHERE cc.EsEliminado = 0;";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -155,28 +156,28 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
+                        int IDXCuentaID = lector.GetOrdinal("CuentaID");
                         int IDXNombre = lector.GetOrdinal("Nombre");
-                        int IDXCuentaAsociadaID = lector.GetOrdinal("CuentaContableID");
+                        int IDXTipoCuenta = lector.GetOrdinal("TipoCuenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (lector.Read())
                         {
-                            Medios_Pago medioPago = new Medios_Pago
+                            Cuentas_Contables cuentaContable = new Cuentas_Contables
                             {
-                                ID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
+                                ID = lector.IsDBNull(IDXCuentaID) ? "" : lector.GetString(IDXCuentaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                CuentaAsociadaID = lector.IsDBNull(IDXCuentaAsociadaID) ? "" : lector.GetString(IDXCuentaAsociadaID),
+                                TipoCuenta = lector.IsDBNull(IDXTipoCuenta) ? "" : lector.GetString(IDXTipoCuenta),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
                             };
-                            ListaMediosPago.Add(medioPago);
+                            ListaCuentasContables.Add(cuentaContable);
                         }
 
-                        return ListaMediosPago;
+                        return ListaCuentasContables;
                     }
                 }
             }
@@ -186,11 +187,11 @@ namespace WPFApp1.Repositorios
             string consulta = "";
             if (Caso == TipoEliminacion.Logica)
             {
-                consulta = "UPDATE Medios_pago SET EsEliminado = TRUE WHERE ID = @id;";
+                consulta = "UPDATE Cuentas_contables SET EsEliminado = TRUE WHERE ID = @id;";
             }
             else
             {
-                consulta = "DELETE FROM Medios_pago WHERE ID = @id;";
+                consulta = "DELETE FROM Cuentas_contables WHERE ID = @id;";
             }
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
@@ -203,10 +204,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(Medios_Pago medioPagoModificado)
+        public bool Modificar(Cuentas_Contables cuentaContableModificada)
         {
-            Medios_Pago registroActual = Recuperar(medioPagoModificado.ID);
-            var propiedadesEntidad = typeof(Medios_Pago).GetProperties();
+            Cuentas_Contables registroActual = Recuperar(cuentaContableModificada.ID);
+            var propiedadesEntidad = typeof(Cuentas_Contables).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -230,13 +231,13 @@ namespace WPFApp1.Repositorios
                                 continue;
 
                             var valorActual = propiedad.GetValue(registroActual);
-                            var valorModificado = propiedad.GetValue(medioPagoModificado);
+                            var valorModificado = propiedad.GetValue(cuentaContableModificada);
                             if (!object.Equals(valorActual, valorModificado))
                             {
                                 string nombreColumna = MapeoColumnas[propiedad.Name];
                                 string nombreParametro = propiedad.Name;
                                 listaPropiedadesModificadas.Add($"{nombreColumna} = @{nombreParametro}");
-                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(medioPagoModificado) ?? DBNull.Value);
+                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(cuentaContableModificada) ?? DBNull.Value);
                             }
                         }
 
@@ -244,9 +245,9 @@ namespace WPFApp1.Repositorios
                             return false;
 
                         listaPropiedadesModificadas.Add("FechaModificacion = @FechaActual");
-                        string Consulta = $"UPDATE Medios_pago SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
+                        string Consulta = $"UPDATE Cuentas_contables SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
                         comando.Parameters.AddWithValue("@FechaActual", DateTime.Now);
-                        comando.Parameters.AddWithValue("@IDModificar", medioPagoModificado.ID);
+                        comando.Parameters.AddWithValue("@IDModificar", cuentaContableModificada.ID);
                         comando.CommandText = Consulta;
 
                         int filasAfectadas = comando.ExecuteNonQuery();
@@ -260,11 +261,11 @@ namespace WPFApp1.Repositorios
             }
         }
     }
-    public class RepoMediosPagoSQLServer : IRepoEntidadGenerica<Medios_Pago>
+    public class RepoCuentasContablesSQLServer : IRepoEntidadGenerica<Cuentas_Contables>
     {
         public readonly ConexionDBSQLServer accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
-        public RepoMediosPagoSQLServer(ConexionDBSQLServer _accesoDB)
+        public RepoCuentasContablesSQLServer(ConexionDBSQLServer _accesoDB)
         {
             accesoDB = _accesoDB;
             MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -272,23 +273,23 @@ namespace WPFApp1.Repositorios
                 //Propiedad de Clase , Nombre de Columna
                 {"ID", "ID" },
                 {"Nombre", "Nombre" },
-                {"CuentaAsociadaID", "cuenta_asociada" },
+                {"TipoCuenta", "tipo_cuenta" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
             };
         }
-        public Medios_Pago Recuperar(string ID)
+        public Cuentas_Contables Recuperar(string ID)
         {
             string consulta = @"SELECT 
-                    mp.id AS MedioPagoID,
-                    mp.Nombre AS Nombre,
-                    mp.cuenta_asociada AS CuentaContableID,
-                    mp.FechaCreacion AS FechaCreacion,
-                    mp.FechaModificacion AS FechaModificacion,
-                    mp.EsEliminado AS EsEliminado
-                FROM Medios_pago AS mp
-                WHERE mp.id = @ID;";
+                    cc.id AS CuentaID,
+                    cc.Nombre AS Nombre,
+                    cc.tipo_cuenta AS TipoCuenta,
+                    cc.FechaCreacion AS FechaCreacion,
+                    cc.FechaModificacion AS FechaModificacion,
+                    cc.EsEliminado AS EsEliminado
+                FROM Cuentas_contables AS cc
+                WHERE cc.id = @ID;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -297,67 +298,67 @@ namespace WPFApp1.Repositorios
                     comando.Parameters.AddWithValue("@id", ID);
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
+                        int IDXCuentaID = lector.GetOrdinal("CuentaID");
                         int IDXNombre = lector.GetOrdinal("Nombre");
-                        int IDXCuentaAsociadaID = lector.GetOrdinal("CuentaContableID");
+                        int IDXTipoCuenta = lector.GetOrdinal("TipoCuenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
-                        Medios_Pago medioPago = new Medios_Pago();
+                        Cuentas_Contables cuentaContable = new Cuentas_Contables();
 
                         if (lector.Read())
                         {
-                            medioPago.ID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID);
-                            medioPago.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
-                            medioPago.CuentaAsociadaID = lector.IsDBNull(IDXCuentaAsociadaID) ? "" : lector.GetString(IDXCuentaAsociadaID);
-                            medioPago.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
-                            medioPago.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
-                            medioPago.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
+                            cuentaContable.ID = lector.IsDBNull(IDXCuentaID) ? "" : lector.GetString(IDXCuentaID);
+                            cuentaContable.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
+                            cuentaContable.TipoCuenta = lector.IsDBNull(IDXTipoCuenta) ? "" : lector.GetString(IDXTipoCuenta);
+                            cuentaContable.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
+                            cuentaContable.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
+                            cuentaContable.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
                         }
                         ;
 
-                        return medioPago;
+                        return cuentaContable;
                     }
                 }
             }
         }
-        public string Insertar(Medios_Pago nuevoMedioPago)
+        public string Insertar(Cuentas_Contables nuevaSucursal)
         {
-            string consulta = @"INSERT INTO Medios_pago (
+            string consulta = @"INSERT INTO Sucursales (
                 ID,
                 Nombre,
-                cuenta_asociada,
+                tipo_cuenta,
                 FechaCreacion)
             VALUES (
-                @MedioPagoID,
+                @CuentaID,
                 @Nombre,
-                @CuentaAsociadaID,
+                @tipoCuenta,
                 @FechaCreacion);";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    comando.Parameters.AddWithValue("@MedioPagoID", nuevoMedioPago.ID);
-                    comando.Parameters.AddWithValue("@Nombre", nuevoMedioPago.Nombre);
-                    comando.Parameters.AddWithValue("@CuentaAsociadaID", nuevoMedioPago.CuentaAsociadaID);
+                    comando.Parameters.AddWithValue("@CuentaID", nuevaSucursal.ID);
+                    comando.Parameters.AddWithValue("@Nombre", nuevaSucursal.Nombre);
+                    comando.Parameters.AddWithValue("@tipoCuenta", nuevaSucursal.TipoCuenta);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
-                    return nuevoMedioPago.ID;
+                    return nuevaSucursal.ID;
                 }
             }
         }
-        public async IAsyncEnumerable<Medios_Pago> RecuperarStreamAsync()
+        public async IAsyncEnumerable<Cuentas_Contables> RecuperarStreamAsync()
         {
             string consulta = @"SELECT 
-                    mp.id AS MedioPagoID,
-                    mp.Nombre AS Nombre,
-                    mp.cuenta_asociada AS CuentaContableID,
-                    mp.FechaCreacion AS FechaCreacion,
-                    mp.FechaModificacion AS FechaModificacion,
-                    mp.EsEliminado AS EsEliminado
-                FROM Medios_pago AS mp
-                WHERE mp.EsEliminado = 0;";
+                    cc.id AS CuentaID,
+                    cc.Nombre AS Nombre,
+                    cc.tipo_cuenta AS TipoCuenta,
+                    cc.FechaCreacion AS FechaCreacion,
+                    cc.FechaModificacion AS FechaModificacion,
+                    cc.EsEliminado AS EsEliminado
+                FROM Cuentas_contables AS cc
+                WHERE cc.EsEliminado = 0;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -366,43 +367,43 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqlDataReader lector = await comando.ExecuteReaderAsync())
                     {
-                        int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
+                        int IDXCuentaID = lector.GetOrdinal("CuentaID");
                         int IDXNombre = lector.GetOrdinal("Nombre");
-                        int IDXCuentaAsociadaID = lector.GetOrdinal("CuentaContableID");
+                        int IDXTipoCuenta = lector.GetOrdinal("TipoCuenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (await lector.ReadAsync())
                         {
-                            Medios_Pago medioPago = new Medios_Pago
+                            Cuentas_Contables cuentaContable = new Cuentas_Contables
                             {
-                                ID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
+                                ID = lector.IsDBNull(IDXCuentaID) ? "" : lector.GetString(IDXCuentaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                CuentaAsociadaID = lector.IsDBNull(IDXCuentaAsociadaID) ? "" : lector.GetString(IDXCuentaAsociadaID),
+                                TipoCuenta = lector.IsDBNull(IDXTipoCuenta) ? "" : lector.GetString(IDXTipoCuenta),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
                             };
 
-                            yield return medioPago;
+                            yield return cuentaContable;
                         }
                     }
                 }
             }
         }
-        public List<Medios_Pago> RecuperarList()
+        public List<Cuentas_Contables> RecuperarList()
         {
-            List<Medios_Pago> ListaMediosPago = new List<Medios_Pago>();
+            List<Cuentas_Contables> ListaCuentasContables = new List<Cuentas_Contables>();
             string consulta = @"SELECT 
-                    mp.id AS MedioPagoID,
-                    mp.Nombre AS Nombre,
-                    mp.cuenta_asociada AS CuentaContableID,
-                    mp.FechaCreacion AS FechaCreacion,
-                    mp.FechaModificacion AS FechaModificacion,
-                    mp.EsEliminado AS EsEliminado
-                FROM Medios_pago AS mp
-                WHERE mp.EsEliminado = 0;";
+                    cc.id AS CuentaID,
+                    cc.Nombre AS Nombre,
+                    cc.tipo_cuenta AS TipoCuenta,
+                    cc.FechaCreacion AS FechaCreacion,
+                    cc.FechaModificacion AS FechaModificacion,
+                    cc.EsEliminado AS EsEliminado
+                FROM Cuentas_contables AS cc
+                WHERE cc.EsEliminado = 0;";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
@@ -410,28 +411,28 @@ namespace WPFApp1.Repositorios
                 {
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
-                        int IDXMedioPagoID = lector.GetOrdinal("MedioPagoID");
+                        int IDXCuentaID = lector.GetOrdinal("CuentaID");
                         int IDXNombre = lector.GetOrdinal("Nombre");
-                        int IDXCuentaAsociadaID = lector.GetOrdinal("CuentaContableID");
+                        int IDXTipoCuenta = lector.GetOrdinal("TipoCuenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
 
                         while (lector.Read())
                         {
-                            Medios_Pago medioPago = new Medios_Pago
+                            Cuentas_Contables cuentaContable = new Cuentas_Contables
                             {
-                                ID = lector.IsDBNull(IDXMedioPagoID) ? "" : lector.GetString(IDXMedioPagoID),
+                                ID = lector.IsDBNull(IDXCuentaID) ? "" : lector.GetString(IDXCuentaID),
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
-                                CuentaAsociadaID = lector.IsDBNull(IDXCuentaAsociadaID) ? "" : lector.GetString(IDXCuentaAsociadaID),
+                                TipoCuenta = lector.IsDBNull(IDXTipoCuenta) ? "" : lector.GetString(IDXTipoCuenta),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion)
                             };
-                            ListaMediosPago.Add(medioPago);
+                            ListaCuentasContables.Add(cuentaContable);
                         }
 
-                        return ListaMediosPago;
+                        return ListaCuentasContables;
                     }
                 }
             }
@@ -441,11 +442,11 @@ namespace WPFApp1.Repositorios
             string consulta = "";
             if (Caso == TipoEliminacion.Logica)
             {
-                consulta = "UPDATE Medios_pago SET EsEliminado = TRUE WHERE ID = @id;";
+                consulta = "UPDATE Cuentas_contables SET EsEliminado = TRUE WHERE ID = @id;";
             }
             else
             {
-                consulta = "DELETE FROM Medios_pago WHERE ID = @id;";
+                consulta = "DELETE FROM Cuentas_contables WHERE ID = @id;";
             }
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
@@ -458,10 +459,10 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        public bool Modificar(Medios_Pago medioPagoModificado)
+        public bool Modificar(Cuentas_Contables cuentaContableModificada)
         {
-            Medios_Pago registroActual = Recuperar(medioPagoModificado.ID);
-            var propiedadesEntidad = typeof(Medios_Pago).GetProperties();
+            Cuentas_Contables registroActual = Recuperar(cuentaContableModificada.ID);
+            var propiedadesEntidad = typeof(Cuentas_Contables).GetProperties();
             var listaPropiedadesModificadas = new List<string>();
             var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -485,13 +486,13 @@ namespace WPFApp1.Repositorios
                                 continue;
 
                             var valorActual = propiedad.GetValue(registroActual);
-                            var valorModificado = propiedad.GetValue(medioPagoModificado);
+                            var valorModificado = propiedad.GetValue(cuentaContableModificada);
                             if (!object.Equals(valorActual, valorModificado))
                             {
                                 string nombreColumna = MapeoColumnas[propiedad.Name];
                                 string nombreParametro = propiedad.Name;
                                 listaPropiedadesModificadas.Add($"{nombreColumna} = @{nombreParametro}");
-                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(medioPagoModificado) ?? DBNull.Value);
+                                comando.Parameters.AddWithValue($"@{nombreParametro}", propiedad.GetValue(cuentaContableModificada) ?? DBNull.Value);
                             }
                         }
 
@@ -499,9 +500,9 @@ namespace WPFApp1.Repositorios
                             return false;
 
                         listaPropiedadesModificadas.Add("FechaModificacion = @FechaActual");
-                        string Consulta = $"UPDATE Medios_pago SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
+                        string Consulta = $"UPDATE Cuentas_contables SET {string.Join(", ", listaPropiedadesModificadas)} WHERE ID = @IDModificar;";
                         comando.Parameters.AddWithValue("@FechaActual", DateTime.Now);
-                        comando.Parameters.AddWithValue("@IDModificar", medioPagoModificado.ID);
+                        comando.Parameters.AddWithValue("@IDModificar", cuentaContableModificada.ID);
                         comando.CommandText = Consulta;
 
                         int filasAfectadas = comando.ExecuteNonQuery();
@@ -509,7 +510,7 @@ namespace WPFApp1.Repositorios
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (SqliteException ex)
             {
                 throw;
             }

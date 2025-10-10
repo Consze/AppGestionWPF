@@ -29,16 +29,13 @@ namespace WPFApp1.Servicios
         private readonly IConmutadorEntidadGenerica<Ubicaciones> ubicacionesServicio;
         private readonly IConmutadorEntidadGenerica<Categorias> categoriasServicio;
         private readonly IConmutadorEntidadGenerica<Marcas> marcasServicio;
-        private readonly IConmutadorEntidadGenerica<Factura> facturaServicio;
-        private readonly IConmutadorEntidadGenerica<Factura_Detalles> facturaDetalleServicio;
-        private readonly IConmutadorEntidadGenerica<Factura_pagos> facturaPagosServicio;
+        private readonly ServicioVentas servicioVentas;
 
         public OrquestadorProductos(IProductosServicio _servicioProductos, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
             IConmutadorEntidadGenerica<Versiones> _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion, 
             IConmutadorEntidadGenerica<Arquetipos> _servicioArquetipo, IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones,
             IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas,
-            IConmutadorEntidadGenerica<Factura> _servicioFacturas, IConmutadorEntidadGenerica<Factura_Detalles> _servicioFacturaDetalles,
-            IConmutadorEntidadGenerica<Factura_pagos> _servicioFacturaPagos)
+            ServicioVentas _servicioVentas)
         {
             productoServicio = _servicioProductos;
             indexacionServicio = _servicioIndexacion;
@@ -48,10 +45,7 @@ namespace WPFApp1.Servicios
             ubicacionesServicio = _servicioUbicaciones;
             categoriasServicio = _servicioCategorias;
             marcasServicio = _servicioMarcas;
-            facturaServicio = _servicioFacturas;
-            facturaDetalleServicio = _servicioFacturaDetalles;
-            facturaPagosServicio = _servicioFacturaPagos;
-
+            servicioVentas = _servicioVentas;
             MapeoPropiedades = new Dictionary<string, ServicioAsociado>(StringComparer.OrdinalIgnoreCase)
             {
                 // Propiedad de Clase , Servicio Asociado
@@ -100,15 +94,6 @@ namespace WPFApp1.Servicios
             if (Ventas.Count == 0)
                 return false;
 
-
-            // 1 - Crear registro de venta
-            Factura nuevaFactura = new Factura
-            {
-                SucursalID = ""
-            };
-
-
-            
             List<ProductoSKU_Propiedad_Valor> ProductosVendidos = new List<ProductoSKU_Propiedad_Valor>();
             List<string> SKUProductosEditar = new List<string>();
 
@@ -120,8 +105,8 @@ namespace WPFApp1.Servicios
             List<ProductoCatalogo> ListaProductos = productoServicio.RecuperarLotePorID(SKUProductosEditar);
             if (ListaProductos.Count == 0)
                 return false;
-            Dictionary<string, ProductoCatalogo> ProductosEditar = ListaProductos.ToDictionary(p => p.ProductoSKU);
 
+            Dictionary<string, ProductoCatalogo> ProductosEditar = ListaProductos.ToDictionary(p => p.ProductoSKU);
             foreach(Ventas venta in Ventas)
             {
                 if(ProductosEditar.TryGetValue(venta.ProductoSKU, out ProductoCatalogo producto))
