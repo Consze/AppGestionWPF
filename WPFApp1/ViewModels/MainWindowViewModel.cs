@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Security.Cryptography;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;

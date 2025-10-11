@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using WPFApp1.DTOS;
+using WPFApp1.Interfaces;
 
 namespace WPFApp1.ViewModels
 {
-    public class PanelSecundarioCatalogoViewModel : INotifyPropertyChanged
+    public class PanelSecundarioCatalogoViewModel : IPanelContextualVM
     {
         private int _ContadorItemsElegidos;
         public int ContadorItemsElegidos
