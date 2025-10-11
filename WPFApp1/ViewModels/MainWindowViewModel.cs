@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Windows.Input;
 using WPFApp1.DTOS;
 using WPFApp1.Mensajes;
@@ -17,6 +18,7 @@ namespace WPFApp1.ViewModels
         public ICommand CambiarVistaCommand { get; }
         public ICommand DobleClickNotificacionCommand { get; }
         public ICommand ColapsarPanelCommand { get; }
+        public ICommand ColapsarPanelSecundarioCommand { get; }
         private bool _procesando;
         public bool Procesando
         {
@@ -27,6 +29,23 @@ namespace WPFApp1.ViewModels
                 {
                     _procesando = value;
                     OnPropertyChanged(nameof(Procesando));
+                }
+            }
+        }
+        private object _VistaPanelSecundario;
+        public object VistaPanelSecundario
+        {
+            get { return _VistaPanelSecundario; }
+            set
+            {
+                if (_VistaPanelSecundario != value)
+                {
+                    _VistaPanelSecundario = value;
+                    OnPropertyChanged(nameof(VistaPanelSecundario));
+                    if (value != null)
+                    {
+                        ToggleIconoPanelSecundario = true;
+                    }
                 }
             }
         }
@@ -109,6 +128,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _ToggleIconoPanelSecundario;
+        public bool ToggleIconoPanelSecundario
+        {
+            get { return _ToggleIconoPanelSecundario; }
+            set
+            {
+                if (_ToggleIconoPanelSecundario != value)
+                {
+                    _ToggleIconoPanelSecundario = value;
+                    OnPropertyChanged(nameof(ToggleIconoPanelSecundario));
+                }
+            }
+        }
         private string _iconoTogglePanel;
         public string iconoTogglePanel
         {
@@ -119,6 +151,19 @@ namespace WPFApp1.ViewModels
                 {
                     _iconoTogglePanel = value;
                     OnPropertyChanged(nameof(iconoTogglePanel));
+                }
+            }
+        }
+        private string _iconoTogglePanelSecundario;
+        public string iconoTogglePanelSecundario
+        {
+            get { return _iconoTogglePanelSecundario; }
+            set
+            {
+                if (_iconoTogglePanelSecundario != value)
+                {
+                    _iconoTogglePanelSecundario = value;
+                    OnPropertyChanged(nameof(iconoTogglePanelSecundario));
                 }
             }
         }
@@ -141,11 +186,14 @@ namespace WPFApp1.ViewModels
             _tituloActivo = "Menú";
             _isAniadirProductoActivo = false;
             _vistaActual = null;
+            _VistaPanelSecundario = null;
             _procesando = false;
             _iconoTogglePanel = "/iconos/layout2.png";
+            _iconoTogglePanelSecundario = "/iconos/layout2.png";
             _toggleMostrarPanel = true;
             _panelNotificacionesColumnas = 1;
-            _TogglePanelSecundario = true;
+            _TogglePanelSecundario = false;
+            _ToggleIconoPanelSecundario = false;
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();
@@ -158,10 +206,14 @@ namespace WPFApp1.ViewModels
             ConfigurarServidorCommand = new RelayCommand<object>(ConfigurarServidor);
             DobleClickNotificacionCommand = new RelayCommand<object>(InspeccionarNotificacion);
             ColapsarPanelCommand = new RelayCommand<object>(ColapsarPanel);
+            ColapsarPanelSecundarioCommand = new RelayCommand<object>(ColapsarPanelSecundario);
 
             Messenger.Default.Subscribir<AbrirVistaAniadirProductoMensaje>(OnAbrirAniadirProducto);
             Messenger.Default.Subscribir<CerrarVistaAniadirProductoMensaje>(OnCerrarAniadirProducto);
             Messenger.Default.Subscribir<NotificacionEmergente>(OnNotificacionEmergenteAsync);
+            Messenger.Default.Subscribir<TogglePanelSecundarioMW>(OnAlternarPanelSecundario);
+            Messenger.Default.Subscribir<PanelSecundarioBoxing>(OnPresentarPanelSecundario);
+            Messenger.Default.Subscribir<CarritoStatusRequest>(OnSolicitudEstadoCarrito);
         }
         private void InspeccionarNotificacion(object NotificacionClickeada)
         {
@@ -238,6 +290,18 @@ namespace WPFApp1.ViewModels
                 panelNotificacionesColumnas = 2;
             }
         }
+        private void ColapsarPanelSecundario(object parameter)
+        {
+            TogglePanelSecundario = !TogglePanelSecundario;
+            if (TogglePanelSecundario)
+            {
+                iconoTogglePanelSecundario = "/iconos/layout2.png";
+            }
+            else
+            {
+                iconoTogglePanelSecundario = "/iconos/layout1.png";
+            }
+        }
         private async Task VerCatalogoAsync()
         {
             Procesando = true;
@@ -263,6 +327,10 @@ namespace WPFApp1.ViewModels
             VistaActual = nuevaVista;
             Procesando = false;
         }
+        private void OnSolicitudEstadoCarrito(CarritoStatusRequest mensaje)
+        {
+            mensaje.PanelSecundarioExiste = TogglePanelSecundario;
+        }
         private async void OnNotificacionEmergenteAsync(NotificacionEmergente Notificacion)
         {
             if(Notificacion?.NuevaNotificacion != null) // Agregar notificacion
@@ -287,6 +355,17 @@ namespace WPFApp1.ViewModels
         private void OnCerrarAniadirProducto(CerrarVistaAniadirProductoMensaje mensaje)
         {
             IsAniadirProductoActivo = false;
+        }
+        private void OnAlternarPanelSecundario(TogglePanelSecundarioMW mensaje)
+        {
+            if (TogglePanelSecundario == mensaje.MostrarPanel)
+                return;
+
+            TogglePanelSecundario = mensaje.MostrarPanel;
+        }
+        private void OnPresentarPanelSecundario(PanelSecundarioBoxing Vista)
+        {
+            VistaPanelSecundario = Vista;
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

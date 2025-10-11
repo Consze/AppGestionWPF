@@ -55,9 +55,6 @@ namespace WPFApp1
             services.AddTransient<RepoCategoriasSQLite>();
             services.AddTransient<RepoCategoriasSQLServer>();
 
-            services.AddTransient<RepoVentasSQLite>();
-            services.AddTransient<RepoVentasSQLServer>();
-
             services.AddTransient<RepoSucursalesSQLite>();
             services.AddTransient<RepoSucursalesSQLServer>();
 
@@ -84,7 +81,6 @@ namespace WPFApp1
             services.AddTransient<IConmutadorEntidadGenerica<Ubicaciones>, UbicacionesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Categorias>, CategoriasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Arquetipos>, ArquetiposConmutador>();
-            services.AddTransient<IConmutadorEntidadGenerica<Ventas>, VentasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Factura>, FacturasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Factura_Detalles>, FacturasDetallesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Factura_pagos>, FacturasPagosConmutador>();
@@ -197,7 +193,6 @@ namespace WPFApp1
             CrearDirectorioInexistente(rutaIconos);
             CrearDirectorioInexistente(rutaGaleria);
         }
-
         private bool CrearDirectorioInexistente(string Ruta)
         {
             if (!Directory.Exists(Ruta))
