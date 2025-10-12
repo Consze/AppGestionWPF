@@ -8,11 +8,16 @@ namespace WPFApp1.Vistas
     public partial class PanelSecundarioCatalogo : System.Windows.Controls.UserControl
     {
         private PanelSecundarioCatalogoViewModel _viewModel;
+        public PanelSecundarioCatalogo()
+        {
+            InitializeComponent();
+            // DataContext se asigna despues por DataTemplate
+        }
         public PanelSecundarioCatalogo(PanelSecundarioCatalogoViewModel ViewModel)
         {
+            InitializeComponent();
             DataContext = ViewModel;
             _viewModel = ViewModel;
-            InitializeComponent();
         }
     }
 }

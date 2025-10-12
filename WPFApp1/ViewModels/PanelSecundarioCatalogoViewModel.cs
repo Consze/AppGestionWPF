@@ -5,7 +5,7 @@ using WPFApp1.Interfaces;
 
 namespace WPFApp1.ViewModels
 {
-    public class PanelSecundarioCatalogoViewModel : IPanelContextualVM
+    public class PanelSecundarioCatalogoViewModel : IPanelContextualVM, INotifyPropertyChanged
     {
         private int _ContadorItemsElegidos;
         public int ContadorItemsElegidos
@@ -25,6 +25,7 @@ namespace WPFApp1.ViewModels
         public PanelSecundarioCatalogoViewModel()
         {
             _ContadorItemsElegidos = 0;
+            ColeccionProductosVenta = new ObservableCollection<ProductoBase>();
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

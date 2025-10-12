@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using WPFApp1.ViewModels;
 
-namespace WPFApp1
+namespace WPFApp1.Vistas
 {
     /// <summary>
     /// Lógica de interacción para Catalogo.xaml
@@ -9,11 +9,15 @@ namespace WPFApp1
     public partial class Catalogo : System.Windows.Controls.UserControl
     {
         private CatalogoViewModel _viewModel;
+        public Catalogo()
+        {
+            InitializeComponent();
+        }
         public Catalogo(CatalogoViewModel viewModel)
         {
+            InitializeComponent();
             DataContext = viewModel;
             _viewModel = viewModel;
-            InitializeComponent();
         }
         private void Row_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -32,7 +36,10 @@ namespace WPFApp1
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            _viewModel.InicializarAsync();
+            if (DataContext is CatalogoViewModel viewModel)
+            {
+                viewModel.InicializarAsync();
+            }
         }
     }
 }

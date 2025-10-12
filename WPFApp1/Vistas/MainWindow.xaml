@@ -4,9 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:WPFApp1.ViewModels"
-        xmlns:view="clr-namespace:WPFApp1.Vistas"
         xmlns:local="clr-namespace:WPFApp1"
-        xmlns:vistas="clr-namespace:WPFApp1.Vistas" mc:Ignorable="d"
+        xmlns:view="clr-namespace:WPFApp1.Vistas" mc:Ignorable="d"
         FontSize = "18" FontWeight="Light" FontFamily="Roboto" UseLayoutRounding="True"
         Title="Aplicación" Height="720" Width="1280" Closing="Window_Closing" WindowState="Maximized">
     <Window.Resources>
@@ -295,8 +294,8 @@
                 BorderThickness="1" CornerRadius="10" Margin="15,0,0,0" 
                 Visibility="{Binding TogglePanelSecundario, Converter={StaticResource BooleanToVisibility}}">
                 <Border.Resources>
-                    <DataTemplate DataType="{x:Type local:PanelSecundarioCatalogoViewModel}">
-                        <local:PanelSecundarioCatalogo />
+                    <DataTemplate DataType="{x:Type vm:PanelSecundarioCatalogoViewModel}">
+                        <view:PanelSecundarioCatalogo />
                     </DataTemplate>
                 </Border.Resources>
                 

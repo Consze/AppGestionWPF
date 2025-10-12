@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
+using System;
+using System.Windows;
 
 namespace WPFApp1.Converters
 {
@@ -15,7 +17,7 @@ namespace WPFApp1.Converters
             if (fechaCreacion.HasValue)
                 return fechaCreacion.Value.ToString("dd/MM/yyyy");
 
-            return DateTime.MinValue;
+            return System.Windows.DependencyProperty.UnsetValue;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

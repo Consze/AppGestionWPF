@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using WPFApp1.DTOS;
+using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
+using WPFApp1.Vistas;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -31,8 +33,8 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private object _VistaPanelSecundario;
-        public object VistaPanelSecundario
+        private IPanelContextualVM _VistaPanelSecundario;
+        public IPanelContextualVM VistaPanelSecundario
         {
             get { return _VistaPanelSecundario; }
             set
@@ -364,7 +366,7 @@ namespace WPFApp1.ViewModels
         }
         private void OnPresentarPanelSecundario(PanelSecundarioBoxing Vista)
         {
-            VistaPanelSecundario = Vista;
+            VistaPanelSecundario = (IPanelContextualVM)Vista.ViewModelGenerico;
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

@@ -2,6 +2,6 @@
 {
     public class PanelSecundarioBoxing
     {
-        public object Vista { get; set; }
+        public object ViewModelGenerico { get; set; }
     }
 }

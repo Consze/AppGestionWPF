@@ -202,8 +202,7 @@ namespace WPFApp1.ViewModels
             if(!EstadoCarrito.PanelSecundarioExiste)
             {
                 PanelSecundarioCatalogoViewModel _viewModel = new PanelSecundarioCatalogoViewModel();
-                PanelSecundarioCatalogo _vista = new PanelSecundarioCatalogo(_viewModel);
-                Messenger.Default.Publish(new PanelSecundarioBoxing { Vista = _vista });
+                Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel });
                 Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
             }
 

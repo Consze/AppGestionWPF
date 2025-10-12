@@ -20,9 +20,7 @@ namespace WPFApp1
         private MainWindow _mainWindow;
         public App()
         {
-            var serviceCollection = new ServiceCollection();
-            ConfigurarServicios(serviceCollection);
-            _serviceProvider = serviceCollection.BuildServiceProvider();
+            
         }
         public static T GetService<T>() where T : class
         {
@@ -145,6 +143,10 @@ namespace WPFApp1
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
+            var serviceCollection = new ServiceCollection();
+            ConfigurarServicios(serviceCollection);
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+
             base.OnStartup(e);
             const string appName = "WPFApp1";
             _mutex = new Mutex(true, appName, out bool createdNew);
