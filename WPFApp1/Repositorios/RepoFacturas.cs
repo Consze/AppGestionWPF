@@ -29,6 +29,7 @@ namespace WPFApp1.Repositorios
             string consulta = @"SELECT 
                     f.id AS FacturaID,
                     f.sucursalID AS SucursalID,
+                    f.FechaVenta AS FechaVenta,
                     f.FechaCreacion AS FechaCreacion,
                     f.FechaModificacion AS FechaModificacion,
                     f.EsEliminado AS EsEliminado
@@ -46,6 +47,7 @@ namespace WPFApp1.Repositorios
                         int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXFechaVenta = lector.GetOrdinal("FechaVenta");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
                         Factura Factura = new Factura();
 
@@ -54,6 +56,7 @@ namespace WPFApp1.Repositorios
                             Factura.ID = lector.IsDBNull(IDXFacturaID) ? "" : lector.GetString(IDXFacturaID);
                             Factura.SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID);
                             Factura.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
+                            Factura.FechaVenta = lector.IsDBNull(IDXFechaVenta) ? DateTime.MinValue : lector.GetDateTime(IDXFechaVenta);
                             Factura.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
                             Factura.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
                         }
@@ -64,20 +67,17 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
-        /// <summary>
-        /// Si no existe crea un nuevo registro para la entidad 'Marcas'
-        /// </summary>
-        /// <param name="nuevaFactura"></param>
-        /// <returns>ID de registro nuevo o Pre-existente</returns>
         public string Insertar(Factura nuevaFactura)
         {
             string consulta = @"INSERT INTO Facturas (
                 ID,
                 sucursalID,
+                FechaVenta,
                 FechaCreacion)
             VALUES (
                 @FacturaID,
                 @SucursalID,
+                @FechaVenta,
                 @FechaCreacion);";
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
@@ -86,6 +86,7 @@ namespace WPFApp1.Repositorios
                 {
                     comando.Parameters.AddWithValue("@FacturaID", nuevaFactura.ID);
                     comando.Parameters.AddWithValue("@SucursalID", nuevaFactura.SucursalID);
+                    comando.Parameters.AddWithValue("@FechaVenta", nuevaFactura.FechaVenta);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
                     return nuevaFactura.ID;
@@ -97,6 +98,7 @@ namespace WPFApp1.Repositorios
             string consulta = @"SELECT 
                     f.id AS FacturaID,
                     f.sucursalID AS SucursalID,
+                    f.FechaVenta AS FechaVenta,
                     f.FechaCreacion AS FechaCreacion,
                     f.FechaModificacion AS FechaModificacion,
                     f.EsEliminado AS EsEliminado
@@ -112,6 +114,7 @@ namespace WPFApp1.Repositorios
                     {
                         int IDXFacturaID = lector.GetOrdinal("FacturaID");
                         int IDXSucursalID = lector.GetOrdinal("SucursalID");
+                        int IDXFechaVenta = lector.GetOrdinal("FechaVenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -122,6 +125,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXFacturaID) ? "" : lector.GetString(IDXFacturaID),
                                 SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
+                                FechaVenta = lector.IsDBNull(IDXFechaVenta) ? DateTime.MinValue : lector.GetDateTime(IDXFechaVenta),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
@@ -139,6 +143,7 @@ namespace WPFApp1.Repositorios
             string consulta = @"SELECT 
                     f.id AS FacturaID,
                     f.sucursalID AS SucursalID,
+                    f.FechaVenta AS FechaVenta,
                     f.FechaCreacion AS FechaCreacion,
                     f.FechaModificacion AS FechaModificacion,
                     f.EsEliminado AS EsEliminado
@@ -153,6 +158,7 @@ namespace WPFApp1.Repositorios
                     {
                         int IDXFacturaID = lector.GetOrdinal("FacturaID");
                         int IDXSucursalID = lector.GetOrdinal("SucursalID");
+                        int IDXFechaVenta = lector.GetOrdinal("FechaVenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -163,6 +169,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXFacturaID) ? "" : lector.GetString(IDXFacturaID),
                                 SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
+                                FechaVenta = lector.IsDBNull(IDXFechaVenta) ? DateTime.MinValue : lector.GetDateTime(IDXFechaVenta),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
@@ -276,6 +283,7 @@ namespace WPFApp1.Repositorios
             string consulta = @"SELECT 
                     f.id AS FacturaID,
                     f.sucursalID AS SucursalID,
+                    f.FechaVenta AS FechaVenta,
                     f.FechaCreacion AS FechaCreacion,
                     f.FechaModificacion AS FechaModificacion,
                     f.EsEliminado AS EsEliminado
@@ -293,6 +301,7 @@ namespace WPFApp1.Repositorios
                         int IDXSucursalID = lector.GetOrdinal("SucursalID");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXFechaVenta = lector.GetOrdinal("FechaVenta");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
                         Factura Factura = new Factura();
 
@@ -301,6 +310,7 @@ namespace WPFApp1.Repositorios
                             Factura.ID = lector.IsDBNull(IDXFacturaID) ? "" : lector.GetString(IDXFacturaID);
                             Factura.SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID);
                             Factura.EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado);
+                            Factura.FechaVenta = lector.IsDBNull(IDXFechaVenta) ? DateTime.MinValue : lector.GetDateTime(IDXFechaVenta);
                             Factura.FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion);
                             Factura.FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion);
                         }
@@ -316,10 +326,12 @@ namespace WPFApp1.Repositorios
             string consulta = @"INSERT INTO Facturas (
                 ID,
                 sucursalID,
+                FechaVenta,
                 FechaCreacion)
             VALUES (
                 @FacturaID,
                 @SucursalID,
+                @FechaVenta,
                 @FechaCreacion);";
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
@@ -328,6 +340,7 @@ namespace WPFApp1.Repositorios
                 {
                     comando.Parameters.AddWithValue("@FacturaID", nuevaFactura.ID);
                     comando.Parameters.AddWithValue("@SucursalID", nuevaFactura.SucursalID);
+                    comando.Parameters.AddWithValue("@FechaVenta", nuevaFactura.FechaVenta);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.ExecuteNonQuery();
                     return nuevaFactura.ID;
@@ -339,6 +352,7 @@ namespace WPFApp1.Repositorios
             string consulta = @"SELECT 
                     f.id AS FacturaID,
                     f.sucursalID AS SucursalID,
+                    f.FechaVenta AS FechaVenta,
                     f.FechaCreacion AS FechaCreacion,
                     f.FechaModificacion AS FechaModificacion,
                     f.EsEliminado AS EsEliminado
@@ -354,6 +368,7 @@ namespace WPFApp1.Repositorios
                     {
                         int IDXFacturaID = lector.GetOrdinal("FacturaID");
                         int IDXSucursalID = lector.GetOrdinal("SucursalID");
+                        int IDXFechaVenta = lector.GetOrdinal("FechaVenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -364,6 +379,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXFacturaID) ? "" : lector.GetString(IDXFacturaID),
                                 SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
+                                FechaVenta = lector.IsDBNull(IDXFechaVenta) ? DateTime.MinValue : lector.GetDateTime(IDXFechaVenta),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)
@@ -381,6 +397,7 @@ namespace WPFApp1.Repositorios
             string consulta = @"SELECT 
                     f.id AS FacturaID,
                     f.sucursalID AS SucursalID,
+                    f.FechaVenta AS FechaVenta,
                     f.FechaCreacion AS FechaCreacion,
                     f.FechaModificacion AS FechaModificacion,
                     f.EsEliminado AS EsEliminado
@@ -395,6 +412,7 @@ namespace WPFApp1.Repositorios
                     {
                         int IDXFacturaID = lector.GetOrdinal("FacturaID");
                         int IDXSucursalID = lector.GetOrdinal("SucursalID");
+                        int IDXFechaVenta = lector.GetOrdinal("FechaVenta");
                         int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
                         int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
                         int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
@@ -405,6 +423,7 @@ namespace WPFApp1.Repositorios
                             {
                                 ID = lector.IsDBNull(IDXFacturaID) ? "" : lector.GetString(IDXFacturaID),
                                 SucursalID = lector.IsDBNull(IDXSucursalID) ? "" : lector.GetString(IDXSucursalID),
+                                FechaVenta = lector.IsDBNull(IDXFechaVenta) ? DateTime.MinValue : lector.GetDateTime(IDXFechaVenta),
                                 FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
                                 FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
                                 EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado)

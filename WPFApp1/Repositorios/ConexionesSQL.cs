@@ -224,9 +224,10 @@ namespace WPFApp1.Repositorios
         CREATE TABLE IF NOT EXISTS Facturas (
             ID VARCHAR(36) PRIMARY KEY,
             sucursalID VARCHAR(36),
-            EsEliminado BOOLEAN DEFAULT 0,
+            FechaVenta DATETIME,
             FechaCreacion DATETIME,
             FechaModificacion DATETIME,
+            EsEliminado BOOLEAN DEFAULT 0,
             FOREIGN KEY(sucursalID) REFERENCES Sucursales(ID)
         );
 

@@ -69,5 +69,18 @@ namespace WPFApp1.DTOS
                 }
             }
         }
+        private DateTime _fechaVenta;
+        public DateTime FechaVenta
+        {
+            get => _fechaVenta;
+            set
+            {
+                if (_fechaVenta != value)
+                {
+                    _fechaVenta = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
     }
 }
