@@ -132,6 +132,7 @@ namespace WPFApp1
             });
 
             // Registrar ViewModels
+            services.AddTransient<PanelSecundarioCatalogoViewModel>();
             services.AddTransient<ServicioVentas>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();

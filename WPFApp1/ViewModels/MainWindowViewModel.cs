@@ -103,6 +103,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _TituloPanelSecundario;
+        public string TituloPanelSecundario
+        {
+            get { return _TituloPanelSecundario; }
+            set
+            {
+                if (_TituloPanelSecundario != value)
+                {
+                    _TituloPanelSecundario = value;
+                    OnPropertyChanged(nameof(TituloPanelSecundario));
+                }
+            }
+        }
         private bool _toggleMostrarPanel;
         public bool ToggleMostrarPanel
         {
@@ -195,6 +208,7 @@ namespace WPFApp1.ViewModels
             _panelNotificacionesColumnas = 1;
             _TogglePanelSecundario = false;
             _ToggleIconoPanelSecundario = false;
+            _TituloPanelSecundario = string.Empty;
 
             // Notificaciones
             ColeccionNotificaciones = new ObservableCollection<Notificacion>();
@@ -367,6 +381,7 @@ namespace WPFApp1.ViewModels
         private void OnPresentarPanelSecundario(PanelSecundarioBoxing Vista)
         {
             VistaPanelSecundario = (IPanelContextualVM)Vista.ViewModelGenerico;
+            TituloPanelSecundario = Vista.TituloPanel;
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

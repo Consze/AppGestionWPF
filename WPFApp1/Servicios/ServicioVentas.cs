@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WPFApp1.DTOS;
+﻿using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 
@@ -28,34 +23,42 @@ namespace WPFApp1.Servicios
 
         public bool VenderProductos(List<Ventas> listaVentas)
         {
-            List<Sucursal> sucursales = sucursalesServicio.RecuperarList();
-            Factura nuevaFactura = new Factura
+            try
             {
-                SucursalID = sucursales[0].ToString()
-            };
-            string facturaID = facturaServicio.Insertar(nuevaFactura);
-
-            foreach(Ventas registro in listaVentas)
-            {
-                Factura_Detalles detalleActual = new Factura_Detalles
+                List<Sucursal> sucursales = sucursalesServicio.RecuperarList();
+                Factura nuevaFactura = new Factura
                 {
-                    FacturaID = facturaID,
-                    ProductoSKU = registro.ProductoSKU,
-                    PrecioVenta = registro.precioVenta,
-                    Cantidad = registro.Cantidad
+                    SucursalID = sucursales[0].ToString() // TODO: CRUD + UX para entidad sucursales - 13/10/2025
                 };
-                Factura_pagos pagoActual = new Factura_pagos
-                {
-                    FacturaID = facturaID,
-                    MedioPagoID = registro.MedioPagoID,
-                    Monto = registro.precioVenta
-                };
+                string facturaID = facturaServicio.Insertar(nuevaFactura);
 
-                facturaDetalleServicio.Insertar(detalleActual);
-                facturaPagosServicio.Insertar(pagoActual);
+                foreach (Ventas registro in listaVentas)
+                {
+                    Factura_Detalles detalleActual = new Factura_Detalles
+                    {
+                        FacturaID = facturaID,
+                        ProductoSKU = registro.ItemVendido.ProductoSKU,
+                        PrecioVenta = registro.precioVenta,
+                        Cantidad = registro.Cantidad
+                    };
+                    Factura_pagos pagoActual = new Factura_pagos
+                    {
+                        FacturaID = facturaID,
+                        MedioPagoID = registro.MedioPagoID,
+                        Monto = registro.precioVenta
+                    };
+
+                    facturaDetalleServicio.Insertar(detalleActual);
+                    facturaPagosServicio.Insertar(pagoActual);
+                }
+
+                return true;
             }
-
-            return true;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
         }
     }
 }

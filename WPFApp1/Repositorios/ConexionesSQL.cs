@@ -263,7 +263,7 @@ namespace WPFApp1.Repositorios
             FechaCreacion DATETIME,
             FechaModificacion DATETIME,
             UNIQUE (Nombre) ON CONFLICT IGNORE,
-            FOREIGN KEY(cuenta_asociada) REFERENCES Cuentas(id)
+            FOREIGN KEY(cuenta_asociada) REFERENCES Cuentas_contables(id)
         );
 
         CREATE TABLE IF NOT EXISTS Sucursales (

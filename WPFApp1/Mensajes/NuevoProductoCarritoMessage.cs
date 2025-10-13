@@ -4,6 +4,6 @@ namespace WPFApp1.Mensajes
 {
     public class NuevoProductoCarritoMessage
     {
-        public ProductoBase Producto { get; set; }
+        public Ventas VentaDTO { get; set; }
     }
 }

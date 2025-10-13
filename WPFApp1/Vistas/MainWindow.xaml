@@ -289,26 +289,26 @@
                 </Button.Background>
                 <Image Margin="4"  Width="18" Height="22" Stretch="Fill" Source="{Binding iconoTogglePanelSecundario}"/>
             </Button>
-            
+
             <Border BorderBrush="Black" Grid.RowSpan="2" Grid.Row="1"
-                BorderThickness="1" CornerRadius="10" Margin="15,0,0,0" 
+                BorderThickness="1" CornerRadius="10" Margin="15,0,0,0" Background="GhostWhite"
                 Visibility="{Binding TogglePanelSecundario, Converter={StaticResource BooleanToVisibility}}">
                 <Border.Resources>
                     <DataTemplate DataType="{x:Type vm:PanelSecundarioCatalogoViewModel}">
                         <view:PanelSecundarioCatalogo />
                     </DataTemplate>
                 </Border.Resources>
-                
 
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <ContentPresenter Grid.Row="1" x:Name="PanelSecundario" Content="{Binding VistaPanelSecundario}" Style="{StaticResource TransicionContenido}"/>
+                    <TextBlock Margin="30,30,10,10"  Grid.Row="0" Text="{Binding TituloPanelSecundario}" FontSize="20"/>
+                    <ContentPresenter Margin="10,0,10,0" Grid.Row="1" x:Name="PanelSecundario" Content="{Binding VistaPanelSecundario}" 
+                     Style="{StaticResource TransicionContenido}"/>
                 </Grid>
             </Border>
         </Grid>
-        
     </Grid>
 </Window>

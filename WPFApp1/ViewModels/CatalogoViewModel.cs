@@ -8,6 +8,7 @@ using WPFApp1.Mensajes;
 using WPFApp1.Enums;
 using WPFApp1.Servicios;
 using WPFApp1.Vistas;
+using System.Threading.Tasks;
 
 namespace WPFApp1.ViewModels
 {
@@ -186,7 +187,7 @@ namespace WPFApp1.ViewModels
             EliminarTextoBusquedaCommand = new RelayCommand<object>(EliminarTextoBusqueda);
             BusquedaRecibeFocoCommand = new RelayCommand<object>(BusquedaRecibeFoco);
             BusquedaPierdeFocoCommand = new RelayCommand<object>(BusquedaPierdeFoco);
-            AniadirItemCarritoCommand = new RelayCommand<ProductoBase>(AniadirItemCarrito);
+            AniadirItemCarritoCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemCarrito(param));
             SeleccionarBusquedaPreviaCommand = new RelayCommand<object>(async (param) => await SeleccionarBusquedaPrevia(param));
 
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
@@ -194,19 +195,21 @@ namespace WPFApp1.ViewModels
             Procesando = false;
             _servicioSFX = new ServicioSFX();
         }
-        public void AniadirItemCarrito(ProductoBase ProductoElegido)
+        public async Task AniadirItemCarrito(ProductoBase ProductoElegido)
         {
             CarritoStatusRequest EstadoCarrito = new CarritoStatusRequest();
             Messenger.Default.Publish(EstadoCarrito);
 
             if(!EstadoCarrito.PanelSecundarioExiste)
             {
-                PanelSecundarioCatalogoViewModel _viewModel = new PanelSecundarioCatalogoViewModel();
-                Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel });
+                PanelSecundarioCatalogoViewModel _viewModel = App.GetService<PanelSecundarioCatalogoViewModel>();
+                await _viewModel.CargarMediosPago();
+                Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel , TituloPanel = "Lista de Ventas" });
                 Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
             }
 
-            Messenger.Default.Publish(new NuevoProductoCarritoMessage { Producto = ProductoElegido});
+            Ventas ItemVender = new Ventas { ItemVendido = ProductoElegido, Cantidad = 1 };
+            Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
         }
         public async Task SeleccionarBusquedaPrevia(object EntradaElegida)
         {

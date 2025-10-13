@@ -17,15 +17,15 @@ namespace WPFApp1.DTOS
                 }
             }
         }
-        private string _productoSKU;
-        public string ProductoSKU
+        private ProductoBase _itemVendido;
+        public ProductoBase ItemVendido
         {
-            get => _productoSKU;
+            get => _itemVendido;
             set
             {
-                if (_productoSKU != value)
+                if (_itemVendido != value)
                 {
-                    _productoSKU = value;
+                    _itemVendido = value;
                     OnPropertyChanged();
                 }
             }

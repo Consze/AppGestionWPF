@@ -734,7 +734,6 @@ namespace WPFApp1.Repositorios
             }
         }
     }
-
     /// <summary>
     /// Implementación para DBMS SQL Server
     /// </summary>

@@ -2,7 +2,6 @@
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Enums;
-using WPFApp1.Conmutadores;
 
 namespace WPFApp1.Servicios
 {
@@ -94,12 +93,17 @@ namespace WPFApp1.Servicios
             if (Ventas.Count == 0)
                 return false;
 
+            if (!servicioVentas.VenderProductos(Ventas))
+                return false;
+
+        //- - - - - - - - - - - - - - - - - - - - STOCK - - - - - - - - - - - - - - - - - - - - - - - - -//
+            
             List<ProductoSKU_Propiedad_Valor> ProductosVendidos = new List<ProductoSKU_Propiedad_Valor>();
             List<string> SKUProductosEditar = new List<string>();
 
             foreach(Ventas ventaActual in Ventas)
             {
-                SKUProductosEditar.Add(ventaActual.ProductoSKU);
+                SKUProductosEditar.Add(ventaActual.ItemVendido.ProductoSKU);
             }
 
             List<ProductoCatalogo> ListaProductos = productoServicio.RecuperarLotePorID(SKUProductosEditar);
@@ -109,11 +113,11 @@ namespace WPFApp1.Servicios
             Dictionary<string, ProductoCatalogo> ProductosEditar = ListaProductos.ToDictionary(p => p.ProductoSKU);
             foreach(Ventas venta in Ventas)
             {
-                if(ProductosEditar.TryGetValue(venta.ProductoSKU, out ProductoCatalogo producto))
+                if(ProductosEditar.TryGetValue(venta.ItemVendido.ProductoSKU, out ProductoCatalogo producto))
                 {
                     ProductoSKU_Propiedad_Valor registro = new ProductoSKU_Propiedad_Valor
                     {
-                        ProductoSKU = venta.ProductoSKU,
+                        ProductoSKU = venta.ItemVendido.ProductoSKU,
                         PropiedadNombre = "Haber",
                         Valor = producto.Haber - venta.Cantidad
                     };
