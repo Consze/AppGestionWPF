@@ -161,8 +161,9 @@
 
 
             <!--Opciones (sucursal, fecha de venta)-->
-            <Grid Visibility="{Binding MostrarOpcionesFlag, Converter={StaticResource BooleanToVisibility}}">
-                
+            <Grid Visibility="{Binding MostrarOpcionesFlag, Converter={StaticResource BooleanToVisibility}}" Grid.Row="2" Margin="10">
+                <ComboBox ItemsSource="{Binding ColeccionSucursales}" SelectedValue="{Binding SucursalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    DisplayMemberPath="Nombre" SelectedValuePath="ID" Margin="15,0,0,0"/>
             </Grid>
 
             <Button x:Name="BotonOpciones" Content="Opciones" FontSize="18" FontWeight="Regular" Command="{Binding MostrarOpcionesCommand}"

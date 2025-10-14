@@ -11,7 +11,7 @@ using System.IO;
 
 namespace WPFApp1.ViewModels
 {
-    public class PanelSecundarioCatalogoViewModel : IPanelContextualVM, INotifyPropertyChanged
+    public class PanelSecundarioCatalogoViewModel : IPanelContextualVM, INotifyPropertyChanged, IDisposable
     {
         private int _ContadorItemsElegidos;
         public int ContadorItemsElegidos
@@ -65,6 +65,21 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _sucursalID;
+        public string SucursalID
+        {
+            get { return _sucursalID; }
+            set
+            {
+                if (_sucursalID != value)
+                {
+                    _sucursalID = value;
+                    OnPropertyChanged(nameof(SucursalID));
+                    ValidarSeleccionMediosPago();
+                }
+            }
+        }
+        public ObservableCollection<Sucursal> ColeccionSucursales { get; set; }
         public ObservableCollection<Ventas> ColeccionProductosVenta { get; set; }
         public ObservableCollection<Medios_Pago> ColeccionMediosPago { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -75,9 +90,13 @@ namespace WPFApp1.ViewModels
         public ICommand MostrarOpcionesCommand { get; }
         private readonly OrquestadorProductos Orquestador;
         private readonly IConmutadorEntidadGenerica<Medios_Pago> servicioMediosPago;
+        private readonly IConmutadorEntidadGenerica<Sucursal> servicioSucursales;
         private readonly ServicioSFX servicioSFX;
-        public PanelSecundarioCatalogoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Medios_Pago> _servicioMediosPago, ServicioSFX _servicioSFX)
+        public PanelSecundarioCatalogoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Medios_Pago> _servicioMediosPago, 
+            ServicioSFX _servicioSFX, IConmutadorEntidadGenerica<Sucursal> _servicioSucursales)
         {
+            _sucursalID = string.Empty;
+            servicioSucursales = _servicioSucursales;
             servicioSFX = _servicioSFX;
             servicioMediosPago = _servicioMediosPago;
             Orquestador = _orquestador;
@@ -85,6 +104,7 @@ namespace WPFApp1.ViewModels
             _MostrarListaProductos = true;
             _mostrarOpciones = false;
             _BotonHabilitado = false;
+            ColeccionSucursales = new ObservableCollection<Sucursal>();
             ColeccionProductosVenta = new ObservableCollection<Ventas>();
             ColeccionMediosPago = new ObservableCollection<Medios_Pago>();
             VerListaCarritoCommand = new RelayCommand<object>(VerListaCarrito);
@@ -125,7 +145,7 @@ namespace WPFApp1.ViewModels
         }
         private void ValidarSeleccionMediosPago()
         {
-            if (!ColeccionProductosVenta.Any())
+            if (!ColeccionProductosVenta.Any() || SucursalID == string.Empty)
             {
                 BotonHabilitado = false;
                 return;
@@ -149,7 +169,9 @@ namespace WPFApp1.ViewModels
             List<Ventas> ListaVentas = new List<Ventas>();
             foreach(Ventas registro in ColeccionProductosVenta)
             {
-                registro.FechaVenta = DateTime.Now;
+                DateTime _fecha = DateTime.Now;
+                registro.SucursalID = SucursalID;
+                registro.FechaVenta = _fecha;
                 ListaVentas.Add(registro);
             }
             if (Orquestador.VenderProductos(ListaVentas))
@@ -165,6 +187,18 @@ namespace WPFApp1.ViewModels
                 servicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo registrar la venta", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
+        }
+        public async Task InicializarVM()
+        {
+            await CargarMediosPago();
+            await CargarSucursales();
+        }
+        public async Task CargarSucursales()
+        {
+            await foreach (Sucursal sucursal in servicioSucursales.RecuperarStreamAsync())
+            {
+                ColeccionSucursales.Add(sucursal);
             }
         }
         public async Task CargarMediosPago()
@@ -215,6 +249,11 @@ namespace WPFApp1.ViewModels
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public void Dispose()
+        {
+            //Messenger.Default.Unregister(this);
+            GC.SuppressFinalize(this);
         }
     }
 }

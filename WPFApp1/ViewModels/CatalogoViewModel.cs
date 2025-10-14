@@ -205,7 +205,7 @@ namespace WPFApp1.ViewModels
             if(!EstadoCarrito.PanelSecundarioExiste)
             {
                 PanelSecundarioCatalogoViewModel _viewModel = App.GetService<PanelSecundarioCatalogoViewModel>();
-                await _viewModel.CargarMediosPago();
+                await _viewModel.InicializarVM();
                 Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel , TituloPanel = "Lista de Ventas" });
             }
 
