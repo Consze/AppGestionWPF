@@ -1,7 +1,8 @@
 ﻿using WPFApp1.DTOS;
 using WPFApp1.Entidades;
-using WPFApp1.Interfaces;
 using WPFApp1.Enums;
+using WPFApp1.Interfaces;
+using WPFApp1.Mensajes;
 
 namespace WPFApp1.Servicios
 {
@@ -122,6 +123,11 @@ namespace WPFApp1.Servicios
                         Valor = producto.Haber - venta.Cantidad
                     };
                     ProductosVendidos.Add(registro);
+
+                    if((producto.Haber - venta.Cantidad) == 0)
+                    {
+                        Messenger.Default.Publish(new ProductoEliminadoMessage { ProductoEliminado = venta.ItemVendido });
+                    }
                 }
             }
             

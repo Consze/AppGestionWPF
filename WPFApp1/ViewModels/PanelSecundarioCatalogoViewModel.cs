@@ -7,6 +7,7 @@ using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
+using System.IO;
 
 namespace WPFApp1.ViewModels
 {
@@ -22,15 +23,6 @@ namespace WPFApp1.ViewModels
                 {
                     _ContadorItemsElegidos = value;
                     OnPropertyChanged(nameof(ContadorItemsElegidos));
-                    /**
-                    if(value > 0)
-                    {
-                        BotonHabilitado = true;
-                    }
-                    else
-                    {
-                        BotonHabilitado = false;
-                    }*/
                 }
             }
         }
@@ -60,26 +52,46 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _mostrarOpciones;
+        public bool MostrarOpcionesFlag
+        {
+            get { return _mostrarOpciones; }
+            set
+            {
+                if (_mostrarOpciones != value)
+                {
+                    _mostrarOpciones = value;
+                    OnPropertyChanged(nameof(MostrarOpcionesFlag));
+                }
+            }
+        }
         public ObservableCollection<Ventas> ColeccionProductosVenta { get; set; }
         public ObservableCollection<Medios_Pago> ColeccionMediosPago { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand VerListaCarritoCommand { get; }
         public ICommand EliminarItemCommand { get; }
         public ICommand RegistrarVentaCommand { get; }
+        public ICommand ModificarItemCommand { get; }
+        public ICommand MostrarOpcionesCommand { get; }
         private readonly OrquestadorProductos Orquestador;
         private readonly IConmutadorEntidadGenerica<Medios_Pago> servicioMediosPago;
-        public PanelSecundarioCatalogoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Medios_Pago> _servicioMediosPago)
+        private readonly ServicioSFX servicioSFX;
+        public PanelSecundarioCatalogoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Medios_Pago> _servicioMediosPago, ServicioSFX _servicioSFX)
         {
+            servicioSFX = _servicioSFX;
             servicioMediosPago = _servicioMediosPago;
             Orquestador = _orquestador;
             _ContadorItemsElegidos = 0;
-            _MostrarListaProductos = false;
+            _MostrarListaProductos = true;
+            _mostrarOpciones = false;
             _BotonHabilitado = false;
             ColeccionProductosVenta = new ObservableCollection<Ventas>();
             ColeccionMediosPago = new ObservableCollection<Medios_Pago>();
             VerListaCarritoCommand = new RelayCommand<object>(VerListaCarrito);
             EliminarItemCommand = new RelayCommand<Ventas>(EliminarItem);
             RegistrarVentaCommand = new RelayCommand<object>(VenderLista);
+            ModificarItemCommand = new RelayCommand<Ventas>(ModificarItem);
+            MostrarOpcionesCommand = new RelayCommand<object>(MostrarOpciones);
 
             ColeccionProductosVenta.CollectionChanged += ColeccionProductosVenta_ColeccionModificada;
             Messenger.Default.Subscribir<NuevoProductoCarritoMessage>(OnProductoAniadidoCarrito);
@@ -124,9 +136,36 @@ namespace WPFApp1.ViewModels
 
             BotonHabilitado = !hayItemsSinPago;
         }
+        private void MostrarOpciones(object parameter)
+        {
+            MostrarOpcionesFlag = !MostrarOpcionesFlag;
+        }
+        private void ModificarItem(Ventas ItemModificar)
+        {
+            ItemModificar.ModoEdicionActivo = !ItemModificar.ModoEdicionActivo;
+        }
         private void VenderLista(object parameter)
         {
-            //Orquestador.VenderProductos();
+            List<Ventas> ListaVentas = new List<Ventas>();
+            foreach(Ventas registro in ColeccionProductosVenta)
+            {
+                registro.FechaVenta = DateTime.Now;
+                ListaVentas.Add(registro);
+            }
+            if (Orquestador.VenderProductos(ListaVentas))
+            {
+                ContadorItemsElegidos = 0;
+                ColeccionProductosVenta.Clear();
+                servicioSFX.Confirmar();
+                Notificacion _notificacion = new Notificacion { Mensaje = "Venta registrada con exito", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
+            else
+            {
+                servicioSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo registrar la venta", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
         }
         public async Task CargarMediosPago()
         {
@@ -159,6 +198,8 @@ namespace WPFApp1.ViewModels
         private void OnProductoAniadidoCarrito(NuevoProductoCarritoMessage Producto)
         {
             Ventas nuevoItemVendido = Producto.VentaDTO;
+            nuevoItemVendido.precioVenta = nuevoItemVendido.ItemVendido.Precio;
+            nuevoItemVendido.ModoEdicionActivo = false;
             Ventas registroVigente = ColeccionProductosVenta.FirstOrDefault(V => V.ItemVendido == nuevoItemVendido.ItemVendido);
             if (registroVigente != null)
             {
@@ -169,6 +210,7 @@ namespace WPFApp1.ViewModels
                 ColeccionProductosVenta.Add(nuevoItemVendido);
                 ContadorItemsElegidos++;
             }
+            servicioSFX.Swipe();
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

@@ -13,15 +13,55 @@
                 <ResourceDictionary Source="Iconos.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+
+            <Style TargetType="ListBoxItem">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Padding" Value="0"/>
+                <Style.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation 
+                            Storyboard.TargetProperty="Opacity" 
+                            From="0.0" 
+                            To="1.0" 
+                            Duration="0:0:0.25"/>
+
+                                <ThicknessAnimation
+                            Storyboard.TargetProperty="Margin"
+                            From="0, -15, 0, 0" To="0"               
+                            Duration="0:0:0.10"/>
+
+                                <ColorAnimationUsingKeyFrames
+                            Storyboard.TargetProperty="(ListBoxItem.Background).(SolidColorBrush.Color)"
+                            Duration="0:0:0.7">
+                                    <DiscreteColorKeyFrame KeyTime="0:0:0.0" Value="LightSkyBlue"/>
+
+                                    <DiscreteColorKeyFrame KeyTime="0:0:0.15" Value="White"/>
+
+                                    <DiscreteColorKeyFrame KeyTime="0:0:0.30" Value="LightSkyBlue"/>
+
+                                    <DiscreteColorKeyFrame KeyTime="0:0:0.45" Value="White"/>
+
+                                    <DiscreteColorKeyFrame KeyTime="0:0:0.7" Value="Transparent"/>
+
+                                </ColorAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid Background="GhostWhite">
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -29,7 +69,7 @@
 
             <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" 
             Style="{StaticResource EstiloBorderConAnimacion}" Background="White"
-            Grid.Row="0" Grid.Column="1">
+            Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="10"
               ShadowDepth="0.1"
@@ -64,7 +104,7 @@
 
             </Border>
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding ColeccionProductosVenta}"
+            <ListBox Grid.Row="1" ItemsSource="{Binding ColeccionProductosVenta}" Grid.ColumnSpan="2" Grid.Column="0"
                      Margin="10" Visibility="{Binding MostrarListaProductos, Converter={StaticResource BooleanToVisibility}}"
                      MaxHeight="400" Height="400" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
@@ -78,21 +118,35 @@
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Column="0">
                                     <TextBlock Text="{Binding ItemVendido.Nombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0"/>
-                                    <TextBlock Text="{Binding ItemVendido.Precio, StringFormat=' - {0:C}'}"/>
-                                    <TextBlock Text="{Binding Cantidad, StringFormat=' X {0}'}" FontWeight="Bold"/>
+                                    
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding ModoLecturaActivo, Converter={StaticResource BooleanToVisibility}}">
+                                        <TextBlock Text="{Binding precioVenta, StringFormat=' - {0:C}'}"/>
+                                        <TextBlock Text="{Binding Cantidad, StringFormat=' - x{0} -'}" FontWeight="Bold" Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding ModoEdicionActivo, Converter={StaticResource BooleanToVisibility}}">
+                                        <TextBox Text="{Binding precioVenta, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="5,0"/>
+                                        <TextBox Text="{Binding Cantidad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" FontWeight="Bold"/>
+                                    </StackPanel>
+
                                     <ComboBox ItemsSource="{Binding DataContext.ColeccionMediosPago, 
                                         RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}"
                                         SelectedValue="{Binding MedioPagoID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        DisplayMemberPath="Nombre" SelectedValuePath="ID"/>  
-
+                                        DisplayMemberPath="Nombre" SelectedValuePath="ID" Margin="15,0,0,0"/>  
                                 </StackPanel>
-                                
-                                <Button Style="{StaticResource BotonSinEstilo}" Margin="40,0,15,0" Command="{Binding DataContext.EliminarItemCommand, RelativeSource={RelativeSource FindAncestor, 
+
+                                <Button Style="{StaticResource BotonSinEstilo}" Margin="40,0,0,0" Command="{Binding DataContext.ModificarItemCommand, RelativeSource={RelativeSource FindAncestor, 
                                     AncestorType={x:Type ListBox}}}" CommandParameter="{Binding}" Grid.Column="2">
+                                    <Image Source="/iconos/lapizEdicion.png" Width="15" Height="15" VerticalAlignment="Center"/>
+                                </Button>
+
+                                <Button Style="{StaticResource BotonSinEstilo}" Margin="10,0,15,0" Command="{Binding DataContext.EliminarItemCommand, RelativeSource={RelativeSource FindAncestor, 
+                                    AncestorType={x:Type ListBox}}}" CommandParameter="{Binding}" Grid.Column="3">
                                     <Image Source="/iconos/Cruz2.png" Width="15" Height="15" VerticalAlignment="Center"/>
                                 </Button>
                             </Grid>
@@ -105,9 +159,17 @@
                 </ScrollViewer.VerticalScrollBarVisibility>
             </ListBox>
 
-            <Border BorderBrush="Black" BorderThickness="0.25"  Grid.Row="2" Margin="10">
+
+            <!--Opciones (sucursal, fecha de venta)-->
+            <Grid Visibility="{Binding MostrarOpcionesFlag, Converter={StaticResource BooleanToVisibility}}">
+                
+            </Grid>
+
+            <Button x:Name="BotonOpciones" Content="Opciones" FontSize="18" FontWeight="Regular" Command="{Binding MostrarOpcionesCommand}"
+                    Grid.Row="3" Grid.Column="0" Margin="10" Padding="10"/>
+            <Border BorderBrush="Black" BorderThickness="0.25"  Grid.Row="3" Margin="10" Grid.Column="1">
                 <Button x:Name="BotonRegistrarVenta" Content="Registrar Venta" FontSize="18" FontWeight="Bold" Command="{Binding RegistrarVentaCommand}" Style="{StaticResource BotonToggleEstilo}"
-                        IsEnabled="{Binding BotonHabilitado}"/>
+                        IsEnabled="{Binding BotonHabilitado}" Padding="10"/>
             </Border>
         </Grid>
     </Grid>

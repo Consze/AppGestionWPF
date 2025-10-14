@@ -14,11 +14,12 @@ namespace WPFApp1.Servicios
         private readonly IConmutadorEntidadGenerica<Sucursal> sucursalesServicio;
 
         public ServicioVentas(IConmutadorEntidadGenerica<Factura> _servicioFacturas, IConmutadorEntidadGenerica<Factura_Detalles> _servicioFacturaDetalles,
-            IConmutadorEntidadGenerica<Factura_pagos> _servicioFacturaPagos)
+            IConmutadorEntidadGenerica<Factura_pagos> _servicioFacturaPagos, IConmutadorEntidadGenerica<Sucursal> _sucursalesServicio)
         {
             facturaServicio = _servicioFacturas;
             facturaDetalleServicio = _servicioFacturaDetalles;
             facturaPagosServicio = _servicioFacturaPagos;
+            sucursalesServicio = _sucursalesServicio;
         }
 
         public bool VenderProductos(List<Ventas> listaVentas)
@@ -28,7 +29,8 @@ namespace WPFApp1.Servicios
                 List<Sucursal> sucursales = sucursalesServicio.RecuperarList();
                 Factura nuevaFactura = new Factura
                 {
-                    SucursalID = sucursales[0].ToString() // TODO: CRUD + UX para entidad sucursales - 13/10/2025
+                    FechaVenta = listaVentas[0].FechaVenta,
+                    SucursalID = sucursales[0].ID // TODO: CRUD + UX para entidad sucursales - 13/10/2025
                 };
                 string facturaID = facturaServicio.Insertar(nuevaFactura);
 

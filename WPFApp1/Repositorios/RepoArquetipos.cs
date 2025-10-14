@@ -245,9 +245,25 @@ namespace WPFApp1.Repositorios
                     @NombreProducto,
                     @categoria_id,
                     @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID FROM Productos WHERE Nombre = @Nombre AND categoria_id = @categoria_id;";
+
 
             using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using(SqliteCommand comandoBusqueda = new SqliteCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@Nombre", nuevoRegistro.Nombre);
+                    comandoBusqueda.Parameters.AddWithValue("@categoria_id", nuevoRegistro.CategoriaID);
+                    using(SqliteDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXId = lector.GetOrdinal("ID");
+                            return lector.IsDBNull(IDXId) ? "" : lector.GetString(IDXId);
+                        }
+                    }
+                }
+
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);
@@ -499,9 +515,25 @@ namespace WPFApp1.Repositorios
                     @NombreProducto,
                     @categoria_id,
                     @FechaCreacion);";
+            string consultaBusqueda = @"SELECT ID FROM Productos WHERE Nombre = @Nombre AND categoria_id = @categoria_id;";
+
 
             using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
             {
+                using (SqlCommand comandoBusqueda = new SqlCommand(consultaBusqueda, conexion))
+                {
+                    comandoBusqueda.Parameters.AddWithValue("@Nombre", nuevoRegistro.Nombre);
+                    comandoBusqueda.Parameters.AddWithValue("@categoria_id", nuevoRegistro.CategoriaID);
+                    using (SqlDataReader lector = comandoBusqueda.ExecuteReader())
+                    {
+                        if (lector.Read())
+                        {
+                            int IDXId = lector.GetOrdinal("ID");
+                            return lector.IsDBNull(IDXId) ? "" : lector.GetString(IDXId);
+                        }
+                    }
+                }
+
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);

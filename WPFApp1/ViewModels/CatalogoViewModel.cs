@@ -192,6 +192,8 @@ namespace WPFApp1.ViewModels
 
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
+            Messenger.Default.Subscribir<ProductoEliminadoMessage>(OnProductoEliminado);
+
             Procesando = false;
             _servicioSFX = new ServicioSFX();
         }
@@ -205,9 +207,9 @@ namespace WPFApp1.ViewModels
                 PanelSecundarioCatalogoViewModel _viewModel = App.GetService<PanelSecundarioCatalogoViewModel>();
                 await _viewModel.CargarMediosPago();
                 Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel , TituloPanel = "Lista de Ventas" });
-                Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
             }
 
+            Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
             Ventas ItemVender = new Ventas { ItemVendido = ProductoElegido, Cantidad = 1 };
             Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
         }
@@ -441,6 +443,13 @@ namespace WPFApp1.ViewModels
                 await _viewModel.InicializarFormulario();
                 _viewModel.ConfigurarEdicionDeProducto(producto);
                 AniadirProductoInstanciado.Show();
+            }
+        }
+        private void OnProductoEliminado(ProductoEliminadoMessage Mensaje)
+        {
+            if(Mensaje.ProductoEliminado != null)
+            {
+                ColeccionProductos.Remove(Mensaje.ProductoEliminado);
             }
         }
         private void OnNuevoProductoAniadido(ProductoAniadidoMensaje Mensaje)

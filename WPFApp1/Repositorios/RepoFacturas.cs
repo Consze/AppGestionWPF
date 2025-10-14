@@ -19,6 +19,7 @@ namespace WPFApp1.Repositorios
                 //Propiedad de Clase , Nombre de Columna
                 {"ID", "ID" },
                 {"SucursalID", "sucursalID" },
+                {"FechaVenta", "FechaVenta" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
@@ -273,6 +274,7 @@ namespace WPFApp1.Repositorios
                 //Propiedad de Clase , Nombre de Columna
                 {"ID", "ID" },
                 {"SucursalID", "sucursalID" },
+                {"FechaVenta", "FechaVenta" },
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }

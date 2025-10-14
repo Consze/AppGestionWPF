@@ -22,17 +22,16 @@
                 <MenuItem Header="Eliminar"
                     Command="{Binding DataContext.EliminarItemCommand, Source={x:Reference CatalogoItems}}"
                     CommandParameter="{Binding}" />
-                <MenuItem Header="Vender Item"/>
-                <Separator/>
-                <MenuItem Header="Añadir a Carrito"
+                <MenuItem Header="Vender Item"
                     Command="{Binding DataContext.AniadirItemCarritoCommand, Source={x:Reference CatalogoItems}}"
                     CommandParameter="{Binding}" />
+                <Separator/>
                 <MenuItem Header="Duplicar"
                     Command="{Binding DataContext.DuplicarItemCommand, Source={x:Reference CatalogoItems}}"
                     CommandParameter="{Binding}" />
                 <MenuItem Header="Reservar"/>
                 <Separator/>
-                <MenuItem Header="Exportar"/>
+                <MenuItem Header="Añadir a lista para exportar"/>
             </ContextMenu>
 
             <ContextMenu x:Key="MenuContextualTabla">
@@ -42,17 +41,16 @@
                 <MenuItem Header="Eliminar"
                     Command="{Binding Path=DataContext.EliminarItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                     CommandParameter="{Binding}" />
-                <MenuItem Header="Vender Item"/>
-                <Separator/>
-                <MenuItem Header="Añadir a Carrito"
+                <MenuItem Header="Vender item"
                     Command="{Binding Path=DataContext.AniadirItemCarritoCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                     CommandParameter="{Binding}" />
+                <Separator/>
                 <MenuItem Header="Duplicar"
                     Command="{Binding Path=DataContext.DuplicarItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                     CommandParameter="{Binding}" />
                 <MenuItem Header="Reservar"/>
                 <Separator/>
-                <MenuItem Header="Exportar"/>
+                <MenuItem Header="Añadir a lista para exportar"/>
             </ContextMenu>
         </ResourceDictionary>
     </UserControl.Resources>

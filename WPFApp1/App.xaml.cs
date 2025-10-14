@@ -131,16 +131,19 @@ namespace WPFApp1
                 return new Factories.SqlServerRepositorioProductosFactory(configuracionServer.CadenaConexion);
             });
 
+            //Servicios
+            services.AddTransient<ServicioVentas>();
+            services.AddTransient<OrquestadorProductos>();
+            services.AddTransient<ServicioSFX>();
+
             // Registrar ViewModels
             services.AddTransient<PanelSecundarioCatalogoViewModel>();
-            services.AddTransient<ServicioVentas>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<ConfigurarSQLServerViewModel>();
             services.AddTransient<CatalogoViewModel>();
             services.AddTransient<ExportarProductosViewModel>();
             services.AddSingleton<MainWindow>();
-            services.AddTransient<OrquestadorProductos>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {

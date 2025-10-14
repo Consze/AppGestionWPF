@@ -82,5 +82,20 @@ namespace WPFApp1.DTOS
                 }
             }
         }
+        private bool _modoEdicionActivo;
+        public bool ModoEdicionActivo
+        {
+            get => _modoEdicionActivo;
+            set
+            {
+                if (_modoEdicionActivo != value)
+                {
+                    _modoEdicionActivo = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(ModoLecturaActivo));
+                }
+            }
+        }
+        public bool ModoLecturaActivo => !ModoEdicionActivo;
     }
 }
