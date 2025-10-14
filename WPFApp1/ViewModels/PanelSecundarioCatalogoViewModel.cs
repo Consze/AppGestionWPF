@@ -79,6 +79,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private DateTime _FechaElegida;
+        public DateTime FechaElegida
+        {
+            get { return _FechaElegida; }
+            set
+            {
+                if (_FechaElegida != value)
+                {
+                    _FechaElegida = value;
+                    OnPropertyChanged(nameof(FechaElegida));
+                }
+            }
+        }
         public ObservableCollection<Sucursal> ColeccionSucursales { get; set; }
         public ObservableCollection<Ventas> ColeccionProductosVenta { get; set; }
         public ObservableCollection<Medios_Pago> ColeccionMediosPago { get; set; }
@@ -95,6 +108,7 @@ namespace WPFApp1.ViewModels
         public PanelSecundarioCatalogoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Medios_Pago> _servicioMediosPago, 
             ServicioSFX _servicioSFX, IConmutadorEntidadGenerica<Sucursal> _servicioSucursales)
         {
+            FechaElegida = DateTime.Today;
             _sucursalID = string.Empty;
             servicioSucursales = _servicioSucursales;
             servicioSFX = _servicioSFX;
@@ -169,9 +183,8 @@ namespace WPFApp1.ViewModels
             List<Ventas> ListaVentas = new List<Ventas>();
             foreach(Ventas registro in ColeccionProductosVenta)
             {
-                DateTime _fecha = DateTime.Now;
                 registro.SucursalID = SucursalID;
-                registro.FechaVenta = _fecha;
+                registro.FechaVenta = FechaElegida;
                 ListaVentas.Add(registro);
             }
             if (Orquestador.VenderProductos(ListaVentas))
