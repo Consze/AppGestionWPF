@@ -161,6 +161,7 @@ namespace WPFApp1.ViewModels
         public ICommand BusquedaRecibeFocoCommand { get; }
         public ICommand BusquedaPierdeFocoCommand { get; }
         public ICommand AniadirItemCarritoCommand { get; }
+        public ICommand AniadirItemLoteEdicionCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
@@ -187,6 +188,7 @@ namespace WPFApp1.ViewModels
             EliminarTextoBusquedaCommand = new RelayCommand<object>(EliminarTextoBusqueda);
             BusquedaRecibeFocoCommand = new RelayCommand<object>(BusquedaRecibeFoco);
             BusquedaPierdeFocoCommand = new RelayCommand<object>(BusquedaPierdeFoco);
+            AniadirItemLoteEdicionCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemLoteEdicion(param));
             AniadirItemCarritoCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemCarrito(param));
             SeleccionarBusquedaPreviaCommand = new RelayCommand<object>(async (param) => await SeleccionarBusquedaPrevia(param));
 
@@ -196,6 +198,23 @@ namespace WPFApp1.ViewModels
 
             Procesando = false;
             _servicioSFX = new ServicioSFX();
+        }
+        public async Task AniadirItemLoteEdicion(ProductoBase ProductoElegido)
+        {
+            //TODO: Completar implementacion
+            CarritoStatusRequest EstadoCarrito = new CarritoStatusRequest();
+            Messenger.Default.Publish(EstadoCarrito);
+
+            if (!EstadoCarrito.PanelSecundarioExiste)
+            {
+                PanelSecundarioEdicionLoteViewModel _viewModel = App.GetService<PanelSecundarioEdicionLoteViewModel>();
+                //await _viewModel.InicializarVM();
+                Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel, TituloPanel = "Edición de Lote" });
+            }
+
+            //Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
+            //Ventas ItemVender = new Ventas { ItemVendido = ProductoElegido, Cantidad = 1 };
+            //Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
         }
         public async Task AniadirItemCarrito(ProductoBase ProductoElegido)
         {

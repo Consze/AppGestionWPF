@@ -21,6 +21,9 @@
             <DataTemplate DataType="{x:Type vm:PanelSecundarioCatalogoViewModel}">
                 <view:PanelSecundarioCatalogo />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PanelSecundarioEdicionLoteViewModel}">
+                <view:PanelSecundarioEdicionLote />
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -293,11 +296,6 @@
             <Border BorderBrush="Black" Grid.RowSpan="2" Grid.Row="1"
                 BorderThickness="1" CornerRadius="10" Margin="15,0,0,0" Background="GhostWhite"
                 Visibility="{Binding TogglePanelSecundario, Converter={StaticResource BooleanToVisibility}}">
-                <Border.Resources>
-                    <DataTemplate DataType="{x:Type vm:PanelSecundarioCatalogoViewModel}">
-                        <view:PanelSecundarioCatalogo />
-                    </DataTemplate>
-                </Border.Resources>
 
                 <Grid>
                     <Grid.RowDefinitions>

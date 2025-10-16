@@ -26,6 +26,9 @@
                     Command="{Binding DataContext.AniadirItemCarritoCommand, Source={x:Reference CatalogoItems}}"
                     CommandParameter="{Binding}" />
                 <Separator/>
+                <MenuItem Header="Añadir a lote de edición"
+                    Command="{Binding DataContext.AniadirItemLoteEdicionCommand, Source={x:Reference CatalogoItems}}"
+                    CommandParameter="{Binding}" />
                 <MenuItem Header="Duplicar"
                     Command="{Binding DataContext.DuplicarItemCommand, Source={x:Reference CatalogoItems}}"
                     CommandParameter="{Binding}" />
@@ -45,6 +48,9 @@
                     Command="{Binding Path=DataContext.AniadirItemCarritoCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                     CommandParameter="{Binding}" />
                 <Separator/>
+                <MenuItem Header="Añadir a lote de edición"
+                    Command="{Binding Path=DataContext.AniadirItemLoteEdicionCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                    CommandParameter="{Binding}" />
                 <MenuItem Header="Duplicar"
                     Command="{Binding Path=DataContext.DuplicarItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                     CommandParameter="{Binding}" />
@@ -365,7 +371,7 @@
                                 <Border Width="150" Height="150">
                                     <Image Source="{Binding Path=RutaImagen}"/>
                                 </Border>
-                                <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding Nombre}"/>
+                                <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding Nombre}" TextWrapping="Wrap" MaxWidth="200"/>
                                 <TextBlock Text="{Binding Path=Categoria, StringFormat='Categoria: {0}'}"/>
                                 <TextBlock Text="{Binding Path=Precio, StringFormat='Precio: ${0}'}"/>
                             </StackPanel>
