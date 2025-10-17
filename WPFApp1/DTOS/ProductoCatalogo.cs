@@ -2,6 +2,24 @@
 {
     public class ProductoCatalogo : ProductoBase
     {
+        //--------Para uso en Vistas----
+        private bool _modoEdicionActivo;
+        public bool ModoEdicionActivo
+        {
+            get => _modoEdicionActivo;
+            set
+            {
+                if (_modoEdicionActivo != value)
+                {
+                    _modoEdicionActivo = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(ModoLecturaActivo));
+                }
+            }
+        }
+        public bool ModoLecturaActivo => !ModoEdicionActivo;
+
+
         //--------Booleanas---------
         private bool _precioPublico;
         public bool PrecioPublico

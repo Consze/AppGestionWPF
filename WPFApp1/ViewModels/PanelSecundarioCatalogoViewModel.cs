@@ -79,6 +79,7 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool Inicializado;
         private DateTime _FechaElegida;
         public DateTime FechaElegida
         {
@@ -108,6 +109,7 @@ namespace WPFApp1.ViewModels
         public PanelSecundarioCatalogoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Medios_Pago> _servicioMediosPago, 
             ServicioSFX _servicioSFX, IConmutadorEntidadGenerica<Sucursal> _servicioSucursales)
         {
+            Inicializado = false;
             FechaElegida = DateTime.Today;
             _sucursalID = string.Empty;
             servicioSucursales = _servicioSucursales;
@@ -204,8 +206,12 @@ namespace WPFApp1.ViewModels
         }
         public async Task InicializarVM()
         {
+            if (Inicializado)
+                return;
+            
             await CargarMediosPago();
             await CargarSucursales();
+            Inicializado = true;
         }
         public async Task CargarSucursales()
         {

@@ -13,6 +13,19 @@ namespace WPFApp1.ViewModels
 {
     public class PanelSecundarioEdicionLoteViewModel : IPanelContextualVM, INotifyPropertyChanged, IDisposable
     {
+        private int _ContadorItemsElegidos;
+        public int ContadorItemsElegidos
+        {
+            get { return _ContadorItemsElegidos; }
+            set
+            {
+                if (_ContadorItemsElegidos != value)
+                {
+                    _ContadorItemsElegidos = value;
+                    OnPropertyChanged(nameof(ContadorItemsElegidos));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         private bool _MostrarListaProductos;
         public bool MostrarListaProductos
@@ -53,10 +66,14 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        public ICommand EliminarItemCommand { get; set; }
+        public ICommand ModificarItemCommand { get; set; }
         public ICommand VerListaEdicionCommand { get; }
         public ICommand MostrarOpcionesCommand { get; }
         public ObservableCollection<ProductoCatalogo> ColeccionProductosEditar { get; set; }
-        public PanelSecundarioEdicionLoteViewModel()
+        private readonly ServicioSFX servicioSFX;
+        private readonly OrquestadorProductos Orquestador;
+        public PanelSecundarioEdicionLoteViewModel(ServicioSFX servicioSFX, OrquestadorProductos _orquestador)
         {
             _MostrarListaProductos = true;
             _MostrarOpcionesFlag = false;
@@ -65,6 +82,39 @@ namespace WPFApp1.ViewModels
 
             VerListaEdicionCommand = new RelayCommand<object>(VerListaEdicion);
             MostrarOpcionesCommand = new RelayCommand<object>(MostrarOpciones);
+            ModificarItemCommand = new RelayCommand<ProductoCatalogo>(ModificarItem);
+            EliminarItemCommand = new RelayCommand<ProductoCatalogo>(EliminarItem);
+            Messenger.Default.Subscribir<NuevoProductoEdicion>(OnProductoAniadidoEdicion);
+            this.servicioSFX = servicioSFX;
+            this.Orquestador = _orquestador;
+        }
+        private void ModificarItem(ProductoCatalogo item)
+        {
+            item.ModoEdicionActivo = !item.ModoEdicionActivo;
+        }
+        private void EliminarItem(ProductoCatalogo ItemEliminar)
+        {
+            ProductoCatalogo itemLista = ColeccionProductosEditar.FirstOrDefault(V => V == ItemEliminar);
+            if (itemLista != null)
+            {
+                ColeccionProductosEditar.Remove(ItemEliminar);
+                ContadorItemsElegidos--;
+            }
+
+        }
+        private void OnProductoAniadidoEdicion(NuevoProductoEdicion Producto)
+        {
+            ProductoBase nuevoItem = Producto.ProductoAniadido;
+
+            ProductoBase registroVigente = ColeccionProductosEditar.FirstOrDefault(V => V.ProductoSKU == nuevoItem.ProductoSKU);
+            if (registroVigente == null)
+            {
+                ProductoCatalogo item = Orquestador.RecuperarProductoPorID(nuevoItem.ProductoSKU);
+                item.ModoEdicionActivo = false;
+                ColeccionProductosEditar.Add(item);
+                ContadorItemsElegidos++;
+            }
+            servicioSFX.Swipe();
         }
         private void VerListaEdicion(object parameter)
         {

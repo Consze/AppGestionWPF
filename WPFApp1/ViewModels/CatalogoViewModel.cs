@@ -201,27 +201,24 @@ namespace WPFApp1.ViewModels
         }
         public async Task AniadirItemLoteEdicion(ProductoBase ProductoElegido)
         {
-            //TODO: Completar implementacion
-            CarritoStatusRequest EstadoCarrito = new CarritoStatusRequest();
+            PanelSecundarioStatusRequest EstadoCarrito = new PanelSecundarioStatusRequest();
             Messenger.Default.Publish(EstadoCarrito);
 
-            if (!EstadoCarrito.PanelSecundarioExiste)
+            if (!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioEdicionLoteViewModel))
             {
                 PanelSecundarioEdicionLoteViewModel _viewModel = App.GetService<PanelSecundarioEdicionLoteViewModel>();
-                //await _viewModel.InicializarVM();
                 Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel, TituloPanel = "Edición de Lote" });
             }
 
-            //Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
-            //Ventas ItemVender = new Ventas { ItemVendido = ProductoElegido, Cantidad = 1 };
-            //Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
+            Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
+            Messenger.Default.Publish(new NuevoProductoEdicion { ProductoAniadido = ProductoElegido });
         }
         public async Task AniadirItemCarrito(ProductoBase ProductoElegido)
         {
-            CarritoStatusRequest EstadoCarrito = new CarritoStatusRequest();
+            PanelSecundarioStatusRequest EstadoCarrito = new PanelSecundarioStatusRequest();
             Messenger.Default.Publish(EstadoCarrito);
 
-            if(!EstadoCarrito.PanelSecundarioExiste)
+            if(!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioCatalogoViewModel))
             {
                 PanelSecundarioCatalogoViewModel _viewModel = App.GetService<PanelSecundarioCatalogoViewModel>();
                 await _viewModel.InicializarVM();

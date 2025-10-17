@@ -228,7 +228,7 @@ namespace WPFApp1.ViewModels
             Messenger.Default.Subscribir<NotificacionEmergente>(OnNotificacionEmergenteAsync);
             Messenger.Default.Subscribir<TogglePanelSecundarioMW>(OnAlternarPanelSecundario);
             Messenger.Default.Subscribir<PanelSecundarioBoxing>(OnPresentarPanelSecundario);
-            Messenger.Default.Subscribir<CarritoStatusRequest>(OnSolicitudEstadoCarrito);
+            Messenger.Default.Subscribir<PanelSecundarioStatusRequest>(OnSolicitudEstadoCarrito);
         }
         private void InspeccionarNotificacion(object NotificacionClickeada)
         {
@@ -342,7 +342,7 @@ namespace WPFApp1.ViewModels
             VistaActual = nuevaVista;
             Procesando = false;
         }
-        private void OnSolicitudEstadoCarrito(CarritoStatusRequest mensaje)
+        private void OnSolicitudEstadoCarrito(PanelSecundarioStatusRequest mensaje)
         {
             mensaje.PanelSecundarioExiste = TogglePanelSecundario;
         }

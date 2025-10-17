@@ -122,22 +122,22 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Column="0">
-                                    <TextBlock Text="{Binding ItemVendido.Nombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0"/>
+                                    <TextBlock Text="{Binding Nombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0"/>
 
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ModoLecturaActivo, Converter={StaticResource BooleanToVisibility}}">
-                                        <TextBlock Text="{Binding precioVenta, StringFormat=' - {0:C}'}"/>
+                                        <TextBlock Text="{Binding CategoriaNombre, StringFormat=' - {0:C}'}"/>
                                         <TextBlock Text="{Binding Cantidad, StringFormat=' - x{0} -'}" FontWeight="Bold" Margin="10,0,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ModoEdicionActivo, Converter={StaticResource BooleanToVisibility}}">
-                                        <TextBox Text="{Binding precioVenta, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="5,0"/>
+                                        <TextBox Text="{Binding CategoriaNombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="5,0"/>
                                         <TextBox Text="{Binding Cantidad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" FontWeight="Bold"/>
                                     </StackPanel>
 
                                     <ComboBox ItemsSource="{Binding DataContext.ColeccionMediosPago, 
-                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    SelectedValue="{Binding MedioPagoID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    DisplayMemberPath="Nombre" SelectedValuePath="ID" Margin="15,0,0,0"/>
+                                        RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}"
+                                        SelectedValue="{Binding MedioPagoID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        DisplayMemberPath="Nombre" SelectedValuePath="ID" Margin="15,0,0,0"/>
                                 </StackPanel>
 
                                 <Button Style="{StaticResource BotonSinEstilo}" Margin="40,0,0,0" Command="{Binding DataContext.ModificarItemCommand, RelativeSource={RelativeSource FindAncestor, 

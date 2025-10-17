@@ -137,7 +137,8 @@ namespace WPFApp1
             services.AddTransient<ServicioSFX>();
 
             // Registrar ViewModels
-            services.AddTransient<PanelSecundarioCatalogoViewModel>();
+            services.AddSingleton<PanelSecundarioCatalogoViewModel>();
+            services.AddSingleton<PanelSecundarioEdicionLoteViewModel>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<ConfigurarSQLServerViewModel>();

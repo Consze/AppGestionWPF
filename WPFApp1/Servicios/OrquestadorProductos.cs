@@ -343,6 +343,9 @@ namespace WPFApp1.Servicios
             }
             return IDNuevaVersion;
         }
-
+        public ProductoCatalogo RecuperarProductoPorID(string ID)
+        {
+            return productoServicio.RecuperarProductoPorID(ID);
+        }
     }
 }
