@@ -10,8 +10,39 @@ using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
 {
+    public class WrapperSeleccionPropiedad
+    {
+        public string Display { get; set; }
+        public string PropiedadNombre { get; set; }
+    }
     public class PanelSecundarioEdicionLoteViewModel : IPanelContextualVM, INotifyPropertyChanged, IDisposable
     {
+        private string _propiedadElegida;
+        public string PropiedadElegida
+        {
+            get { return _propiedadElegida; }
+            set
+            {
+                if (_propiedadElegida != value)
+                {
+                    _propiedadElegida = value;
+                    OnPropertyChanged(nameof(PropiedadElegida));
+                }
+            }
+        }
+        private object _nuevoValor;
+        public object NuevoValor
+        {
+            get { return _nuevoValor; }
+            set
+            {
+                if (_nuevoValor != value)
+                {
+                    _nuevoValor = value;
+                    OnPropertyChanged(nameof(NuevoValor));
+                }
+            }
+        }
         private int _ContadorItemsElegidos;
         public int ContadorItemsElegidos
         {
@@ -65,6 +96,7 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+
         public ICommand EliminarItemCommand { get; set; }
         public ICommand ModificarItemCommand { get; set; }
         public ICommand VerListaEdicionCommand { get; }
@@ -72,14 +104,18 @@ namespace WPFApp1.ViewModels
         public ICommand EliminarListaCommand {get;}
         public ICommand GuardarCambiosCommand { get; }
         public ObservableCollection<ProductoCatalogo> ColeccionProductosEditar { get; set; }
+        public ObservableCollection<WrapperSeleccionPropiedad> ColeccionPropiedadesProductos { get; set; }
         private readonly ServicioSFX servicioSFX;
         private readonly OrquestadorProductos Orquestador;
+        public readonly Dictionary<string, string> MapeoColumnas;
         public PanelSecundarioEdicionLoteViewModel(ServicioSFX servicioSFX, OrquestadorProductos _orquestador)
         {
+            PropiedadElegida = string.Empty;
             _MostrarListaProductos = true;
             _MostrarOpcionesFlag = false;
             _BotonHabilitado = false;
             ColeccionProductosEditar = new ObservableCollection<ProductoCatalogo>();
+            ColeccionPropiedadesProductos = new ObservableCollection<WrapperSeleccionPropiedad>();
 
             VerListaEdicionCommand = new RelayCommand<object>(VerListaEdicion);
             MostrarOpcionesCommand = new RelayCommand<object>(MostrarOpciones);
@@ -90,15 +126,102 @@ namespace WPFApp1.ViewModels
             Messenger.Default.Subscribir<NuevoProductoEdicion>(OnProductoAniadidoEdicion);
             this.servicioSFX = servicioSFX;
             this.Orquestador = _orquestador;
+
+            MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Nombre de Display
+                {"UbicacionID", "Ubicacion" },
+                {"Haber" , "Haber" },
+                {"Precio", "Precio" },
+                {"Categoria", "Categoria" },
+                {"EsEliminado", "Eliminacion" },
+                {"VisibilidadWeb","Se muestra Online" },
+                {"PrecioPublico","Precio Publico" }
+            };
+        }
+        public async Task InicializarVista()
+        {
+            if (ColeccionPropiedadesProductos.Count > 0)
+                return;
+
+            var listaExclusion = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "ProductoSKU",
+                "FechaCreacion",
+                "ModoEdicionActivo",
+                "ModoLecturaActivo",
+                "FechaModificacion",
+                "CategoriaNombre",
+                "UbicacionNombre",
+                "MarcaNombre",
+                "EAN",
+                "RutaImagen",
+                "Nombre",
+                "ID",
+                "ProductoVersionID",
+                "FormatoProductoID",
+                "FormatoNombre",
+                "MarcaID",
+                "Alto",
+                "Profundidad",
+                "Largo",
+                "Peso"
+            };
+
+            var propiedadesEntidad = typeof(ProductoCatalogo).GetProperties();
+            foreach (var propiedad in propiedadesEntidad)
+            {
+                if (listaExclusion.Contains(propiedad.Name))
+                    continue;
+                WrapperSeleccionPropiedad item = new WrapperSeleccionPropiedad
+                {
+                    PropiedadNombre = propiedad.Name,
+                    Display = MapeoColumnas[propiedad.Name]
+                };
+                ColeccionPropiedadesProductos.Add(item);
+            }
         }
         private void GuardarCambios(object parameter)
         {
+            List<ProductoSKU_Propiedad_Valor> listaModificacion = new List<ProductoSKU_Propiedad_Valor>();
 
+            foreach(ProductoBase producto in ColeccionProductosEditar)
+            {
+                ProductoSKU_Propiedad_Valor item = new ProductoSKU_Propiedad_Valor
+                {
+                    ProductoSKU = producto.ProductoSKU,
+                    PropiedadNombre = PropiedadElegida,
+                    Valor = NuevoValor
+                };
 
+                listaModificacion.Add(item);
+            }
 
-
-
-            bool resultado = Orquestador.ModificarListaProductos();
+            if (Orquestador.ModificarListaProductos(listaModificacion))
+            {
+                ContadorItemsElegidos = 0;
+                ColeccionProductosEditar.Clear();
+                servicioSFX.Confirmar();
+                Notificacion _notificacion = new Notificacion { Mensaje = "Lote de items modificados", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
+            else
+            {
+                servicioSFX.Suspenso();
+                Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo registrar la modificación", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            }
+        }
+        private void ValidarBoton(object parameter)
+        {
+            if(true)
+            {
+                BotonHabilitado = false;
+            }
+            else
+            {
+                BotonHabilitado = true;
+            }
         }
         private void EliminarLista(object parameter)
         {

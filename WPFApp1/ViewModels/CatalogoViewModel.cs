@@ -7,8 +7,6 @@ using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Enums;
 using WPFApp1.Servicios;
-using WPFApp1.Vistas;
-using System.Threading.Tasks;
 
 namespace WPFApp1.ViewModels
 {
@@ -207,6 +205,7 @@ namespace WPFApp1.ViewModels
             if (!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioEdicionLoteViewModel))
             {
                 PanelSecundarioEdicionLoteViewModel _viewModel = App.GetService<PanelSecundarioEdicionLoteViewModel>();
+                await _viewModel.InicializarVista();
                 Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel, TituloPanel = "Edición de Lote" });
             }
 

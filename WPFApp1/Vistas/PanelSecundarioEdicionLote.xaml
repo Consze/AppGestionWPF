@@ -106,7 +106,7 @@
 
             <ListBox Grid.Row="1" ItemsSource="{Binding ColeccionProductosEditar}" Grid.ColumnSpan="2" Grid.Column="0"
                  Margin="10" Visibility="{Binding MostrarListaProductos, Converter={StaticResource BooleanToVisibility}}"
-                 MaxHeight="400" Height="400" HorizontalContentAlignment="Stretch">
+                 MaxHeight="350" Height="350" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border>
@@ -131,18 +131,13 @@
 
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ModoLecturaActivo, Converter={StaticResource BooleanToVisibility}}">
                                         <TextBlock Text="{Binding CategoriaNombre, StringFormat=' - {0:C}'}" Margin="0,20,0,0"/>
-                                        <TextBlock Text="{Binding Cantidad, StringFormat=' - x{0} -'}" FontWeight="Bold" Margin="10,20,0,0"/>
+                                        <TextBlock Text="{Binding Haber, StringFormat=' - x{0}'}" FontWeight="Bold" Margin="10,20,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ModoEdicionActivo, Converter={StaticResource BooleanToVisibility}}">
                                         <TextBox Text="{Binding CategoriaNombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="5,0"/>
-                                        <TextBox Text="{Binding Cantidad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" FontWeight="Bold"/>
+                                        <TextBox Text="{Binding Haber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" FontWeight="Bold"/>
                                     </StackPanel>
-
-                                    <ComboBox ItemsSource="{Binding DataContext.ColeccionMediosPago, 
-                                        RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}"
-                                        SelectedValue="{Binding MedioPagoID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        DisplayMemberPath="Nombre" SelectedValuePath="ID" Margin="15,20,0,20"/>
                                 </StackPanel>
 
                                 <Button Style="{StaticResource BotonSinEstilo}" Margin="40,0,0,0" Command="{Binding DataContext.ModificarItemCommand, RelativeSource={RelativeSource FindAncestor, 
@@ -168,9 +163,22 @@
             <Grid Visibility="{Binding MostrarOpcionesFlag, Converter={StaticResource BooleanToVisibility}}" Grid.Row="2" Margin="10" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <ComboBox ItemsSource="{Binding ColeccionPropiedadesProductos}" SelectedValue="{Binding PropiedadElegida, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="5" Grid.Column="0" DisplayMemberPath="Display" 
+                    SelectedValuePath="PropiedadNombre" />
+
+                <TextBox Grid.Column="1" Text="{Binding NuevoValor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="5"/>
+
                 <Button x:Name="EliminarLista" Content="Vaciar lista" FontSize="18" FontWeight="Regular" Command="{Binding EliminarListaCommand}"
-                    Grid.Column="0" Padding="10"/>
+                    Grid.Column="0" Padding="10" Grid.Row="1" Margin="5"/>
             </Grid>
 
             <Button x:Name="BotonOpciones" Content="Opciones" FontSize="18" FontWeight="Regular" Command="{Binding MostrarOpcionesCommand}"

@@ -249,7 +249,7 @@ namespace WPFApp1.Servicios
         }
         public bool ModificarListaProductos(List<ProductoSKU_Propiedad_Valor> ListaModificar)
         {
-
+            return productoServicio.ModificacionMasiva(ListaModificar);
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {
