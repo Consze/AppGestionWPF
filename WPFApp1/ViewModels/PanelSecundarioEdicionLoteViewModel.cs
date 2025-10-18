@@ -1,13 +1,12 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Input;
 using WPFApp1.DTOS;
-using WPFApp1.Entidades;
+using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
-using System.IO;
 
 namespace WPFApp1.ViewModels
 {
@@ -70,6 +69,8 @@ namespace WPFApp1.ViewModels
         public ICommand ModificarItemCommand { get; set; }
         public ICommand VerListaEdicionCommand { get; }
         public ICommand MostrarOpcionesCommand { get; }
+        public ICommand EliminarListaCommand {get;}
+        public ICommand GuardarCambiosCommand { get; }
         public ObservableCollection<ProductoCatalogo> ColeccionProductosEditar { get; set; }
         private readonly ServicioSFX servicioSFX;
         private readonly OrquestadorProductos Orquestador;
@@ -84,9 +85,23 @@ namespace WPFApp1.ViewModels
             MostrarOpcionesCommand = new RelayCommand<object>(MostrarOpciones);
             ModificarItemCommand = new RelayCommand<ProductoCatalogo>(ModificarItem);
             EliminarItemCommand = new RelayCommand<ProductoCatalogo>(EliminarItem);
+            EliminarListaCommand = new RelayCommand<object>(EliminarLista);
+            GuardarCambiosCommand = new RelayCommand<object>(GuardarCambios);
             Messenger.Default.Subscribir<NuevoProductoEdicion>(OnProductoAniadidoEdicion);
             this.servicioSFX = servicioSFX;
             this.Orquestador = _orquestador;
+        }
+        private void GuardarCambios(object parameter)
+        {
+
+        }
+        private void EliminarLista(object parameter)
+        {
+            if (ColeccionProductosEditar.Count > 0)
+            {
+                ColeccionProductosEditar.Clear();
+                ContadorItemsElegidos = 0;
+            }
         }
         private void ModificarItem(ProductoCatalogo item)
         {

@@ -102,6 +102,7 @@ namespace WPFApp1.ViewModels
         public ICommand RegistrarVentaCommand { get; }
         public ICommand ModificarItemCommand { get; }
         public ICommand MostrarOpcionesCommand { get; }
+        public ICommand EliminarListaCommand { get; }
         private readonly OrquestadorProductos Orquestador;
         private readonly IConmutadorEntidadGenerica<Medios_Pago> servicioMediosPago;
         private readonly IConmutadorEntidadGenerica<Sucursal> servicioSucursales;
@@ -128,9 +129,18 @@ namespace WPFApp1.ViewModels
             RegistrarVentaCommand = new RelayCommand<object>(VenderLista);
             ModificarItemCommand = new RelayCommand<Ventas>(ModificarItem);
             MostrarOpcionesCommand = new RelayCommand<object>(MostrarOpciones);
+            EliminarListaCommand = new RelayCommand<object>(EliminarLista);
 
             ColeccionProductosVenta.CollectionChanged += ColeccionProductosVenta_ColeccionModificada;
             Messenger.Default.Subscribir<NuevoProductoCarritoMessage>(OnProductoAniadidoCarrito);
+        }
+        private void EliminarLista(object parameter)
+        {
+            if (ColeccionProductosVenta.Count > 0)
+            {
+                ColeccionProductosVenta.Clear();
+                ContadorItemsElegidos = 0;
+            }
         }
         private void ColeccionProductosVenta_ColeccionModificada(object sender, NotifyCollectionChangedEventArgs e)
         {

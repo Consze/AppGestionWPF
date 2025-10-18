@@ -6,18 +6,6 @@ using WPFApp1.Mensajes;
 
 namespace WPFApp1.Servicios
 {
-    public enum ServicioAsociado
-    {
-        Stock,
-        Ubicaciones,
-        Formatos,
-        Versiones,
-        Marcas,
-        Categorias,
-        Indexacion,
-        Arquetipo,
-        Null
-    }
     public class OrquestadorProductos
     {
         public readonly Dictionary<string, ServicioAsociado> MapeoPropiedades;
@@ -258,6 +246,10 @@ namespace WPFApp1.Servicios
 
 
             return ActualizacionStock || ActualizarVersion || ActualizarArquetipo || ActualizarUbicacion || ActualizarMarca;
+        }
+        public bool ModificarListaProductos(List<ProductoSKU_Propiedad_Valor> ListaModificar)
+        {
+
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {
