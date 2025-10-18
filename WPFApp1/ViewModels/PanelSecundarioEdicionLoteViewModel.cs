@@ -94,6 +94,11 @@ namespace WPFApp1.ViewModels
         private void GuardarCambios(object parameter)
         {
 
+
+
+
+
+            bool resultado = Orquestador.ModificarListaProductos();
         }
         private void EliminarLista(object parameter)
         {
