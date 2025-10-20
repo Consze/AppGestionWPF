@@ -96,7 +96,6 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-
         public ICommand EliminarItemCommand { get; set; }
         public ICommand ModificarItemCommand { get; set; }
         public ICommand VerListaEdicionCommand { get; }
