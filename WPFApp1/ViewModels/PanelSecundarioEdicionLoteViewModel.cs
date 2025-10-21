@@ -96,6 +96,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private IControlValidadoVM _contenidoEdicion;
+        public IControlValidadoVM ContenidoControl
+        {
+            get { return _contenidoEdicion; }
+            set
+            {
+                if (_contenidoEdicion != value)
+                {
+                    _contenidoEdicion = value;
+                    OnPropertyChanged(nameof(ContenidoControl));
+                }
+            }
+        }
         public ICommand EliminarItemCommand { get; set; }
         public ICommand ModificarItemCommand { get; set; }
         public ICommand VerListaEdicionCommand { get; }
@@ -137,6 +150,23 @@ namespace WPFApp1.ViewModels
                 {"VisibilidadWeb","Se muestra Online" },
                 {"PrecioPublico","Precio Publico" }
             };
+        }
+        public void ActualizarContenidoControl()
+        {
+            if (ContenidoControl is IDisposable disposableVM)
+                disposableVM.Dispose();
+
+            ContenidoControl = null;
+
+            switch (_propiedadElegida)
+            {
+                case "Haber":
+                case "Precio":
+                    ContenidoControl = new NuevoValorNumericoViewModel(_propiedadElegida);
+                    break;
+            }
+
+            OnPropertyChanged(nameof(ContenidoControl));
         }
         public async Task InicializarVista()
         {

@@ -1,6 +1,6 @@
 ﻿namespace WPFApp1.Interfaces
 {
-    public interface IControlValidadoVM
+    public interface IControlValidadoVM : IDisposable
     {
         bool ValidarInput { get; }
         object InputUsuario { get; }
