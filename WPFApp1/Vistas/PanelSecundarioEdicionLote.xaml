@@ -26,6 +26,21 @@
                        Visibility="{Binding MostrarError, Converter={StaticResource BooleanToVisibility}}"/>
                 </StackPanel>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NuevoValorBooleanoViewModel}">
+                <CheckBox IsChecked="{Binding InputBindingToggle}" Grid.Row="1">
+                    <TextBlock Text="{Binding TextoCheckbox}" FontWeight="Regular" FontSize="14"/>
+                </CheckBox>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NuevoValorEntidadAuxiliarViewModel}">
+                <ComboBox x:Name="ubicacionElegida" 
+                  Style="{StaticResource CBOXValidable}"
+                  DisplayMemberPath="Nombre" 
+                  SelectedValuePath="ID" 
+                  SelectedValue="{Binding UbicacionID, Mode=TwoWay}"
+                  ItemsSource="{Binding Ubicaciones}"
+                  Margin="2">
+                </ComboBox>
+            </DataTemplate>
             <Style TargetType="ListBoxItem">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Padding" Value="0"/>

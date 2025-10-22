@@ -168,6 +168,17 @@ namespace WPFApp1.ViewModels
                 case "Precio":
                     ContenidoControl = new NuevoValorNumericoViewModel(PropiedadElegida);
                     break;
+                case "PrecioPublico":
+                case "VisibilidadWeb":
+                case "EsEliminado":
+                    ContenidoControl = new NuevoValorBooleanoViewModel(PropiedadElegida);
+                    break;
+                case "UbicacionID":
+                    //TODO Seleccion de entidad + creación en linea
+                    break;
+                case "Categoria":
+                    //TODO Seleccion de entidad + creación en linea
+                    break;
             }
         }
         public async Task InicializarVista()
@@ -215,8 +226,8 @@ namespace WPFApp1.ViewModels
         private void GuardarCambios(object parameter)
         {
             List<ProductoSKU_Propiedad_Valor> listaModificacion = new List<ProductoSKU_Propiedad_Valor>();
-
-            foreach(ProductoBase producto in ColeccionProductosEditar)
+            NuevoValor = ContenidoControl.InputUsuario;
+            foreach (ProductoBase producto in ColeccionProductosEditar)
             {
                 ProductoSKU_Propiedad_Valor item = new ProductoSKU_Propiedad_Valor
                 {
@@ -230,6 +241,12 @@ namespace WPFApp1.ViewModels
 
             if (Orquestador.ModificarListaProductos(listaModificacion))
             {
+                if (ContenidoControl is IDisposable disposableVM)
+                {
+                    ContenidoControl = null;
+                    disposableVM.Dispose();
+                    MostrarOpcionesFlag = false;
+                }
                 ContadorItemsElegidos = 0;
                 ColeccionProductosEditar.Clear();
                 servicioSFX.Confirmar();
@@ -248,7 +265,6 @@ namespace WPFApp1.ViewModels
             if(ContenidoControl.InputUsuario != null && mensaje.Estado)
             {
                 BotonHabilitado = mensaje.Estado;
-                NuevoValor = ContenidoControl.InputUsuario;
             }
             else
             {
