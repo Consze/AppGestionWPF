@@ -27,6 +27,7 @@ namespace WPFApp1.ViewModels
                 {
                     _propiedadElegida = value;
                     OnPropertyChanged(nameof(PropiedadElegida));
+                    ActualizarContenidoControl();
                 }
             }
         }
@@ -96,15 +97,15 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
-        private IControlValidadoVM _contenidoEdicion;
+        private IControlValidadoVM _contenidoControl;
         public IControlValidadoVM ContenidoControl
         {
-            get { return _contenidoEdicion; }
+            get { return _contenidoControl; }
             set
             {
-                if (_contenidoEdicion != value)
+                if (_contenidoControl != value)
                 {
-                    _contenidoEdicion = value;
+                    _contenidoControl = value;
                     OnPropertyChanged(nameof(ContenidoControl));
                 }
             }
@@ -119,13 +120,15 @@ namespace WPFApp1.ViewModels
         public ObservableCollection<WrapperSeleccionPropiedad> ColeccionPropiedadesProductos { get; set; }
         private readonly ServicioSFX servicioSFX;
         private readonly OrquestadorProductos Orquestador;
-        public readonly Dictionary<string, string> MapeoColumnas;
+        public readonly Dictionary<string, string> MapeoPropiedades;
         public PanelSecundarioEdicionLoteViewModel(ServicioSFX servicioSFX, OrquestadorProductos _orquestador)
         {
             PropiedadElegida = string.Empty;
             _MostrarListaProductos = true;
             _MostrarOpcionesFlag = false;
             _BotonHabilitado = false;
+            _nuevoValor = null;
+            ContenidoControl = null;
             ColeccionProductosEditar = new ObservableCollection<ProductoCatalogo>();
             ColeccionPropiedadesProductos = new ObservableCollection<WrapperSeleccionPropiedad>();
 
@@ -136,10 +139,11 @@ namespace WPFApp1.ViewModels
             EliminarListaCommand = new RelayCommand<object>(EliminarLista);
             GuardarCambiosCommand = new RelayCommand<object>(GuardarCambios);
             Messenger.Default.Subscribir<NuevoProductoEdicion>(OnProductoAniadidoEdicion);
+            Messenger.Default.Subscribir<ToggleHabilitarBotonEdicion>(OnValidacionBoton);
             this.servicioSFX = servicioSFX;
             this.Orquestador = _orquestador;
 
-            MapeoColumnas = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            MapeoPropiedades = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 //Propiedad de Clase , Nombre de Display
                 {"UbicacionID", "Ubicacion" },
@@ -158,15 +162,13 @@ namespace WPFApp1.ViewModels
 
             ContenidoControl = null;
 
-            switch (_propiedadElegida)
+            switch (PropiedadElegida)
             {
                 case "Haber":
                 case "Precio":
-                    ContenidoControl = new NuevoValorNumericoViewModel(_propiedadElegida);
+                    ContenidoControl = new NuevoValorNumericoViewModel(PropiedadElegida);
                     break;
             }
-
-            OnPropertyChanged(nameof(ContenidoControl));
         }
         public async Task InicializarVista()
         {
@@ -205,7 +207,7 @@ namespace WPFApp1.ViewModels
                 WrapperSeleccionPropiedad item = new WrapperSeleccionPropiedad
                 {
                     PropiedadNombre = propiedad.Name,
-                    Display = MapeoColumnas[propiedad.Name]
+                    Display = MapeoPropiedades[propiedad.Name]
                 };
                 ColeccionPropiedadesProductos.Add(item);
             }
@@ -241,15 +243,17 @@ namespace WPFApp1.ViewModels
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
         }
-        private void ValidarBoton(object parameter)
+        private void OnValidacionBoton(ToggleHabilitarBotonEdicion mensaje)
         {
-            if(true)
+            if(ContenidoControl.InputUsuario != null && mensaje.Estado)
             {
-                BotonHabilitado = false;
+                BotonHabilitado = mensaje.Estado;
+                NuevoValor = ContenidoControl.InputUsuario;
             }
             else
             {
-                BotonHabilitado = true;
+                BotonHabilitado = false;
+                NuevoValor = null;
             }
         }
         private void EliminarLista(object parameter)

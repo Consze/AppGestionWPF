@@ -1,60 +1,99 @@
 ﻿using System.ComponentModel;
 using WPFApp1.Interfaces;
+using WPFApp1.Mensajes;
 using WPFApp1.Servicios;
 
-public class NuevoValorNumericoViewModel : INotifyPropertyChanged, IControlValidadoVM
+namespace WPFApp1.ViewModels
 {
-    private string _valorString;
-    private readonly string nombrePropiedad;
-    public event PropertyChangedEventHandler PropertyChanged;
-    public string ValorString
+    public class NuevoValorNumericoViewModel : INotifyPropertyChanged, IControlValidadoVM
     {
-        get => _valorString;
-        set
+        private string _valorString;
+        private string _textoError;
+        private readonly string nombrePropiedad;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public string ValorString
         {
-            if (_valorString != value)
+            get => _valorString;
+            set
             {
-                _valorString = value;
-                OnPropertyChanged(nameof(ValidarInput));
+                if (_valorString != value)
+                {
+                    _valorString = value;
+                    OnPropertyChanged(nameof(ValorString));
+                    OnPropertyChanged(nameof(ValidarInput));
+                    OnPropertyChanged(nameof(MostrarError));
+                    Messenger.Default.Publish(new ToggleHabilitarBotonEdicion { Estado = ValidarInput });
+                }
             }
         }
-    }
-    public bool ValidarInput
-    {
-        get
+        public bool MostrarError
         {
-            if (!decimal.TryParse(ValorString, out decimal valorNumerico))
-                return false;
+            get { return !ValidarInput; }
+        }
+        public bool ValidarInput
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ValorString))
+                    return true;
 
-            if (nombrePropiedad.Equals("Haber", StringComparison.OrdinalIgnoreCase))
-            {
-                return valorNumerico > 0;
-            }
+                if (!decimal.TryParse(ValorString, out decimal valorNumerico))
+                {
+                    return false;
+                }
+                
+                if (nombrePropiedad.Equals("Haber", StringComparison.OrdinalIgnoreCase))
+                {
+                    return valorNumerico > 0;
+                }
 
-            return valorNumerico >= 0;
-        }
-    }
-    public object InputUsuario
-    {
-        get
-        {
-            if (ValidarInput && decimal.TryParse(ValorString, out decimal valorNumerico))
-            {
-                return valorNumerico;
+                return valorNumerico >= 0;
             }
-            return null;
         }
-    }
-    public NuevoValorNumericoViewModel(string _nombrePropiedad)
-    {
-        nombrePropiedad = _nombrePropiedad;
-    }
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-    }
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public object InputUsuario
+        {
+            get
+            {
+                if (ValidarInput && decimal.TryParse(ValorString, out decimal valorNumerico))
+                {
+                    return valorNumerico;
+                }
+                return null;
+            }
+        }
+        public string TextoError
+        {
+            get => _textoError;
+            set
+            {
+                if (_textoError != value)
+                {
+                    _textoError = value;
+                    OnPropertyChanged(nameof(TextoError));
+                }
+            }
+        }
+        public NuevoValorNumericoViewModel(string _nombrePropiedad)
+        {
+            nombrePropiedad = _nombrePropiedad;
+
+            switch (nombrePropiedad)
+            {
+                case "Haber":
+                    TextoError = "Valor inválido (debe ser numerico y mayor que 0).";
+                    break;
+                case "Precio":
+                    TextoError = "Valor inválido (debe ser numerico y como valor minimo 0).";
+                    break;
+            }   
+        }
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
