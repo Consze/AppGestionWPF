@@ -99,6 +99,7 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        
         private IControlValidadoVM _contenidoControl;
         public IControlValidadoVM ContenidoControl
         {

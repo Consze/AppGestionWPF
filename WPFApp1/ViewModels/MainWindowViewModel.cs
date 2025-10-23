@@ -6,6 +6,7 @@ using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
 using WPFApp1.Vistas;
 using WPFApp1.Servicios;
+using System.IO;
 
 namespace WPFApp1.ViewModels
 {
@@ -350,6 +351,7 @@ namespace WPFApp1.ViewModels
         {
             if(Notificacion?.NuevaNotificacion != null) // Agregar notificacion
             {
+                Notificacion.NuevaNotificacion.IconoRuta = Path.GetFullPath(Notificacion.NuevaNotificacion.IconoRuta);
                 this.ColeccionNotificaciones.Add(Notificacion.NuevaNotificacion);
                 string[] palabras = Notificacion.NuevaNotificacion.Mensaje.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 int cantidadPalabras = palabras.Length;

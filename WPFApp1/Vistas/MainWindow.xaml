@@ -84,7 +84,7 @@
         </ItemsControl>
         
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" 
-                Background="GhostWhite" Grid.RowSpan="2">
+                Background="GhostWhite" Grid.RowSpan="2" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -144,7 +144,8 @@
                 </Grid>
 
                 <StackPanel Grid.Row="1" Grid.Column="0">
-                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
+                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Cursor="Hand"
+                            Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10"
                                   ShadowDepth="0.1"
@@ -177,7 +178,8 @@
                         </StackPanel>
                     </Border>
 
-                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
+                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Cursor="Hand"
+                            Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10"
               ShadowDepth="0.1"
@@ -210,7 +212,8 @@
                         </StackPanel>
                     </Border>
 
-                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
+                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Cursor="Hand"
+                            Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10"
                               ShadowDepth="0.1"
@@ -243,7 +246,8 @@
                         </StackPanel>
                     </Border>
 
-                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
+                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="10" Margin="15,10" Cursor="Hand" 
+                            Style="{StaticResource EstiloBorderConAnimacion}" Background="White">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10"
                           ShadowDepth="0.1"
@@ -265,8 +269,6 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-
-                
             </Grid>
         </Border>
 

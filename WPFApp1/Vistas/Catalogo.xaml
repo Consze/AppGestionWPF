@@ -330,7 +330,8 @@
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" ContextMenu="{StaticResource MenuContextualGaleria}">
+                        <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" Cursor="Hand" 
+                                ContextMenu="{StaticResource MenuContextualGaleria}">
                             <Border.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding DataContext.ItemDoubleClickCommand,
