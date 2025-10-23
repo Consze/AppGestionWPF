@@ -249,6 +249,18 @@ namespace WPFApp1.Servicios
         }
         public bool ModificarListaProductos(List<ProductoSKU_Propiedad_Valor> ListaModificar)
         {
+            //crear o recuperar id de entidad auxiliar
+            switch(ListaModificar[0].PropiedadNombre)
+            {
+                case "UbicacionID":
+                    
+                    break;
+                case "Categoria":
+                    
+                    break;
+            }
+
+
             return productoServicio.ModificacionMasiva(ListaModificar);
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)

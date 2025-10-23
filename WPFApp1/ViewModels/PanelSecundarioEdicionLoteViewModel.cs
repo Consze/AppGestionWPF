@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
+using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
+using WPFApp1.Entidades;
 using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
@@ -147,9 +149,9 @@ namespace WPFApp1.ViewModels
             {
                 //Propiedad de Clase , Nombre de Display
                 {"UbicacionID", "Ubicacion" },
+                {"Categoria", "Categoria" },
                 {"Haber" , "Haber" },
                 {"Precio", "Precio" },
-                {"Categoria", "Categoria" },
                 {"EsEliminado", "Eliminacion" },
                 {"VisibilidadWeb","Se muestra Online" },
                 {"PrecioPublico","Precio Publico" }
@@ -174,7 +176,7 @@ namespace WPFApp1.ViewModels
                     ContenidoControl = new NuevoValorBooleanoViewModel(PropiedadElegida);
                     break;
                 case "UbicacionID":
-                    //TODO Seleccion de entidad + creación en linea
+                    ContenidoControl = App.GetService<NuevoValorUbicacionViewModel>();
                     break;
                 case "Categoria":
                     //TODO Seleccion de entidad + creación en linea

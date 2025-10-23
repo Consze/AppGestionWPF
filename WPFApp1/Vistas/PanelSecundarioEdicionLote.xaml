@@ -31,13 +31,11 @@
                     <TextBlock Text="{Binding TextoCheckbox}" FontWeight="Regular" FontSize="14"/>
                 </CheckBox>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:NuevoValorEntidadAuxiliarViewModel}">
-                <ComboBox x:Name="ubicacionElegida" 
-                  Style="{StaticResource CBOXValidable}"
-                  DisplayMemberPath="Nombre" 
-                  SelectedValuePath="ID" 
-                  SelectedValue="{Binding UbicacionID, Mode=TwoWay}"
-                  ItemsSource="{Binding Ubicaciones}"
+            <DataTemplate DataType="{x:Type vm:NuevoValorUbicacionViewModel}">
+                <ComboBox Style="{StaticResource CBOXValidable}"
+                  DisplayMemberPath="Nombre"              
+                  SelectedItem="{Binding EntidadElegida, Mode=TwoWay}"
+                  ItemsSource="{Binding Coleccion}"
                   Margin="2">
                 </ComboBox>
             </DataTemplate>
