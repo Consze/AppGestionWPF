@@ -153,11 +153,19 @@ namespace WPFApp1.ViewModels
             {
                 Nombre = UbicacionNombre
             };
-            if (EntidadElegida == null)
+            item.ID = ServicioUbicaciones.Insertar(item);
+            Ubicaciones _registro = Coleccion.FirstOrDefault(u => u.ID == item.ID);
+
+            if(_registro == null)
+            {
+                Coleccion.Add(item);
                 EntidadElegida = item;
-            
-            EntidadElegida.ID = ServicioUbicaciones.Insertar(item);
-            EntidadElegida.Nombre = item.Nombre;
+            }
+            else
+            {
+                EntidadElegida = _registro;
+            }
+
             ToggleCheckInsertarUbicacion = false;
             iconoSeleccionRapida = "/iconos/lapizEdicion.png";
             ToggleEdicionUbicacion = false;

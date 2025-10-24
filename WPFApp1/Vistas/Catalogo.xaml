@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:conv="clr-namespace:WPFApp1.Converters" FontFamily="Roboto"
              mc:Ignorable="d" FontSize="12"
+             xmlns:behaviors="clr-namespace:WPFApp1.Recursos"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
@@ -325,9 +326,15 @@
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemContainerStyle>
-                    <StaticResource ResourceKey="NotificationItemEnterAnimation"/>
+                    <Style TargetType="ContentPresenter" 
+           BasedOn="{StaticResource NotificationItemEnterAnimation}">
+
+                        <Setter Property="Margin" Value="4"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+
+                    </Style>
                 </ItemsControl.ItemContainerStyle>
-                
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" Cursor="Hand" 
