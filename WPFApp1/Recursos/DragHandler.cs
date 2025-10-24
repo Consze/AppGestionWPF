@@ -23,13 +23,19 @@ namespace WPFApp1.Recursos
             _startPoint = e.GetPosition(null);
             _dragVisual = sender as UIElement;
 
-            if (_rootVisual == null && System.Windows.Application.Current.MainWindow != null)
+            if (_rootVisual == null)
             {
-                _rootVisual = System.Windows.Application.Current.MainWindow.Content as UIElement;
-                if (_rootVisual != null)
+                Window window = Window.GetWindow(_dragVisual);
+
+                if (window != null)
                 {
-                    System.Windows.Application.Current.MainWindow.GiveFeedback -= OnGiveFeedback;
-                    System.Windows.Application.Current.MainWindow.GiveFeedback += OnGiveFeedback;
+                    _rootVisual = window.Content as UIElement;
+
+                    if (_rootVisual != null)
+                    {
+                        window.GiveFeedback -= OnGiveFeedback;
+                        window.GiveFeedback += OnGiveFeedback;
+                    }
                 }
             }
         }
@@ -59,7 +65,8 @@ namespace WPFApp1.Recursos
             {
                 _dragAdorner = new DragAdorner(_rootVisual, _dragVisual);
                 adornerLayer.Add(_dragAdorner);
-                _dragAdorner.UpdatePosition(startPosition);
+                System.Windows.Point currentMousePos = Mouse.GetPosition(_rootVisual);
+                _dragAdorner.UpdatePosition(currentMousePos);
             }
 
             System.Windows.DataObject data = new System.Windows.DataObject();

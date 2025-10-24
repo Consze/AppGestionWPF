@@ -327,8 +327,7 @@
 
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter" 
-           BasedOn="{StaticResource NotificationItemEnterAnimation}">
-
+                        BasedOn="{StaticResource NotificationItemEnterAnimation}">
                         <Setter Property="Margin" Value="4"/>
                         <Setter Property="Cursor" Value="Hand"/>
 
@@ -338,7 +337,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="Black" BorderThickness="0.25" Margin="5" Padding="10" Cursor="Hand" 
-                                ContextMenu="{StaticResource MenuContextualGaleria}">
+                                ContextMenu="{StaticResource MenuContextualGaleria}" Background="Transparent">
                             <Border.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding DataContext.ItemDoubleClickCommand,

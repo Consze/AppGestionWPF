@@ -68,6 +68,43 @@
                     </Button>
                 </Grid>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NuevoValorCategoriaViewModel}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="campoCategoria" Text="{Binding CategoriaNombre}" Grid.Column="0" Visibility="{Binding ToggleEdicionCategoria, Converter={StaticResource BooleanToVisibility}}"/>
+                    <ComboBox Style="{StaticResource CBOXValidable}" Grid.Column="0"
+            DisplayMemberPath="Nombre"              
+            SelectedItem="{Binding EntidadElegida, Mode=TwoWay}"
+            ItemsSource="{Binding Coleccion}"
+            Visibility="{Binding ToggleSeleccionCategoria, Converter={StaticResource BooleanToVisibility}}"
+            Margin="2">
+                    </ComboBox>
+
+                    <Button BorderThickness="0" Command="{Binding EditarCategoriaCommand}" Margin="10,0,0,0" Grid.Column="1">
+                        <Button.Background>
+                            <SolidColorBrush Color="Transparent"/>
+                        </Button.Background>
+                        <Image Width="20" Height="20" Source="{Binding iconoSeleccionRapida}"/>
+                    </Button>
+
+                    <Button BorderThickness="0" Command="{Binding InsertarNuevaCategoriaCommand}" Margin="10,0,0,0" Grid.Column="2"
+                Visibility="{Binding ToggleCheckInsertarCategoria, Converter={StaticResource BooleanToVisibility}}">
+                        <Button.Background>
+                            <SolidColorBrush Color="Transparent"/>
+                        </Button.Background>
+                        <Image Width="20" Height="20" Source="/iconos/check.png"/>
+                    </Button>
+                </Grid>
+            </DataTemplate>
             <Style TargetType="ListBoxItem">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Padding" Value="0"/>

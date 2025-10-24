@@ -180,7 +180,7 @@ namespace WPFApp1.ViewModels
                     ContenidoControl = App.GetService<NuevoValorUbicacionViewModel>();
                     break;
                 case "Categoria":
-                    //TODO Seleccion de entidad + creación en linea
+                    ContenidoControl = App.GetService<NuevoValorCategoriaViewModel>();
                     break;
             }
         }
