@@ -657,7 +657,7 @@ namespace WPFApp1.Repositorios
                 throw;
             }
         }
-        public bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista)
+        public bool ModificacionMasiva(List<ProductoEditar_Propiedad_Valor> lista)
         {
             if (lista.Count == 0)
                 return false;
@@ -702,7 +702,7 @@ namespace WPFApp1.Repositorios
 
                         foreach (var item in lista)
                         {
-                            comando.Parameters["@productoSKU"].Value = item.ProductoSKU;
+                            comando.Parameters["@productoSKU"].Value = item.ProductoEditar.ProductoSKU;
                             comando.Parameters["@propiedadValor"].Value = item.Valor ?? DBNull.Value;
                             comando.ExecuteNonQuery();
                         }
@@ -1383,7 +1383,7 @@ namespace WPFApp1.Repositorios
                 throw;
             }
         }
-        public bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista)
+        public bool ModificacionMasiva(List<ProductoEditar_Propiedad_Valor> lista)
         {
             throw new NotImplementedException("Metodo temporalmente sin implementación para SQL Server");
         }

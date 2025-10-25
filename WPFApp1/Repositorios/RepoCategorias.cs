@@ -38,7 +38,7 @@ namespace WPFApp1.Repositorios
             {
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
-                    comando.Parameters.AddWithValue("@id", ID);
+                    comando.Parameters.AddWithValue("@ID", ID);
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
                         int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
@@ -294,7 +294,7 @@ namespace WPFApp1.Repositorios
             {
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    comando.Parameters.AddWithValue("@id", ID);
+                    comando.Parameters.AddWithValue("@ID", ID);
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
                         int IDXCategoriaID = lector.GetOrdinal("CategoriaID");

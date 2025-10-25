@@ -87,7 +87,7 @@ namespace WPFApp1.Servicios
 
         //- - - - - - - - - - - - - - - - - - - - STOCK - - - - - - - - - - - - - - - - - - - - - - - - -//
             
-            List<ProductoSKU_Propiedad_Valor> ProductosVendidos = new List<ProductoSKU_Propiedad_Valor>();
+            List<ProductoEditar_Propiedad_Valor> ProductosVendidos = new List<ProductoEditar_Propiedad_Valor>();
             List<string> SKUProductosEditar = new List<string>();
 
             foreach(Ventas ventaActual in Ventas)
@@ -104,9 +104,9 @@ namespace WPFApp1.Servicios
             {
                 if(ProductosEditar.TryGetValue(venta.ItemVendido.ProductoSKU, out ProductoCatalogo producto))
                 {
-                    ProductoSKU_Propiedad_Valor registro = new ProductoSKU_Propiedad_Valor
+                    ProductoEditar_Propiedad_Valor registro = new ProductoEditar_Propiedad_Valor
                     {
-                        ProductoSKU = venta.ItemVendido.ProductoSKU,
+                        ProductoEditar = venta.ItemVendido,
                         PropiedadNombre = "Haber",
                         Valor = producto.Haber - venta.Cantidad
                     };
@@ -114,7 +114,8 @@ namespace WPFApp1.Servicios
 
                     if((producto.Haber - venta.Cantidad) == 0)
                     {
-                        Messenger.Default.Publish(new ProductoEliminadoMessage { ProductoEliminado = venta.ItemVendido });
+                        ProductoBase _itemVendido = venta.ItemVendido as ProductoBase;
+                        Messenger.Default.Publish(new ProductoEliminadoMessage { ProductoEliminado = _itemVendido });
                     }
                 }
             }
@@ -247,21 +248,55 @@ namespace WPFApp1.Servicios
 
             return ActualizacionStock || ActualizarVersion || ActualizarArquetipo || ActualizarUbicacion || ActualizarMarca;
         }
-        public bool ModificarListaProductos(List<ProductoSKU_Propiedad_Valor> ListaModificar)
+        public bool ModificarListaProductos(List<ProductoEditar_Propiedad_Valor> ListaModificar)
         {
-            //crear o recuperar id de entidad auxiliar
+            /** Si se modifica la categoria
+                - Insertar nuevo arquetipo usando datos vigentes
+                - Insertar nueva version usando datos vigentes (Mantener RutaImagen, MarcaID, FormatoID, EAN) - (Nuevo ProductoID)
+                - Modificar registro de Stock: reemplazar producto_versionID
+             */
             switch(ListaModificar[0].PropiedadNombre)
             {
-                case "UbicacionID":
-                    
-                    break;
                 case "Categoria":
-                    
-                    break;
+                    List<ProductoEditar_Propiedad_Valor> listaAuxiliar = new List<ProductoEditar_Propiedad_Valor>();
+
+                    foreach(ProductoEditar_Propiedad_Valor item in ListaModificar)
+                    {
+                        Arquetipos productoNuevo = new Arquetipos
+                        {
+                            Nombre = item.ProductoEditar.Nombre,
+                            CategoriaID = item.Valor.ToString()
+                        };
+                        Versiones nuevaVersion = new Versiones
+                        {
+                            FormatoID = item.ProductoEditar.FormatoProductoID,
+                            MarcaID = item.ProductoEditar.MarcaID,
+                            EAN = item.ProductoEditar.EAN,
+                            ProductoID = arquetiposServicio.Insertar(productoNuevo),
+                            RutaRelativaImagen = item.ProductoEditar.RutaImagen
+                        };
+                        nuevaVersion.ID = versionesServicio.Insertar(nuevaVersion);
+
+                        ProductoEditar_Propiedad_Valor registroActual = new ProductoEditar_Propiedad_Valor
+                        {
+                            ProductoEditar = item.ProductoEditar,
+                            PropiedadNombre = "ProductoVersionID",
+                            Valor = nuevaVersion.ID
+                        };
+
+                        listaAuxiliar.Add(registroActual);
+                        Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = item.ProductoEditar});
+                    }
+                    return productoServicio.ModificacionMasiva(listaAuxiliar);
+
+                case "FormatoProductoID":
+                    return true;
+                case "MarcaID":
+                    return true;
+
+                default:
+                    return productoServicio.ModificacionMasiva(ListaModificar);
             }
-
-
-            return productoServicio.ModificacionMasiva(ListaModificar);
         }
         public string CrearProducto(ProductoCatalogo productoNuevo)
         {

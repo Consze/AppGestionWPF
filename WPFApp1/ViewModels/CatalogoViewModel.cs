@@ -2,10 +2,12 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
+using Microsoft.VisualBasic;
 using WPFApp1.DTOS;
+using WPFApp1.Entidades;
+using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
-using WPFApp1.Enums;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -223,9 +225,21 @@ namespace WPFApp1.ViewModels
                 await _viewModel.InicializarVM();
                 Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel , TituloPanel = "Lista de Ventas" });
             }
-
+            
+            ProductoCatalogo productoAniadir = new ProductoCatalogo
+            {
+                ProductoSKU = ProductoElegido.ProductoSKU,
+                Nombre = ProductoElegido.Nombre,
+                RutaImagen = ProductoElegido.RutaImagen,
+                ID = ProductoElegido.ID,
+                EsEliminado = ProductoElegido.EsEliminado,
+                FechaCreacion = ProductoElegido.FechaCreacion,
+                FechaModificacion = ProductoElegido.FechaModificacion,
+                Categoria = ProductoElegido.Categoria,
+                Precio = ProductoElegido.Precio
+            };
             Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
-            Ventas ItemVender = new Ventas { ItemVendido = ProductoElegido, Cantidad = 1 };
+            Ventas ItemVender = new Ventas { ItemVendido = productoAniadir, Cantidad = 1 };
             Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
         }
         public async Task SeleccionarBusquedaPrevia(object EntradaElegida)
@@ -464,7 +478,8 @@ namespace WPFApp1.ViewModels
         {
             if(Mensaje.ProductoEliminado != null)
             {
-                ColeccionProductos.Remove(Mensaje.ProductoEliminado);
+                ProductoBase _registro = ColeccionProductos.FirstOrDefault(p => p.ProductoSKU == Mensaje.ProductoEliminado.ProductoSKU);
+                ColeccionProductos.Remove(_registro);
             }
         }
         private void OnNuevoProductoAniadido(ProductoAniadidoMensaje Mensaje)
@@ -478,16 +493,15 @@ namespace WPFApp1.ViewModels
         {
             if(Mensaje?.ProductoModificado != null)
             {
-                ProductoBase ProductoModificado = Mensaje.ProductoModificado;
-                ProductoBase productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ID == ProductoModificado.ID);
+                ProductoBase productoAEditar = ColeccionProductos.FirstOrDefault(p => p.ProductoSKU == Mensaje.ProductoModificado.ProductoSKU);
                 if (productoAEditar != null)
                 {
-                    productoAEditar.Nombre = ProductoModificado.Nombre;
-                    productoAEditar.Precio= ProductoModificado.Precio;
-                    productoAEditar.Categoria= ProductoModificado.Categoria;
-                    productoAEditar.RutaImagen= string.IsNullOrWhiteSpace(productoAEditar.RutaImagen) ? string.Empty : System.IO.Path.GetFullPath(ProductoModificado.RutaImagen);
-                    productoAEditar.FechaModificacion = ProductoModificado.FechaModificacion;
-                    productoAEditar.FechaCreacion = ProductoModificado.FechaCreacion;
+                    productoAEditar.Nombre = Mensaje.ProductoModificado.Nombre;
+                    productoAEditar.Precio= Mensaje.ProductoModificado.Precio;
+                    productoAEditar.Categoria= Mensaje.ProductoModificado.CategoriaNombre;
+                    productoAEditar.RutaImagen= string.IsNullOrWhiteSpace(productoAEditar.RutaImagen) ? string.Empty : System.IO.Path.GetFullPath(Mensaje.ProductoModificado.RutaImagen);
+                    productoAEditar.FechaModificacion = Mensaje.ProductoModificado.FechaModificacion;
+                    productoAEditar.FechaCreacion = Mensaje.ProductoModificado.FechaCreacion;
                 }  
             }
         }

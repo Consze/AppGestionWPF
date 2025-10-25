@@ -221,13 +221,12 @@
                                     <TextBlock Text="{Binding Nombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,20,0,0"/>
 
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ModoLecturaActivo, Converter={StaticResource BooleanToVisibility}}">
-                                        <TextBlock Text="{Binding CategoriaNombre, StringFormat=' - {0:C}'}" Margin="0,20,0,0"/>
-                                        <TextBlock Text="{Binding Haber, StringFormat=' - x{0}'}" FontWeight="Bold" Margin="10,20,0,0"/>
+                                        <TextBlock Text="{Binding PropiedadElegida}" Margin="0,20,0,0"/>
+                                        <TextBlock Text="{Binding DisplayPropiedadActiva, StringFormat=' - {0}'}" FontWeight="Bold" Margin="10,20,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ModoEdicionActivo, Converter={StaticResource BooleanToVisibility}}">
-                                        <TextBox Text="{Binding CategoriaNombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="5,0"/>
-                                        <TextBox Text="{Binding Haber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" FontWeight="Bold"/>
+                                        <TextBox HorizontalContentAlignment="Stretch" Text="{Binding DisplayPropiedadActiva, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" FontWeight="Bold" Margin="20,10,0,0" Padding="2"/>
                                     </StackPanel>
                                 </StackPanel>
 

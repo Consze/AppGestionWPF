@@ -930,14 +930,13 @@ namespace WPFApp1.ViewModels
                 Peso = Peso
 
             };
-            ProductoBase ProductoMensaje = ProductoModificado;
 
             if (OrquestadorProductos.ModificarProducto(ProductoModificado))
             {
-                ProductoMensaje.FechaModificacion = DateTime.Now;
-                ProductoMensaje.Categoria = ProductoModificado.CategoriaNombre;
-                ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen) ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen);
-                Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoMensaje });
+                ProductoModificado.FechaModificacion = DateTime.Now;
+                ProductoModificado.Categoria = ProductoModificado.CategoriaNombre;
+                ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(RutaImagenSeleccionada) ? string.Empty : Path.GetFullPath(RutaImagenSeleccionada);
+                Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
                 _servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };

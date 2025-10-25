@@ -95,7 +95,7 @@ namespace WPFApp1.Conmutadores
                 return _repoLocal.EliminarProducto(ProductoID, TipoEliminacion.Logica);
             }
         }
-        public bool ModificacionMasiva(List<ProductoSKU_Propiedad_Valor> lista)
+        public bool ModificacionMasiva(List<ProductoEditar_Propiedad_Valor> lista)
         {
             if (_repoServer._accesoDB.LeerConfiguracionManual())
             {

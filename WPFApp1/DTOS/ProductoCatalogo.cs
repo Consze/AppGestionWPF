@@ -18,6 +18,19 @@
             }
         }
         public bool ModoLecturaActivo => !ModoEdicionActivo;
+        private string _displayPropiedadActiva;
+        public string DisplayPropiedadActiva
+        {
+            get => _displayPropiedadActiva;
+            set
+            {
+                if (_displayPropiedadActiva != value)
+                {
+                    _displayPropiedadActiva = value;
+                    OnPropertyChanged(nameof(DisplayPropiedadActiva));
+                }
+            }
+        }
 
 
         //--------Booleanas---------

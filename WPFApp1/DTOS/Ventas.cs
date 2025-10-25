@@ -17,8 +17,8 @@ namespace WPFApp1.DTOS
                 }
             }
         }
-        private ProductoBase _itemVendido;
-        public ProductoBase ItemVendido
+        private ProductoCatalogo _itemVendido;
+        public ProductoCatalogo ItemVendido
         {
             get => _itemVendido;
             set

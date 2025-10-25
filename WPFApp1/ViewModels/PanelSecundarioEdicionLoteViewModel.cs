@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Windows.Input;
 using WPFApp1.Conmutadores;
@@ -183,6 +184,25 @@ namespace WPFApp1.ViewModels
                     ContenidoControl = App.GetService<NuevoValorCategoriaViewModel>();
                     break;
             }
+
+            if(ColeccionProductosEditar != null)
+            {
+                foreach (ProductoCatalogo item in ColeccionProductosEditar)
+                {
+                    var propiedadInfo = item.GetType().GetProperty(PropiedadElegida);
+                    switch (PropiedadElegida)
+                    {
+                        case "UbicacionID":
+                            propiedadInfo = item.GetType().GetProperty("UbicacionNombre");
+                            break;
+                        case "Categoria":
+                            propiedadInfo = item.GetType().GetProperty("CategoriaNombre");
+                            break;
+                    }
+                    if (propiedadInfo != null)
+                        item.DisplayPropiedadActiva = propiedadInfo.GetValue(item)?.ToString();
+                }
+            }
         }
         public async Task InicializarVista()
         {
@@ -195,6 +215,7 @@ namespace WPFApp1.ViewModels
                 "FechaCreacion",
                 "ModoEdicionActivo",
                 "ModoLecturaActivo",
+                "DisplayPropiedadActiva",
                 "FechaModificacion",
                 "CategoriaNombre",
                 "UbicacionNombre",
@@ -228,18 +249,28 @@ namespace WPFApp1.ViewModels
         }
         private void GuardarCambios(object parameter)
         {
-            List<ProductoSKU_Propiedad_Valor> listaModificacion = new List<ProductoSKU_Propiedad_Valor>();
+            List<ProductoEditar_Propiedad_Valor> listaModificacion = new List<ProductoEditar_Propiedad_Valor>();
             NuevoValor = ContenidoControl.InputUsuario;
-            foreach (ProductoBase producto in ColeccionProductosEditar)
+            foreach (ProductoCatalogo producto in ColeccionProductosEditar)
             {
-                ProductoSKU_Propiedad_Valor item = new ProductoSKU_Propiedad_Valor
+                ProductoEditar_Propiedad_Valor item = new ProductoEditar_Propiedad_Valor
                 {
-                    ProductoSKU = producto.ProductoSKU,
+                    ProductoEditar = producto,
                     PropiedadNombre = PropiedadElegida,
                     Valor = NuevoValor
                 };
-
                 listaModificacion.Add(item);
+
+                //Si, esto es horrible. Pero permite ahorrar otro viaje a DB en Orquestador para averiguar el nombre ...
+                switch (PropiedadElegida)
+                {
+                    case "Categoria":
+                        if(ContenidoControl is NuevoValorCategoriaViewModel ViewModel)
+                        {
+                            producto.CategoriaNombre = ViewModel.CategoriaNombre.ToString();    
+                        }
+                        break;
+                }
             }
 
             if (Orquestador.ModificarListaProductos(listaModificacion))
@@ -306,6 +337,23 @@ namespace WPFApp1.ViewModels
             {
                 ProductoCatalogo item = Orquestador.RecuperarProductoPorID(nuevoItem.ProductoSKU);
                 item.ModoEdicionActivo = false;
+
+                if(PropiedadElegida != string.Empty)
+                {
+                    var propiedadInfo = item.GetType().GetProperty(PropiedadElegida);
+                    switch (PropiedadElegida)
+                    {
+                        case "UbicacionID":
+                            propiedadInfo = item.GetType().GetProperty("UbicacionNombre");
+                            break;
+                        case "Categoria":
+                            propiedadInfo = item.GetType().GetProperty("CategoriaNombre");
+                            break;
+                    }
+                    if (propiedadInfo != null)
+                        item.DisplayPropiedadActiva = propiedadInfo.GetValue(item)?.ToString();
+                }
+
                 ColeccionProductosEditar.Add(item);
                 ContadorItemsElegidos++;
             }
