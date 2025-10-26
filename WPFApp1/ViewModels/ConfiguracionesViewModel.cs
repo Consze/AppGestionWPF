@@ -15,16 +15,13 @@ namespace WPFApp1.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand CrearNotificacionCommand { get; }
         public ICommand IniciarServidorCommand { get; }
-        private ServicioSFX _servicioSFX { get; set; }
         public ConfiguracionesViewModel()
         {
             CrearNotificacionCommand = new RelayCommand<object>(CrearNotificacion);
             IniciarServidorCommand = new RelayCommand<object>(IniciarServidor);
-            _servicioSFX = new ServicioSFX();
         }
         public void CrearNotificacion(object parameter)
         {
-            _servicioSFX.Swipe();
             Notificacion _notificacionPrueba = new Notificacion { Mensaje = "Este es el cuerpo de la notificación de prueba", Titulo = "Notificación", IconoRuta = Path.GetFullPath(IconoNotificacion.NOTIFICACION), Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacionPrueba });
         }

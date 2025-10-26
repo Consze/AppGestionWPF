@@ -283,13 +283,11 @@ namespace WPFApp1.ViewModels
                 }
                 ContadorItemsElegidos = 0;
                 ColeccionProductosEditar.Clear();
-                servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Lote de items modificados", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
             else
             {
-                servicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo registrar la modificación", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }

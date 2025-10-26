@@ -32,7 +32,6 @@ namespace WPFApp1.ViewModels
         public bool Seleccion { get; set; }
         private ConexionDBSQLServer _repositorioServidor;
         private string _nombreComputadora;
-        private ServicioSFX _servicioSFX { get; set; }
         public string NombreComputadora
         {
             get {  return _nombreComputadora; }
@@ -156,7 +155,7 @@ namespace WPFApp1.ViewModels
         {
             //Configuración inicial de toggle
             _repositorioServidor = RepositorioServidor;
-            _servicioSFX = new ServicioSFX();
+           
             this.Seleccion = _repositorioServidor.LeerConfiguracionManual();
             if (this.Seleccion)
             {
@@ -192,7 +191,6 @@ namespace WPFApp1.ViewModels
                 this.Descripcion = "Cambiar a SQLServer";
                 DBMSElegido = "Las operaciones se realizaran de manera local.";
             }
-            _servicioSFX.Confirmar();
             Notificacion _notificacion = new Notificacion { Mensaje = DBMSElegido, Titulo = "Cambio de DBMS", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
             Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             _repositorioServidor.GuardarConfiguracionManual(this.Seleccion);

@@ -41,6 +41,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBox x:Name="campoUbicacion" Text="{Binding UbicacionNombre}" Grid.Column="0" Visibility="{Binding ToggleEdicionUbicacion, Converter={StaticResource BooleanToVisibility}}"/>
@@ -51,6 +52,10 @@
                         Visibility="{Binding ToggleSeleccionUbicacion, Converter={StaticResource BooleanToVisibility}}"
                         Margin="2">
                     </ComboBox>
+                    <TextBlock Text="El campo no puede estar vacio" 
+                       Foreground="Red" 
+                       FontSize="12" Grid.Column="0" Grid.Row="1"
+                       Visibility="{Binding MostrarError, Converter={StaticResource BooleanToVisibility}}"/>
 
                     <Button BorderThickness="0" Command="{Binding EditarUbicacionCommand}" Margin="10,0,0,0" Grid.Column="1">
                         <Button.Background>
@@ -78,6 +83,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBox x:Name="campoCategoria" Text="{Binding CategoriaNombre}" Grid.Column="0" Visibility="{Binding ToggleEdicionCategoria, Converter={StaticResource BooleanToVisibility}}"/>
@@ -88,6 +94,10 @@
             Visibility="{Binding ToggleSeleccionCategoria, Converter={StaticResource BooleanToVisibility}}"
             Margin="2">
                     </ComboBox>
+                    <TextBlock Text="El campo no puede estar vacio" 
+                       Foreground="Red" 
+                       FontSize="12" Grid.Column="0" Grid.Row="1"
+                       Visibility="{Binding MostrarError, Converter={StaticResource BooleanToVisibility}}"/>
 
                     <Button BorderThickness="0" Command="{Binding EditarCategoriaCommand}" Margin="10,0,0,0" Grid.Column="1">
                         <Button.Background>
@@ -97,7 +107,7 @@
                     </Button>
 
                     <Button BorderThickness="0" Command="{Binding InsertarNuevaCategoriaCommand}" Margin="10,0,0,0" Grid.Column="2"
-                Visibility="{Binding ToggleCheckInsertarCategoria, Converter={StaticResource BooleanToVisibility}}">
+                Visibility="{Binding ToggleCheckInsertarCategoria, Converter={StaticResource BooleanToVisibility}}" IsEnabled="{Binding ValidarInput, Converter={StaticResource BooleanToVisibility}}">
                         <Button.Background>
                             <SolidColorBrush Color="Transparent"/>
                         </Button.Background>

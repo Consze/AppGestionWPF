@@ -7,6 +7,8 @@ using WPFApp1.Mensajes;
 using WPFApp1.Vistas;
 using WPFApp1.Servicios;
 using System.IO;
+using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPFApp1.ViewModels
 {
@@ -196,8 +198,10 @@ namespace WPFApp1.ViewModels
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
+        private readonly ServicioSFX servicioSFX;
         public MainWindowViewModel()
         {
+            servicioSFX = new ServicioSFX();
             _tituloActivo = "Menú";
             _isAniadirProductoActivo = false;
             _vistaActual = null;
@@ -351,6 +355,22 @@ namespace WPFApp1.ViewModels
         {
             if(Notificacion?.NuevaNotificacion != null) // Agregar notificacion
             {
+
+                // Sonido
+                if (Notificacion.NuevaNotificacion.IconoRuta == Path.GetFullPath(IconoNotificacion.OK))
+                {
+                    servicioSFX.Confirmar();
+                }
+                else if(Notificacion.NuevaNotificacion.IconoRuta == Path.GetFullPath(IconoNotificacion.NOTIFICACION))
+                {
+                    servicioSFX.Swipe();
+                }
+                else if (Notificacion.NuevaNotificacion.IconoRuta == Path.GetFullPath(IconoNotificacion.SUSPENSO1))
+                {
+                    servicioSFX.Suspenso();
+                }
+                
+
                 Notificacion.NuevaNotificacion.IconoRuta = Path.GetFullPath(Notificacion.NuevaNotificacion.IconoRuta);
                 this.ColeccionNotificaciones.Add(Notificacion.NuevaNotificacion);
                 string[] palabras = Notificacion.NuevaNotificacion.Mensaje.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);

@@ -25,14 +25,12 @@ namespace WPFApp1.ViewModels
             }
         }
         public ICommand ExportarXLSXCommand { get; }
-        private ServicioSFX _servicioSFX { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         private readonly IProductosServicio _productoServicio;
         //constructor
         public ExportarProductosViewModel(IProductosServicio productoServicio)
         {
             _productoServicio = productoServicio;
-            _servicioSFX = new ServicioSFX();
             ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX());
             _procesando = false;
         }
@@ -58,14 +56,12 @@ namespace WPFApp1.ViewModels
                     string IconoAUtilizar = string.Empty;
                     if (resultado)
                     {
-                        _servicioSFX.Confirmar();
                         TituloNotificacion = "Operación Completada";
                         CuerpoNotificacion = "Catalogo exportado correctamente!";
                         IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
                     }
                     else
                     {
-                        _servicioSFX.Suspenso();
                         TituloNotificacion = "Operación Completada";
                         CuerpoNotificacion = "Hubo un error al exportar";
                         IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);

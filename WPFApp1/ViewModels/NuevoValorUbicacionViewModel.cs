@@ -11,7 +11,6 @@ namespace WPFApp1.ViewModels
 {
     public class NuevoValorUbicacionViewModel : INotifyPropertyChanged, IControlValidadoVM
     {
-        private string _textoError;
         private string _ubicacionNombre;
         public string UbicacionNombre
         {
@@ -22,8 +21,10 @@ namespace WPFApp1.ViewModels
                 {
                     _ubicacionNombre = value;
                     OnPropertyChanged(nameof(UbicacionNombre));
+                    OnPropertyChanged(nameof(ValidarInput));
+                    OnPropertyChanged(nameof(MostrarError));
 
-                    if(ToggleEdicionUbicacion)
+                    if (ToggleEdicionUbicacion)
                     {
                         Ubicaciones _registro = Coleccion.FirstOrDefault(u => u.Nombre == value);
                         if (_registro != null)
@@ -107,9 +108,19 @@ namespace WPFApp1.ViewModels
             }
         }
         public ObservableCollection<Ubicaciones> Coleccion { get; set; }
+        public bool MostrarError
+        {
+            get { return !ValidarInput; }
+        }
         public bool ValidarInput
         {
-            get { return true; }
+            get
+            {
+                if (string.IsNullOrEmpty(UbicacionNombre))
+                    return false;
+
+                return true;
+            }
         }
         public object InputUsuario
         {
@@ -149,6 +160,13 @@ namespace WPFApp1.ViewModels
         }
         private void InsertarNuevaUbicacion(object parameter)
         {
+            if(string.IsNullOrEmpty(UbicacionNombre))
+            {
+                Notificacion operacionCancelada = new Notificacion { Mensaje = "No se puede registrar una Ubicacion sin nombre!", Titulo = "Operación Cancelada", IconoRuta = IconoNotificacion.SUSPENSO1, Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = operacionCancelada });
+                return;
+            }
+
             Ubicaciones item = new Ubicaciones
             {
                 Nombre = UbicacionNombre

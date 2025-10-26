@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Org.BouncyCastle.Bcpg;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Interfaces;
@@ -11,7 +13,10 @@ namespace WPFApp1.ViewModels
 {
     public class NuevoValorCategoriaViewModel : INotifyPropertyChanged, IControlValidadoVM
     {
-        private string _textoError;
+        public bool MostrarError
+        {
+            get { return !ValidarInput; }
+        }
         private string _categoriaNombre;
         public string CategoriaNombre
         {
@@ -22,6 +27,8 @@ namespace WPFApp1.ViewModels
                 {
                     _categoriaNombre = value;
                     OnPropertyChanged(nameof(CategoriaNombre));
+                    OnPropertyChanged(nameof(ValidarInput));
+                    OnPropertyChanged(nameof(MostrarError));
 
                     if (ToggleEdicionCategoria)
                     {
@@ -109,7 +116,13 @@ namespace WPFApp1.ViewModels
         public ObservableCollection<Categorias> Coleccion { get; set; }
         public bool ValidarInput
         {
-            get { return true; }
+            get
+            {
+                if (string.IsNullOrEmpty(CategoriaNombre))
+                    return false;
+
+                return true;
+            }
         }
         public object InputUsuario
         {
@@ -149,6 +162,14 @@ namespace WPFApp1.ViewModels
         }
         private void InsertarNuevaCategoria(object parameter)
         {
+            if (string.IsNullOrEmpty(CategoriaNombre))
+            {
+                Notificacion operacionCancelada = new Notificacion { Mensaje = "No se puede registrar una Categoría sin nombre!", Titulo = "Operación Cancelada", IconoRuta = IconoNotificacion.SUSPENSO1, Urgencia = MatrizEisenhower.C1 };
+                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = operacionCancelada });
+                return;
+            }
+                
+
             Categorias item = new Categorias
             {
                 Nombre = CategoriaNombre

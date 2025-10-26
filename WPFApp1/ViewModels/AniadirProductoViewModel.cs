@@ -645,7 +645,6 @@ namespace WPFApp1.ViewModels
         public string ProductoSKU { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CierreSolicitado;
-        private ServicioSFX _servicioSFX { get; set; }
         public ICommand ModificarMarcaCommand{ get; }
         public ICommand ElegirImagenCommand{ get; }
         public ICommand AniadirProductoCommand { get; }
@@ -718,7 +717,6 @@ namespace WPFApp1.ViewModels
 
             //Servicios
             OrquestadorProductos = _orquestador;
-            _servicioSFX = new ServicioSFX();
             servicioFormatos = _servicioFormatos;
             servicioMarcas = _servicioMarcas;
             servicioCategorias = _servicioCategorias;
@@ -747,7 +745,6 @@ namespace WPFApp1.ViewModels
                 // El proposito es forzar la animación
                 Conflicto = false;
                 Conflicto = true;
-                _servicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Debe completar todos los campos requeridos", Titulo = "Operación Interrumpida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
@@ -938,14 +935,12 @@ namespace WPFApp1.ViewModels
                 ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(RutaImagenSeleccionada) ? string.Empty : Path.GetFullPath(RutaImagenSeleccionada);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
-                _servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
             else
             {
                 CerrarVistaCommand.Execute(0);
-                _servicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo editar el Item", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
@@ -1133,13 +1128,11 @@ namespace WPFApp1.ViewModels
                 ProductoMensaje.RutaImagen = string.IsNullOrWhiteSpace(ProductoMensaje.RutaImagen)  ? string.Empty : Path.GetFullPath(ProductoMensaje.RutaImagen); ;
                 Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });
                 CerrarVistaCommand.Execute(0);
-                _servicioSFX.Confirmar();
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item añadido con exito", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }
             else
             {
-                _servicioSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = "No se pudo añadir el Item", Titulo = "Operación Cancelada", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
             }

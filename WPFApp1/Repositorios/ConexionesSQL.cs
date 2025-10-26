@@ -178,8 +178,6 @@ namespace WPFApp1.Repositorios
             }
             catch (Exception ex)
             {
-                ServicioSFX sonidoSFX = new ServicioSFX();
-                sonidoSFX.Suspenso();
                 Notificacion _notificacion = new Notificacion { Mensaje = $"Error: {ex.Message}", Titulo = "Operación Fallida", IconoRuta = Path.GetFullPath(IconoNotificacion.SUSPENSO1), Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
                 return false;

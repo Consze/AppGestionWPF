@@ -7,7 +7,7 @@
         C3 = 3
     }
 
-    public class IconoNotificacion
+    public static class IconoNotificacion
     {
         public static string OK = @"./iconos/check.png";
         public static string NOTIFICACION = @"./iconos/notificaciones.png";
