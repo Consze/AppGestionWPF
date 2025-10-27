@@ -313,13 +313,16 @@ namespace WPFApp1.Repositorios
 
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
                 {
+                    string rutaImagen = nuevoRegistro.RutaRelativaImagen;
+                    object RutaValidadaDB = string.IsNullOrWhiteSpace(rutaImagen) ? (object)DBNull.Value : rutaImagen;
+
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);
                     comando.Parameters.AddWithValue("@Producto_id", nuevoRegistro.ProductoID);
                     comando.Parameters.AddWithValue("@EAN", nuevoRegistro.EAN);
                     comando.Parameters.AddWithValue("@Marca_id", nuevoRegistro.MarcaID);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.Parameters.AddWithValue("@formato_id", nuevoRegistro.FormatoID);
-                    comando.Parameters.AddWithValue("@RutaRelativaImagen", nuevoRegistro.RutaRelativaImagen);
+                    comando.Parameters.AddWithValue("@RutaRelativaImagen", RutaValidadaDB);
                     comando.ExecuteNonQuery();
                     return nuevoRegistro.ID;
                 }
@@ -632,13 +635,16 @@ namespace WPFApp1.Repositorios
 
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
+                    string rutaImagen = nuevoRegistro.RutaRelativaImagen;
+                    object RutaValidadaDB = string.IsNullOrWhiteSpace(rutaImagen) ? (object)DBNull.Value : rutaImagen;
+
                     comando.Parameters.AddWithValue("@ID", nuevoRegistro.ID);
                     comando.Parameters.AddWithValue("@Producto_id", nuevoRegistro.ProductoID);
                     comando.Parameters.AddWithValue("@EAN", nuevoRegistro.EAN);
                     comando.Parameters.AddWithValue("@Marca_id", nuevoRegistro.MarcaID);
                     comando.Parameters.AddWithValue("@FechaCreacion", DateTime.Now);
                     comando.Parameters.AddWithValue("@formato_id", nuevoRegistro.FormatoID);
-                    comando.Parameters.AddWithValue("@RutaRelativaImagen", nuevoRegistro.RutaRelativaImagen);
+                    comando.Parameters.AddWithValue("@RutaRelativaImagen", RutaValidadaDB);
                     comando.ExecuteNonQuery();
                     return nuevoRegistro.ID;
                 }
