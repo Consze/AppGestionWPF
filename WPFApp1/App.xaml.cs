@@ -139,6 +139,7 @@ namespace WPFApp1
             // Registrar ViewModels
             services.AddTransient<NuevoValorUbicacionViewModel>();
             services.AddTransient<NuevoValorCategoriaViewModel>();
+            services.AddTransient<NuevoValorMarcaViewModel>();
 
             services.AddSingleton<PanelSecundarioCatalogoViewModel>();
             services.AddSingleton<PanelSecundarioEdicionLoteViewModel>();

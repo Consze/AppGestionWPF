@@ -115,6 +115,48 @@
                     </Button>
                 </Grid>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NuevoValorMarcaViewModel}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="campoMarca" Text="{Binding MarcaNombre}" Grid.Column="0" Visibility="{Binding ToggleEdicionMarca, Converter={StaticResource BooleanToVisibility}}"/>
+                    <ComboBox Style="{StaticResource CBOXValidable}" Grid.Column="0"
+DisplayMemberPath="Nombre"              
+SelectedItem="{Binding EntidadElegida, Mode=TwoWay}"
+ItemsSource="{Binding Coleccion}"
+Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}"
+Margin="2">
+                    </ComboBox>
+                    <TextBlock Text="El campo no puede estar vacio" 
+           Foreground="Red" 
+           FontSize="12" Grid.Column="0" Grid.Row="1"
+           Visibility="{Binding MostrarError, Converter={StaticResource BooleanToVisibility}}"/>
+
+                    <Button BorderThickness="0" Command="{Binding EditarMarcaCommand}" Margin="10,0,0,0" Grid.Column="1">
+                        <Button.Background>
+                            <SolidColorBrush Color="Transparent"/>
+                        </Button.Background>
+                        <Image Width="20" Height="20" Source="{Binding iconoSeleccionRapida}"/>
+                    </Button>
+
+                    <Button BorderThickness="0" Command="{Binding InsertarNuevaMarcaCommand}" Margin="10,0,0,0" Grid.Column="2"
+    Visibility="{Binding ToggleCheckInsertarMarca, Converter={StaticResource BooleanToVisibility}}" IsEnabled="{Binding ValidarInput, Converter={StaticResource BooleanToVisibility}}">
+                        <Button.Background>
+                            <SolidColorBrush Color="Transparent"/>
+                        </Button.Background>
+                        <Image Width="20" Height="20" Source="/iconos/check.png"/>
+                    </Button>
+                </Grid>
+            </DataTemplate>
             <Style TargetType="ListBoxItem">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Padding" Value="0"/>

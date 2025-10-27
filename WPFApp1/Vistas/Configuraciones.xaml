@@ -37,6 +37,7 @@
             </Grid.RowDefinitions>
             <Button Content="Crear Notificación" Grid.Row="0" Grid.Column="0" Margin="10" Command="{Binding CrearNotificacionCommand}"/>
             <Button Content="Iniciar Servidor" Grid.Row="0" Grid.Column="1" Margin="10" Command="{Binding IniciarServidorCommand}"/>
+            <Button Content="Importar Stock" Grid.Row="0" Grid.Column="3" Margin="10" Command="{Binding IniciarImportacionCommand}"/>
         </Grid>
     </Grid>
 </UserControl>

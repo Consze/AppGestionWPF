@@ -252,14 +252,14 @@ namespace WPFApp1.Servicios
         {
             /** Si se modifica la categoria
                 - Insertar nuevo arquetipo usando datos vigentes
-                - Insertar nueva version usando datos vigentes (Mantener RutaImagen, MarcaID, FormatoID, EAN) - (Nuevo ProductoID)
-                - Modificar registro de Stock: reemplazar producto_versionID
+                - Insertar nueva version usando datos vigentes (Mantener RutaImagen, MarcaID, FormatoID, EAN). Utilizar nueva ID (ProductoID)
+                - Modificar registro de Stock: reemplazar producto_versionID (unica responsabilidad del repo de Stock)
              */
-            switch(ListaModificar[0].PropiedadNombre)
+            List<ProductoEditar_Propiedad_Valor> listaModificacionStock = new List<ProductoEditar_Propiedad_Valor>();
+
+            switch (ListaModificar[0].PropiedadNombre)
             {
                 case "Categoria":
-                    List<ProductoEditar_Propiedad_Valor> listaAuxiliar = new List<ProductoEditar_Propiedad_Valor>();
-
                     foreach(ProductoEditar_Propiedad_Valor item in ListaModificar)
                     {
                         Arquetipos productoNuevo = new Arquetipos
@@ -284,17 +284,40 @@ namespace WPFApp1.Servicios
                             Valor = nuevaVersion.ID
                         };
 
-                        listaAuxiliar.Add(registroActual);
+                        listaModificacionStock.Add(registroActual);
                         Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = item.ProductoEditar});
                     }
-                    return productoServicio.ModificacionMasiva(listaAuxiliar);
+                    return productoServicio.ModificacionMasiva(listaModificacionStock);
 
                 case "FormatoProductoID":
                     return true;
-                case "MarcaID":
-                    return true;
 
-                default:
+                case "MarcaID":
+                    foreach (ProductoEditar_Propiedad_Valor item in ListaModificar)
+                    {
+                        Versiones nuevaVersion = new Versiones
+                        {
+                            FormatoID = item.ProductoEditar.FormatoProductoID,
+                            MarcaID = item.Valor.ToString(),
+                            EAN = item.ProductoEditar.EAN,
+                            ProductoID = item.ProductoEditar.ID,
+                            RutaRelativaImagen = item.ProductoEditar.RutaImagen
+                        };
+                        nuevaVersion.ID = versionesServicio.Insertar(nuevaVersion);
+
+                        ProductoEditar_Propiedad_Valor registroActual = new ProductoEditar_Propiedad_Valor
+                        {
+                            ProductoEditar = item.ProductoEditar,
+                            PropiedadNombre = "ProductoVersionID",
+                            Valor = nuevaVersion.ID
+                        };
+
+                        listaModificacionStock.Add(registroActual);
+                        Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = item.ProductoEditar });
+                    }
+                    return productoServicio.ModificacionMasiva(listaModificacionStock);
+
+                default: //Precio, Haber, EsEliminado, VisibilidadWeb, PrecioPublico, Ubicacion
                     return productoServicio.ModificacionMasiva(ListaModificar);
             }
         }

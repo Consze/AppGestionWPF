@@ -15,10 +15,16 @@ namespace WPFApp1.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand CrearNotificacionCommand { get; }
         public ICommand IniciarServidorCommand { get; }
+        public ICommand IniciarImportacionCommand { get; }
         public ConfiguracionesViewModel()
         {
             CrearNotificacionCommand = new RelayCommand<object>(CrearNotificacion);
             IniciarServidorCommand = new RelayCommand<object>(IniciarServidor);
+            IniciarImportacionCommand = new RelayCommand<object>(IniciarImportacion);
+        }
+        public void IniciarImportacion(object parameter)
+        {
+
         }
         public void CrearNotificacion(object parameter)
         {

@@ -152,6 +152,7 @@ namespace WPFApp1.ViewModels
                 //Propiedad de Clase , Nombre de Display
                 {"UbicacionID", "Ubicacion" },
                 {"Categoria", "Categoria" },
+                {"MarcaID", "Marca" },
                 {"Haber" , "Haber" },
                 {"Precio", "Precio" },
                 {"EsEliminado", "Eliminacion" },
@@ -183,6 +184,9 @@ namespace WPFApp1.ViewModels
                 case "Categoria":
                     ContenidoControl = App.GetService<NuevoValorCategoriaViewModel>();
                     break;
+                case "MarcaID":
+                    ContenidoControl = App.GetService<NuevoValorMarcaViewModel>();
+                    break;
             }
 
             if(ColeccionProductosEditar != null)
@@ -197,6 +201,9 @@ namespace WPFApp1.ViewModels
                             break;
                         case "Categoria":
                             propiedadInfo = item.GetType().GetProperty("CategoriaNombre");
+                            break;
+                        case "MarcaID":
+                            propiedadInfo = item.GetType().GetProperty("MarcaNombre");
                             break;
                     }
                     if (propiedadInfo != null)
@@ -227,7 +234,6 @@ namespace WPFApp1.ViewModels
                 "ProductoVersionID",
                 "FormatoProductoID",
                 "FormatoNombre",
-                "MarcaID",
                 "Alto",
                 "Profundidad",
                 "Largo",
@@ -261,13 +267,20 @@ namespace WPFApp1.ViewModels
                 };
                 listaModificacion.Add(item);
 
-                //Si, esto es horrible. Pero permite ahorrar otro viaje a DB en Orquestador para averiguar el nombre ...
+                //Si, esto es horrible. Pero permite ahorrar otro viaje a DB en Orquestador para averiguar los nombres ...
                 switch (PropiedadElegida)
                 {
                     case "Categoria":
                         if(ContenidoControl is NuevoValorCategoriaViewModel ViewModel)
                         {
                             producto.CategoriaNombre = ViewModel.CategoriaNombre.ToString();    
+                        }
+                        break;
+
+                    case "MarcaID":
+                        if (ContenidoControl is NuevoValorMarcaViewModel vm)
+                        {
+                            producto.MarcaNombre = vm.MarcaNombre.ToString();
                         }
                         break;
                 }
