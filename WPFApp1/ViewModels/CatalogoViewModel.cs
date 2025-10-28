@@ -2,9 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
-using Microsoft.VisualBasic;
 using WPFApp1.DTOS;
-using WPFApp1.Entidades;
 using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
@@ -17,6 +15,11 @@ namespace WPFApp1.ViewModels
         Tabla,
         Galeria,
         Ninguna
+    }
+    public enum EleccionPanelSecundario
+    {
+        Venta,
+        Edicion
     }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
@@ -162,6 +165,7 @@ namespace WPFApp1.ViewModels
         public ICommand BusquedaPierdeFocoCommand { get; }
         public ICommand AniadirItemCarritoCommand { get; }
         public ICommand AniadirItemLoteEdicionCommand { get; }
+        public ICommand ElegirTodoLoteCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
         public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
@@ -190,6 +194,7 @@ namespace WPFApp1.ViewModels
             BusquedaPierdeFocoCommand = new RelayCommand<object>(BusquedaPierdeFoco);
             AniadirItemLoteEdicionCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemLoteEdicion(param));
             AniadirItemCarritoCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemCarrito(param));
+            ElegirTodoLoteCommand = new RelayCommand<ProductoBase>(async (param) => await ElegirTodoLote(param));
             SeleccionarBusquedaPreviaCommand = new RelayCommand<object>(async (param) => await SeleccionarBusquedaPrevia(param));
 
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
@@ -199,33 +204,85 @@ namespace WPFApp1.ViewModels
             Procesando = false;
             _servicioSFX = new ServicioSFX();
         }
+        public async Task ElegirTodoLote(object parameter)
+        {
+            DialogResult eleccionUsuario = MessageBox.Show("¿Editar productos o vender?", "Eliminar Item", MessageBoxButtons.YesNo);
+            if (eleccionUsuario == DialogResult.Yes)
+            {
+                await AniadirTodoLoteEdicion();
+            }
+            else
+            {
+                await AniadirTodoLoteVenta();
+            }
+        }
         public async Task AniadirItemLoteEdicion(ProductoBase ProductoElegido)
+        {
+            await IniciarPanelSecundario(EleccionPanelSecundario.Edicion);
+            Messenger.Default.Publish(new NuevoProductoEdicion { ProductoAniadido = ProductoElegido });
+        }
+        public async Task AniadirTodoLoteEdicion()
+        {
+            await IniciarPanelSecundario(EleccionPanelSecundario.Edicion);
+
+            foreach(ProductoBase item in ColeccionProductos)
+            {
+                Messenger.Default.Publish(new NuevoProductoEdicion { ProductoAniadido = item });
+            }
+        }
+        public async Task AniadirTodoLoteVenta()
+        {
+            await IniciarPanelSecundario(EleccionPanelSecundario.Venta);
+
+            foreach (ProductoBase item in ColeccionProductos)
+            {
+                ProductoCatalogo productoAniadir = new ProductoCatalogo
+                {
+                    ProductoSKU = item.ProductoSKU,
+                    Nombre = item.Nombre,
+                    RutaImagen = item.RutaImagen,
+                    ID = item.ID,
+                    EsEliminado = item.EsEliminado,
+                    FechaCreacion = item.FechaCreacion,
+                    FechaModificacion = item.FechaModificacion,
+                    Categoria = item.Categoria,
+                    Precio = item.Precio
+                };
+                Ventas ItemVender = new Ventas { ItemVendido = productoAniadir, Cantidad = 1 };
+                Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
+            }
+        }
+        public async Task IniciarPanelSecundario(EleccionPanelSecundario Caso)
         {
             PanelSecundarioStatusRequest EstadoCarrito = new PanelSecundarioStatusRequest();
             Messenger.Default.Publish(EstadoCarrito);
 
-            if (!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioEdicionLoteViewModel))
+            switch(Caso)
             {
-                PanelSecundarioEdicionLoteViewModel _viewModel = App.GetService<PanelSecundarioEdicionLoteViewModel>();
-                await _viewModel.InicializarVista();
-                Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel, TituloPanel = "Edición de Lote" });
-            }
+                case EleccionPanelSecundario.Edicion:
+                    if (!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioEdicionLoteViewModel))
+                    {
+                        PanelSecundarioEdicionLoteViewModel _viewModel = App.GetService<PanelSecundarioEdicionLoteViewModel>();
+                        await _viewModel.InicializarVista();
+                        Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel, TituloPanel = "Edición de Lote" });
+                    }
+                    break;
 
+                case EleccionPanelSecundario.Venta:
+                    if (!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioCatalogoViewModel))
+                    {
+                        PanelSecundarioCatalogoViewModel _viewModel = App.GetService<PanelSecundarioCatalogoViewModel>();
+                        await _viewModel.InicializarVM();
+                        Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel, TituloPanel = "Lista de Ventas" });
+                    }
+                    break;
+            }
+            
             Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
-            Messenger.Default.Publish(new NuevoProductoEdicion { ProductoAniadido = ProductoElegido });
         }
         public async Task AniadirItemCarrito(ProductoBase ProductoElegido)
         {
-            PanelSecundarioStatusRequest EstadoCarrito = new PanelSecundarioStatusRequest();
-            Messenger.Default.Publish(EstadoCarrito);
-
-            if(!EstadoCarrito.PanelSecundarioExiste || !(EstadoCarrito.ViewModel is PanelSecundarioCatalogoViewModel))
-            {
-                PanelSecundarioCatalogoViewModel _viewModel = App.GetService<PanelSecundarioCatalogoViewModel>();
-                await _viewModel.InicializarVM();
-                Messenger.Default.Publish(new PanelSecundarioBoxing { ViewModelGenerico = _viewModel , TituloPanel = "Lista de Ventas" });
-            }
-            
+            await IniciarPanelSecundario(EleccionPanelSecundario.Venta);
             ProductoCatalogo productoAniadir = new ProductoCatalogo
             {
                 ProductoSKU = ProductoElegido.ProductoSKU,
@@ -238,7 +295,6 @@ namespace WPFApp1.ViewModels
                 Categoria = ProductoElegido.Categoria,
                 Precio = ProductoElegido.Precio
             };
-            Messenger.Default.Publish(new TogglePanelSecundarioMW { MostrarPanel = true });
             Ventas ItemVender = new Ventas { ItemVendido = productoAniadir, Cantidad = 1 };
             Messenger.Default.Publish(new NuevoProductoCarritoMessage { VentaDTO = ItemVender });
         }

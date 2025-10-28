@@ -261,7 +261,7 @@ namespace WPFApp1.ViewModels
             Ventas nuevoItemVendido = Producto.VentaDTO;
             nuevoItemVendido.precioVenta = nuevoItemVendido.ItemVendido.Precio;
             nuevoItemVendido.ModoEdicionActivo = false;
-            Ventas registroVigente = ColeccionProductosVenta.FirstOrDefault(V => V.ItemVendido == nuevoItemVendido.ItemVendido);
+            Ventas registroVigente = ColeccionProductosVenta.FirstOrDefault(V => V.ItemVendido.ProductoSKU == nuevoItemVendido.ItemVendido.ProductoSKU);
             if (registroVigente != null)
             {
                 registroVigente.Cantidad++;

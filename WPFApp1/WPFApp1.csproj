@@ -28,6 +28,7 @@
     <None Remove="iconos\Cruz2.png" />
     <None Remove="iconos\dotted line face.png" />
     <None Remove="iconos\exportar_xlsx.png" />
+    <None Remove="iconos\globo1.png" />
     <None Remove="iconos\lapizEdicion.png" />
     <None Remove="iconos\layout1.png" />
     <None Remove="iconos\layout2.png" />
@@ -73,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\Cruz2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\globo1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\layout2.png">
