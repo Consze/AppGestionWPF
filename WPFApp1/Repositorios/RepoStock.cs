@@ -14,6 +14,7 @@ namespace WPFApp1.Repositorios
     {
         private readonly ConexionDBSQLite _accesoDB;
         public readonly Dictionary<string,string> MapeoColumnas;
+        public readonly Dictionary<string, string> MapeoDTO;
         public ProductosAcessoDatosSQLite(ConexionDBSQLite accesoDB)
         {
             _accesoDB = accesoDB;
@@ -30,6 +31,22 @@ namespace WPFApp1.Repositorios
                 {"PrecioPublico","PrecioPublico" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
+            };
+            MapeoDTO = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Acceso en lector
+                {"ProductoSKU", "s.SKU_Producto" },
+                {"UbicacionID", "s.ubicacion_id" },
+                {"ProductoVersionID", "s.producto_version_id"},
+                {"MarcaID", "v.Marca_id"},
+                {"FormatoProductoID", "v.formato_id"},
+                {"Haber" , "s.Haber" },
+                {"Precio", "s.Precio" },
+                {"EsEliminado", "s.EsEliminado" },
+                {"VisibilidadWeb","s.VisibilidadWeb" },
+                {"PrecioPublico","s.PrecioPublico" },
+                {"FechaModificacion", "s.FechaModificacion"},
+                {"FechaCreacion","s.FechaCreacion" }
             };
         }
         public ProductoCatalogo RecuperarProductoPorID(string ProductoID)
@@ -115,7 +132,7 @@ namespace WPFApp1.Repositorios
                             registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber);
                             registro.Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio);
-                            registro.Peso= lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso);
+                            registro.Peso= lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso);
 
                             //Cadena
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
@@ -155,9 +172,9 @@ namespace WPFApp1.Repositorios
             }
             return registro;
         }
-        public List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs)
+        public List<ProductoCatalogo> RecuperarLotePorIDS(string propiedadNombre, List<string> IDs)
         {
-            string parametros = string.Join(", ", Enumerable.Range(0, SKUs.Count).Select(i => $"@sku{i}"));
+            string parametros = string.Join(", ", Enumerable.Range(0, IDs.Count).Select(i => $"@id{i}"));
             string Consulta = $@"SELECT 
                 s.SKU_Producto AS ProductoSKU,
                 s.ubicacion_id AS ProductoHaberUbicacionID,
@@ -191,16 +208,16 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
-            WHERE s.SKU_Producto IN ({parametros});";
+            WHERE {MapeoDTO[propiedadNombre]} IN ({parametros}) AND s.Haber > 0;";
 
             List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
             using (SqliteConnection conexion = _accesoDB.ObtenerConexionDB())
             {
                 using (SqliteCommand comando = new SqliteCommand(Consulta, conexion))
                 {
-                    for (int i = 0; i < SKUs.Count; i++)
+                    for (int i = 0; i < IDs.Count; i++)
                     {
-                        comando.Parameters.AddWithValue($"@sku{i}", SKUs[i]);
+                        comando.Parameters.AddWithValue($"@id{i}", IDs[i]);
                     }
 
                     using (SqliteDataReader lector = comando.ExecuteReader())
@@ -244,7 +261,7 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
-                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -400,7 +417,7 @@ namespace WPFApp1.Repositorios
                                     Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                     Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                     Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
-                                    Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+                                    Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
 
                                     //Cadena
                                     Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -518,7 +535,7 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
-                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -733,6 +750,141 @@ namespace WPFApp1.Repositorios
                 return filasAfectadas > 0;
             }
         }
+        public List<ProductoCatalogo> RecuperarLotePorPropiedades(List<Propiedad_Valor> Busqueda)
+        {
+            List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
+            List<string> listaPropiedadesBuscadas = new List<string>();
+
+            using (SqliteConnection conexion = _accesoDB.ObtenerConexionDB())
+            {
+                using (SqliteCommand comando = new SqliteCommand())
+                {
+                    comando.Connection = conexion;
+                    foreach (Propiedad_Valor filtro in Busqueda)
+                    {
+                        string nombreIndice = MapeoDTO[filtro.PropiedadNombre];
+                        string valorParametro = filtro.Valor;
+                        listaPropiedadesBuscadas.Add($"{nombreIndice} = @{filtro.PropiedadNombre}");
+                        comando.Parameters.AddWithValue($"@{filtro.PropiedadNombre}", valorParametro);
+                    }
+
+                    if (listaPropiedadesBuscadas.Count < 1)
+                        return listaRegistros;
+
+                    string Consulta = $@"SELECT 
+                        s.SKU_Producto AS ProductoSKU,
+                        s.ubicacion_id AS ProductoHaberUbicacionID,
+                        s.producto_version_id AS ProductoVersionID,
+                        s.haber AS ProductoHaber,
+                        s.precio AS ProductoPrecio,
+                        s.VisibilidadWeb AS ProductoVisibilidadWeb,
+                        s.PrecioPublico AS ProductoPrecioPublico,
+                        s.FechaModificacion AS ProductoFechaModificacion,
+                        s.FechaCreacion AS ProductoFechaCreacion,
+                        s.EsEliminado AS ProductoEsEliminado,
+                        v.RutaRelativaImagen AS RutaRelativaImagen,
+                        v.EAN AS EAN,
+                        v.producto_id AS ProductoID,
+                        v.Marca_id AS MarcaID,
+                        v.formato_id AS FormatoID,
+                        f.alto AS Alto,
+                        f.profundidad AS Profundidad,
+                        f.largo AS Largo,
+                        f.peso AS Peso,
+                        f.descripcion AS FormatoNombre,
+                        p.nombre AS ProductoNombre,
+                        p.categoria_id AS CategoriaID,
+                        c.nombre AS ProductoCategoria,
+                        m.nombre AS MarcaNombre,
+                        u.descripcion AS UbicacionNombre
+                        FROM Productos_stock AS s
+                        INNER JOIN Productos_versiones AS v ON s.producto_version_id = v.id
+                        INNER JOIN Productos_Formatos AS f ON v.formato_id = f.id
+                        INNER JOIN Productos AS p ON v.producto_id = p.id
+                        INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
+                        INNER JOIN Marcas AS m ON v.Marca_id = m.id
+                        INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
+                        WHERE {string.Join(" AND ", listaPropiedadesBuscadas)};";
+
+                    comando.CommandText = Consulta;
+
+                    using (SqliteDataReader lector = comando.ExecuteReader())
+                    {
+                        // Indices
+                        int IDXAlto = lector.GetOrdinal("Alto");
+                        int IDXProfundidad = lector.GetOrdinal("Profundidad");
+                        int IDXLargo = lector.GetOrdinal("Largo");
+                        int IDXPeso = lector.GetOrdinal("Peso");
+                        int IDXHaber = lector.GetOrdinal("ProductoHaber");
+                        int IDXPrecio = lector.GetOrdinal("ProductoPrecio");
+                        int IDXNombre = lector.GetOrdinal("ProductoNombre");
+                        int IDXCategoriaID = lector.GetOrdinal("CategoriaID");
+                        int IDXCategoria = lector.GetOrdinal("ProductoCategoria");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXUbicacionID = lector.GetOrdinal("ProductoHaberUbicacionID");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXMarcaNombre = lector.GetOrdinal("MarcaNombre");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXFormatoNombre = lector.GetOrdinal("FormatoNombre");
+                        int IDXUbicacionNombre = lector.GetOrdinal("UbicacionNombre");
+                        int IDXProductoVersionID = lector.GetOrdinal("ProductoVersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXFechaCreacion = lector.GetOrdinal("ProductoFechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("ProductoFechaModificacion");
+                        int IDXProductoEsEliminado = lector.GetOrdinal("ProductoEsEliminado");
+                        int IDXProductoPrecioPublico = lector.GetOrdinal("ProductoPrecioPublico");
+                        int IDXProductoVisibilidadWeb = lector.GetOrdinal("ProductoVisibilidadWeb");
+                        int IDXProductoSKU = lector.GetOrdinal("ProductoSKU");
+
+                        while (lector.Read())
+                        {
+                            ProductoCatalogo registroActual = new ProductoCatalogo
+                            {
+                                ProductoSKU = lector.GetString(IDXProductoSKU),
+
+                                //Numericos
+                                Alto = lector.IsDBNull(IDXAlto) ? 0 : lector.GetDecimal(IDXAlto),
+                                Profundidad = lector.IsDBNull(IDXProfundidad) ? 0 : lector.GetDecimal(IDXProfundidad),
+                                Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
+                                Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
+                                Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
+
+                                //Cadena
+                                Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
+                                CategoriaNombre = lector.IsDBNull(IDXCategoria) ? "" : lector.GetString(IDXCategoria),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan),
+                                RutaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                MarcaNombre = lector.IsDBNull(IDXMarcaNombre) ? "" : lector.GetString(IDXMarcaNombre),
+                                UbicacionNombre = lector.IsDBNull(IDXUbicacionNombre) ? "" : lector.GetString(IDXUbicacionNombre),
+                                FormatoNombre = lector.IsDBNull(IDXFormatoNombre) ? "" : lector.GetString(IDXFormatoNombre),
+
+                                //Claves
+                                UbicacionID = lector.IsDBNull(IDXUbicacionID) ? "" : lector.GetString(IDXUbicacionID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                FormatoProductoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                ProductoVersionID = lector.IsDBNull(IDXProductoVersionID) ? "" : lector.GetString(IDXProductoVersionID),
+                                ID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                Categoria = lector.IsDBNull(IDXCategoriaID) ? "" : lector.GetString(IDXCategoriaID),
+
+                                //Datetime
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+
+                                //Booleanos
+                                EsEliminado = lector.IsDBNull(IDXProductoEsEliminado) ? false : lector.GetBoolean(IDXProductoEsEliminado),
+                                PrecioPublico = lector.IsDBNull(IDXProductoPrecioPublico) ? false : lector.GetBoolean(IDXProductoPrecioPublico),
+                                VisibilidadWeb = lector.IsDBNull(IDXProductoVisibilidadWeb) ? false : lector.GetBoolean(IDXProductoVisibilidadWeb)
+                            };
+
+                            listaRegistros.Add(registroActual);
+                        }
+                    }
+                }
+            }
+            return listaRegistros;
+        }
     }
     /// <summary>
     /// Implementación para DBMS SQL Server
@@ -741,6 +893,7 @@ namespace WPFApp1.Repositorios
     {
         public readonly ConexionDBSQLServer _accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
+        public readonly Dictionary<string, string> MapeoDTO;
         public ProductosAccesoDatosSQLServer(ConexionDBSQLServer accesoDB)
         {
             _accesoDB = accesoDB;
@@ -756,6 +909,22 @@ namespace WPFApp1.Repositorios
                 {"PrecioPublico","PrecioPublico" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
+            };
+            MapeoDTO = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Acceso en lector
+                {"ProductoSKU", "s.SKU_Producto" },
+                {"UbicacionID", "s.ubicacion_id" },
+                {"ProductoVersionID", "s.producto_version_id"},
+                {"MarcaID", "v.Marca_id"},
+                {"FormatoProductoID", "v.formato_id"},
+                {"Haber" , "s.Haber" },
+                {"Precio", "s.Precio" },
+                {"EsEliminado", "s.EsEliminado" },
+                {"VisibilidadWeb","s.VisibilidadWeb" },
+                {"PrecioPublico","s.PrecioPublico" },
+                {"FechaModificacion", "s.FechaModificacion"},
+                {"FechaCreacion","s.FechaCreacion" }
             };
         }
         public ProductoCatalogo RecuperarProductoPorID(string ProductoID)
@@ -841,7 +1010,7 @@ namespace WPFApp1.Repositorios
                             registro.Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo);
                             registro.Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber);
                             registro.Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio);
-                            registro.Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso);
+                            registro.Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso);
 
                             //Cadena
                             registro.Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre);
@@ -881,9 +1050,9 @@ namespace WPFApp1.Repositorios
             }
             return registro;
         }
-        public List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs)
+        public List<ProductoCatalogo> RecuperarLotePorIDS(string propiedadNombre, List<string> IDs)
         {
-            string parametros = string.Join(", ", Enumerable.Range(0, SKUs.Count).Select(i => $"@sku{i}"));
+            string parametros = string.Join(", ", Enumerable.Range(0, IDs.Count).Select(i => $"@id{i}"));
             string Consulta = $@"SELECT 
                 s.SKU_Producto AS ProductoSKU,
                 s.ubicacion_id AS ProductoHaberUbicacionID,
@@ -917,16 +1086,16 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_categorias AS c ON p.categoria_id = c.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
-            WHERE s.SKU_Producto IN ({parametros});";
+            WHERE {MapeoDTO[propiedadNombre]} IN ({parametros}) AND s.Haber > 0;";
 
             List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
             using (SqlConnection conexion = _accesoDB.ObtenerConexionDB())
             {
                 using (SqlCommand comando = new SqlCommand(Consulta, conexion))
                 {
-                    for (int i = 0; i < SKUs.Count; i++)
+                    for (int i = 0; i < IDs.Count; i++)
                     {
-                        comando.Parameters.AddWithValue($"@sku{i}", SKUs[i]);
+                        comando.Parameters.AddWithValue($"@id{i}", IDs[i]);
                     }
 
                     using (SqlDataReader lector = comando.ExecuteReader())
@@ -970,7 +1139,7 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
-                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -1126,7 +1295,7 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
-                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),
@@ -1244,7 +1413,7 @@ namespace WPFApp1.Repositorios
                                 Largo = lector.IsDBNull(IDXLargo) ? 0 : lector.GetDecimal(IDXLargo),
                                 Haber = lector.IsDBNull(IDXHaber) ? 0 : lector.GetInt32(IDXHaber),
                                 Precio = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPrecio),
-                                Peso = lector.IsDBNull(IDXPrecio) ? 0 : lector.GetDecimal(IDXPeso),
+                                Peso = lector.IsDBNull(IDXPeso) ? 0 : lector.GetDecimal(IDXPeso),
 
                                 //Cadena
                                 Nombre = lector.IsDBNull(IDXNombre) ? "" : lector.GetString(IDXNombre),

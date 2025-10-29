@@ -106,15 +106,15 @@ namespace WPFApp1.Conmutadores
                 return _repoLocal.ModificacionMasiva(lista);
             }
         }
-        public List<ProductoCatalogo> RecuperarLotePorID(List<string> SKUs)
+        public List<ProductoCatalogo> RecuperarLotePorIDS(string propiedadNombre ,List<string> IDs)
         {
             if (_repoServer._accesoDB.LeerConfiguracionManual())
             {
-                return _repoServer.RecuperarLotePorID(SKUs);
+                return _repoServer.RecuperarLotePorIDS(propiedadNombre, IDs);
             }
             else
             {
-                return _repoLocal.RecuperarLotePorID(SKUs);
+                return _repoLocal.RecuperarLotePorIDS(propiedadNombre, IDs);
             }
         }
     }

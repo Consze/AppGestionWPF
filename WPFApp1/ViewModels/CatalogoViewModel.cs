@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
+using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
 using WPFApp1.Enums;
 using WPFApp1.Interfaces;
@@ -23,7 +24,7 @@ namespace WPFApp1.ViewModels
     }
     public class CatalogoViewModel : INotifyPropertyChanged
     {
-        private readonly IProductosServicio _productoServicio;
+        private readonly ProductoConmutador _productoServicio;
         private readonly OrquestadorProductos OrquestadorProductos;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
@@ -167,7 +168,7 @@ namespace WPFApp1.ViewModels
         public ICommand AniadirItemLoteEdicionCommand { get; }
         public ICommand ElegirTodoLoteCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
-        public CatalogoViewModel(IProductosServicio productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
+        public CatalogoViewModel(ProductoConmutador productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
         {
             _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
@@ -393,10 +394,15 @@ namespace WPFApp1.ViewModels
             if(TextoBusqueda != null)
             {
                 this.Procesando = true;
-                await Task.Run(() => BuscarProductosTitulos(TextoBusqueda));
-                this.Procesando = false;
-                string cuerpoNotificacion = string.Empty;
-                string IconoAUtilizar = string.Empty;
+                int lenCadena = TextoBusqueda.Length;
+                if (decimal.TryParse(TextoBusqueda.Substring(0, lenCadena - 1), out decimal eanBuscado) && (lenCadena == 10 || lenCadena == 13))
+                {
+                    await BuscarEAN(TextoBusqueda);
+                }
+                else
+                {
+                    await Task.Run(() => BuscarProductosTitulos(TextoBusqueda));
+                }
 
                 if (!string.IsNullOrEmpty(TextoBusqueda) && !BusquedasRecientes.Contains(TextoBusqueda))
                 {
@@ -406,8 +412,9 @@ namespace WPFApp1.ViewModels
                         BusquedasRecientes.RemoveAt(BusquedasRecientes.Count -1);
                     }
                 }
-                
 
+                string cuerpoNotificacion = string.Empty;
+                string IconoAUtilizar = string.Empty;
                 if (ColeccionProductos.Count < 1)
                 {
                     _servicioSFX.Suspenso();
@@ -428,8 +435,33 @@ namespace WPFApp1.ViewModels
                 MostrarBotonRegresar = true;
                 Notificacion _notificacion = new Notificacion { Mensaje = cuerpoNotificacion, Titulo = TituloVista, IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
                 Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+                this.Procesando = false;
             }
             TextoBusqueda = string.Empty;
+        }
+        private async Task BuscarEAN(string EanBuscado)
+        {
+            List<ProductoCatalogo> registros = await Task.Run(() => OrquestadorProductos.BuscarProductoEAN(EanBuscado));
+
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                ColeccionProductos.Clear();
+                foreach (var producto in registros)
+                {
+                    ProductoBase item = new ProductoBase
+                    {
+                        Nombre = producto.Nombre,
+                        ID = producto.ID,
+                        Precio = producto.Precio,
+                        Categoria = producto.CategoriaNombre,
+                        RutaImagen = producto.RutaImagen,
+                        ProductoSKU = producto.ProductoSKU,
+                        FechaCreacion = producto.FechaCreacion,
+                        FechaModificacion = producto.FechaModificacion
+                    };
+                    ColeccionProductos.Add(item);
+                }
+            });
         }
         private async Task BuscarProductosTitulos(string Titulo)
         {

@@ -1,7 +1,8 @@
-﻿using WPFApp1.Entidades;
+﻿using WPFApp1.DTOS;
+using WPFApp1.Entidades;
+using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
-using WPFApp1.Enums;
 
 namespace WPFApp1.Conmutadores
 {
@@ -94,6 +95,28 @@ namespace WPFApp1.Conmutadores
             else
             {
                 return repoLocal.Recuperar(ID);
+            }
+        }
+        public List<Versiones> BuscarEan(string EanBuscado)
+        {
+            if (repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                return repoServer.BuscarEan(EanBuscado);
+            }
+            else
+            {
+                return repoLocal.BuscarEan(EanBuscado);
+            }
+        }
+        public List<Versiones> RecuperarLotePorIDS(string propiedadNombre, List<string> IDs)
+        {
+            if (repoServer.accesoDB.LeerConfiguracionManual())
+            {
+                return repoServer.RecuperarLotePorIDS(propiedadNombre, IDs);
+            }
+            else
+            {
+                return repoLocal.RecuperarLotePorIDS(propiedadNombre, IDs);
             }
         }
     }

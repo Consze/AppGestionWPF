@@ -74,7 +74,7 @@ namespace WPFApp1
 
             // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
-            services.AddTransient<IConmutadorEntidadGenerica<Versiones>, VersionesConmutador>();
+            services.AddTransient<VersionesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Marcas>, MarcasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Ubicaciones>, UbicacionesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Categorias>, CategoriasConmutador>();
@@ -86,13 +86,15 @@ namespace WPFApp1
             services.AddTransient<IConmutadorEntidadGenerica<Medios_Pago>, MediosPagoConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Cuentas_Contables>, CuentasContablesConmutador>();
 
-            services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
-            {
+            services.AddTransient<ProductoConmutador>();
+
+            //services.AddTransient<IProductosServicio, ProductoConmutador>(provider =>
+            /**{
                 var repoServer = provider.GetRequiredService<ProductosAccesoDatosSQLServer>();
                 var repoLocal = provider.GetRequiredService<ProductosAcessoDatosSQLite>();
 
                 return new ProductoConmutador(repoServer, repoLocal);
-            });
+            });*/
             
             services.AddTransient<IndexadorGenericoService>();
 

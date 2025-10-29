@@ -234,7 +234,8 @@
                                 </ListBox>
                             </Border>
                         </Popup>
-
+                        
+                        
                         <Button x:Name="BorrarTexto" Margin="10,5" BorderThickness="0" Command="{Binding EliminarTextoBusquedaCommand}" 
                             HorizontalAlignment="Left" Grid.Column="2" Visibility="{Binding BotonCruzVisible, Converter={StaticResource BooleanToVisibility}}">
                             <Button.Background>
@@ -375,9 +376,19 @@
                                 </Style>
                             </Border.Style>
                             <StackPanel Orientation="Vertical">
-                                <Border Width="150" Height="150">
+                                <Border Width="150" Height="150" x:Name="Miniatura">
                                     <Image Source="{Binding Path=RutaImagen}"/>
                                 </Border>
+                                <Popup IsOpen="{Binding EANModificado}"
+                                   PlacementTarget="{Binding ElementName=Miniatura}"
+                                   Placement="Bottom"        
+                                   StaysOpen="True"
+                                   AllowsTransparency="True"
+                                   PopupAnimation="Fade"
+                                   Panel.ZIndex="1000"
+                                   VerticalOffset="1">
+                                    <TextBlock FontSize="14">El codigo de barra de este item ha cambiado</TextBlock>
+                                </Popup>
                                 <TextBlock FontSize="18" FontWeight="Bold" Text="{Binding Nombre}" TextWrapping="Wrap" MaxWidth="200"/>
                                 <TextBlock Text="{Binding Path=Categoria, StringFormat='Categoria: {0}'}"/>
                                 <TextBlock Text="{Binding Path=Precio, StringFormat='Precio: ${0}'}"/>

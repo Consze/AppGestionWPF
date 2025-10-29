@@ -1,4 +1,7 @@
-﻿using WPFApp1.DTOS;
+﻿using System.ComponentModel.Design;
+using Org.BouncyCastle.Crypto;
+using WPFApp1.Conmutadores;
+using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Enums;
 using WPFApp1.Interfaces;
@@ -9,18 +12,18 @@ namespace WPFApp1.Servicios
     public class OrquestadorProductos
     {
         public readonly Dictionary<string, ServicioAsociado> MapeoPropiedades;
-        private readonly IProductosServicio productoServicio;
+        private readonly ProductoConmutador productoServicio;
         private readonly ServicioIndexacionProductos indexacionServicio;
         private readonly IConmutadorEntidadGenerica<Formatos> formatoServicio;
-        private readonly IConmutadorEntidadGenerica<Versiones> versionesServicio;
+        private readonly VersionesConmutador versionesServicio;
         private readonly IConmutadorEntidadGenerica<Arquetipos> arquetiposServicio;
         private readonly IConmutadorEntidadGenerica<Ubicaciones> ubicacionesServicio;
         private readonly IConmutadorEntidadGenerica<Categorias> categoriasServicio;
         private readonly IConmutadorEntidadGenerica<Marcas> marcasServicio;
         private readonly ServicioVentas servicioVentas;
 
-        public OrquestadorProductos(IProductosServicio _servicioProductos, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
-            IConmutadorEntidadGenerica<Versiones> _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion, 
+        public OrquestadorProductos(ProductoConmutador _servicioProductos, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
+            VersionesConmutador _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion, 
             IConmutadorEntidadGenerica<Arquetipos> _servicioArquetipo, IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones,
             IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas,
             ServicioVentas _servicioVentas)
@@ -73,6 +76,26 @@ namespace WPFApp1.Servicios
                 {"FechaCreacion",ServicioAsociado.Null}
             };
         }
+        public List<ProductoCatalogo> BuscarProductoEAN(string EanBuscado)
+        {
+            List<Versiones> versiones = versionesServicio.BuscarEan(EanBuscado);
+
+            List<string> listaProductosBuscados = new List<string>();
+            List<Versiones> versionesIncluyenProducto = new List<Versiones>();
+            List<string> VersionesBuscadas = new List<string>();
+            foreach (Versiones item in versiones)
+            {
+                listaProductosBuscados.Add(item.ProductoID);
+            }
+
+            versionesIncluyenProducto = versionesServicio.RecuperarLotePorIDS("ProductoID", listaProductosBuscados);
+            foreach(Versiones coincidencias in versionesIncluyenProducto)
+            {
+                VersionesBuscadas.Add(coincidencias.ID);
+            }
+
+            return productoServicio.RecuperarLotePorIDS("ProductoVersionID", VersionesBuscadas);
+        }
         public bool EliminarProducto (string ProductoID, TipoEliminacion TipoEliminacion)
         {
             return true;
@@ -95,7 +118,7 @@ namespace WPFApp1.Servicios
                 SKUProductosEditar.Add(ventaActual.ItemVendido.ProductoSKU);
             }
 
-            List<ProductoCatalogo> ListaProductos = productoServicio.RecuperarLotePorID(SKUProductosEditar);
+            List<ProductoCatalogo> ListaProductos = productoServicio.RecuperarLotePorIDS("ProductoSKU", SKUProductosEditar);
             if (ListaProductos.Count == 0)
                 return false;
 
@@ -276,6 +299,14 @@ namespace WPFApp1.Servicios
                             RutaRelativaImagen = item.ProductoEditar.RutaImagen
                         };
                         nuevaVersion.ID = versionesServicio.Insertar(nuevaVersion);
+
+                        ProductoBase nuevoRegistro = new ProductoBase
+                        {
+                            Nombre = productoNuevo.Nombre,
+                            ID = nuevaVersion.ProductoID,
+                            Categoria = productoNuevo.CategoriaID
+                        };
+                        indexacionServicio.IndexarProducto(nuevoRegistro);
 
                         ProductoEditar_Propiedad_Valor registroActual = new ProductoEditar_Propiedad_Valor
                         {

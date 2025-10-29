@@ -1,9 +1,10 @@
-﻿using Microsoft.Data.Sqlite;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.IO;
+using Microsoft.Data.Sqlite;
+using WPFApp1.DTOS;
 using WPFApp1.Entidades;
-using WPFApp1.Interfaces;
 using WPFApp1.Enums;
+using WPFApp1.Interfaces;
 
 namespace WPFApp1.Repositorios
 {
@@ -11,6 +12,7 @@ namespace WPFApp1.Repositorios
     {
         public readonly ConexionDBSQLite accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
+        public readonly Dictionary<string, string> MapeoDTO;
         public RepoVersionesSQLite(ConexionDBSQLite _accesoDB)
         {
             accesoDB = _accesoDB;
@@ -26,6 +28,19 @@ namespace WPFApp1.Repositorios
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
+            };
+            MapeoDTO = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Acceso en lector
+                {"ID", "v.id" },
+                {"ProductoID", "v.producto_id" },
+                {"EAN", "v.ean" },
+                {"FormatoID", "v.formato_id" },
+                {"RutaRelativaImagen", "v.RutaRelativaImagen" },
+                {"MarcaID", "v.marca_id" },
+                {"EsEliminado", "v.EsEliminado" },
+                {"FechaModificacion", "v.FechaModificacion" },
+                {"FechaCreacion","v.FechaCreacion" }
             };
         }
         public async IAsyncEnumerable<Versiones> RecuperarStreamAsync()
@@ -135,6 +150,65 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
+        public List<Versiones> RecuperarLotePorIDS(string propiedadNombre, List<string> IDs)
+        {
+            List<Versiones> versiones = new List<Versiones>();
+            string parametros = string.Join(", ", Enumerable.Range(0, IDs.Count).Select(i => $"@id{i}"));
+            string consulta = $@"SELECT 
+                    v.id AS VersionID,
+                    v.producto_id AS ProductoID,
+                    v.ean AS EAN,
+                    v.marca_id AS MarcaID,
+                    v.formato_id AS FormatoID,
+                    v.RutaRelativaImagen AS RutaRelativaImagen,
+                    v.FechaCreacion AS FechaCreacion,
+                    v.FechaModificacion AS FechaModificacion,
+                    v.EsEliminado AS EsEliminado
+                FROM Productos_versiones AS v
+                WHERE {MapeoDTO[propiedadNombre]} IN ({parametros});";
+            using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
+            {
+                using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
+                {
+                    for (int i = 0; i < IDs.Count; i++)
+                    {
+                        comando.Parameters.AddWithValue($"@id{i}", IDs[i]);
+                    }
+
+                    using (SqliteDataReader lector = comando.ExecuteReader())
+                    {
+                        int IDXID = lector.GetOrdinal("VersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
+
+                        while (lector.Read())
+                        {
+                            Versiones registro = new Versiones
+                            {
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
+                            };
+                            versiones.Add(registro);
+                        }
+
+                        return versiones;
+                    }
+                }
+            }
+        }
         public Versiones Recuperar(string ID)
         {
             string consulta = @"SELECT 
@@ -183,6 +257,61 @@ namespace WPFApp1.Repositorios
                         
 
                         return registro;
+                    }
+                }
+            }
+        }
+        public List<Versiones> BuscarEan(string EanBuscado)
+        {
+            List<Versiones> Versiones = new List<Versiones>();
+            string consulta = @"SELECT 
+                    v.id AS VersionID,
+                    v.producto_id AS ProductoID,
+                    v.ean AS EAN,
+                    v.marca_id AS MarcaID,
+                    v.formato_id AS FormatoID,
+                    v.RutaRelativaImagen AS RutaRelativaImagen,
+                    v.FechaCreacion AS FechaCreacion,
+                    v.FechaModificacion AS FechaModificacion,
+                    v.EsEliminado AS EsEliminado
+                FROM Productos_versiones AS v
+                WHERE v.ean = @EANBuscado;";
+
+            using (SqliteConnection conexion = accesoDB.ObtenerConexionDB())
+            {
+                using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("@EANBuscado", EanBuscado);
+                    using (SqliteDataReader lector = comando.ExecuteReader())
+                    {
+                        int IDXID = lector.GetOrdinal("VersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
+
+                        while (lector.Read())
+                        {
+                            Versiones registro = new Versiones
+                            {
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
+                            };
+                            Versiones.Add(registro);
+                        }
+
+                        return Versiones;
                     }
                 }
             }
@@ -333,6 +462,7 @@ namespace WPFApp1.Repositorios
     {
         public readonly ConexionDBSQLServer accesoDB;
         public readonly Dictionary<string, string> MapeoColumnas;
+        public readonly Dictionary<string, string> MapeoDTO;
         public RepoVersionesSQLServer(ConexionDBSQLServer _accesoDB)
         {
             accesoDB = _accesoDB;
@@ -348,6 +478,19 @@ namespace WPFApp1.Repositorios
                 {"EsEliminado", "EsEliminado" },
                 {"FechaModificacion", "FechaModificacion"},
                 {"FechaCreacion","FechaCreacion" }
+            };
+            MapeoDTO = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                //Propiedad de Clase , Acceso en lector
+                {"ID", "v.id" },
+                {"ProductoID", "v.producto_id" },
+                {"EAN", "v.ean" },
+                {"FormatoID", "v.formato_id" },
+                {"RutaRelativaImagen", "v.RutaRelativaImagen" },
+                {"MarcaID", "v.marca_id" },
+                {"EsEliminado", "v.EsEliminado" },
+                {"FechaModificacion", "v.FechaModificacion" },
+                {"FechaCreacion","v.FechaCreacion" }
             };
         }
         public async IAsyncEnumerable<Versiones> RecuperarStreamAsync()
@@ -457,6 +600,65 @@ namespace WPFApp1.Repositorios
                 }
             }
         }
+        public List<Versiones> RecuperarLotePorIDS(string propiedadNombre, List<string> IDs)
+        {
+            List<Versiones> versiones = new List<Versiones>();
+            string parametros = string.Join(", ", Enumerable.Range(0, IDs.Count).Select(i => $"@id{i}"));
+            string consulta = $@"SELECT 
+                    v.id AS VersionID,
+                    v.producto_id AS ProductoID,
+                    v.ean AS EAN,
+                    v.marca_id AS MarcaID,
+                    v.formato_id AS FormatoID,
+                    v.RutaRelativaImagen AS RutaRelativaImagen,
+                    v.FechaCreacion AS FechaCreacion,
+                    v.FechaModificacion AS FechaModificacion,
+                    v.EsEliminado AS EsEliminado
+                FROM Productos_versiones AS v
+                WHERE {MapeoDTO[propiedadNombre]} IN ({parametros});";
+            using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
+            {
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    for (int i = 0; i < IDs.Count; i++)
+                    {
+                        comando.Parameters.AddWithValue($"@id{i}", IDs[i]);
+                    }
+
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        int IDXID = lector.GetOrdinal("VersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
+
+                        while (lector.Read())
+                        {
+                            Versiones registro = new Versiones
+                            {
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
+                            };
+                            versiones.Add(registro);
+                        }
+
+                        return versiones;
+                    }
+                }
+            }
+        }
         public Versiones Recuperar(string ID)
         {
             string consulta = @"SELECT 
@@ -506,6 +708,61 @@ namespace WPFApp1.Repositorios
 
 
                         return registro;
+                    }
+                }
+            }
+        }
+        public List<Versiones> BuscarEan(string EanBuscado)
+        {
+            List<Versiones> Versiones = new List<Versiones>();
+            string consulta = @"SELECT 
+                    v.id AS VersionID,
+                    v.producto_id AS ProductoID,
+                    v.ean AS EAN,
+                    v.marca_id AS MarcaID,
+                    v.formato_id AS FormatoID,
+                    v.RutaRelativaImagen AS RutaRelativaImagen,
+                    v.FechaCreacion AS FechaCreacion,
+                    v.FechaModificacion AS FechaModificacion,
+                    v.EsEliminado AS EsEliminado
+                FROM Productos_versiones AS v
+                WHERE v.ean = @EANBuscado;";
+
+            using (SqlConnection conexion = accesoDB.ObtenerConexionDB())
+            {
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("@EANBuscado", EanBuscado);
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        int IDXID = lector.GetOrdinal("VersionID");
+                        int IDXProductoID = lector.GetOrdinal("ProductoID");
+                        int IDXEan = lector.GetOrdinal("EAN");
+                        int IDXMarcaID = lector.GetOrdinal("MarcaID");
+                        int IDXFechaCreacion = lector.GetOrdinal("FechaCreacion");
+                        int IDXFechaModificacion = lector.GetOrdinal("FechaModificacion");
+                        int IDXRutaImagen = lector.GetOrdinal("RutaRelativaImagen");
+                        int IDXFormatoID = lector.GetOrdinal("FormatoID");
+                        int IDXEsEliminado = lector.GetOrdinal("EsEliminado");
+
+                        while (lector.Read())
+                        {
+                            Versiones registro = new Versiones
+                            {
+                                ID = lector.IsDBNull(IDXID) ? "" : lector.GetString(IDXID),
+                                FormatoID = lector.IsDBNull(IDXFormatoID) ? "" : lector.GetString(IDXFormatoID),
+                                MarcaID = lector.IsDBNull(IDXMarcaID) ? "" : lector.GetString(IDXMarcaID),
+                                ProductoID = lector.IsDBNull(IDXProductoID) ? "" : lector.GetString(IDXProductoID),
+                                FechaModificacion = lector.IsDBNull(IDXFechaModificacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaModificacion),
+                                FechaCreacion = lector.IsDBNull(IDXFechaCreacion) ? DateTime.MinValue : lector.GetDateTime(IDXFechaCreacion),
+                                RutaRelativaImagen = lector.IsDBNull(IDXRutaImagen) ? "" : Path.GetFullPath(lector.GetString(IDXRutaImagen)),
+                                EsEliminado = lector.IsDBNull(IDXEsEliminado) ? false : lector.GetBoolean(IDXEsEliminado),
+                                EAN = lector.IsDBNull(IDXEan) ? "" : lector.GetString(IDXEan)
+                            };
+                            Versiones.Add(registro);
+                        }
+
+                        return Versiones;
                     }
                 }
             }

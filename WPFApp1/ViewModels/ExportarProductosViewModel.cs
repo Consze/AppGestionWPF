@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
@@ -26,9 +27,9 @@ namespace WPFApp1.ViewModels
         }
         public ICommand ExportarXLSXCommand { get; }
         public event PropertyChangedEventHandler PropertyChanged;
-        private readonly IProductosServicio _productoServicio;
+        private readonly ProductoConmutador _productoServicio;
         //constructor
-        public ExportarProductosViewModel(IProductosServicio productoServicio)
+        public ExportarProductosViewModel(ProductoConmutador productoServicio)
         {
             _productoServicio = productoServicio;
             ExportarXLSXCommand = new RelayCommand<object>(async (param) => await ExportarXLSX());
