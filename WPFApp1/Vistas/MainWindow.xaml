@@ -113,7 +113,7 @@
                         <TextBlock FontSize="16" Text="Bienvenido" FontWeight="ExtraLight" VerticalAlignment="Center"/>
                     </StackPanel>
                     <Button x:Name="ColapsarFormato" BorderThickness="0" Grid.Row="0" Grid.Column="2"
-                            Command="{Binding ColapsarPanelCommand}" IsTabStop="False" Margin="10">
+                            Command="{Binding ColapsarPanelCommand}" IsTabStop="False" Margin="10" Cursor="Hand">
                         <Button.Background>
                             <SolidColorBrush Color="Transparent"/>
                         </Button.Background>
@@ -288,7 +288,7 @@
             </Grid.RowDefinitions>
 
             <Button x:Name="ColapsarPanelSecundario" BorderThickness="0" Grid.Row="0" Visibility="{Binding ToggleIconoPanelSecundario, Converter={StaticResource BooleanToVisibility}}"
-                Command="{Binding ColapsarPanelSecundarioCommand}" IsTabStop="False" Margin="10" VerticalAlignment="Center">
+                Command="{Binding ColapsarPanelSecundarioCommand}" IsTabStop="False" Margin="10" VerticalAlignment="Center" Cursor="Hand">
                 <Button.Background>
                     <SolidColorBrush Color="Transparent"/>
                 </Button.Background>

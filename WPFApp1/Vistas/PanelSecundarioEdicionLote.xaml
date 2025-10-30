@@ -130,11 +130,11 @@
 
                     <TextBox x:Name="campoMarca" Text="{Binding MarcaNombre}" Grid.Column="0" Visibility="{Binding ToggleEdicionMarca, Converter={StaticResource BooleanToVisibility}}"/>
                     <ComboBox Style="{StaticResource CBOXValidable}" Grid.Column="0"
-DisplayMemberPath="Nombre"              
-SelectedItem="{Binding EntidadElegida, Mode=TwoWay}"
-ItemsSource="{Binding Coleccion}"
-Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}"
-Margin="2">
+                        DisplayMemberPath="Nombre"              
+                        SelectedItem="{Binding EntidadElegida, Mode=TwoWay}"
+                        ItemsSource="{Binding Coleccion}"
+                        Visibility="{Binding ToggleSeleccionMarca, Converter={StaticResource BooleanToVisibility}}"
+                        Margin="2">         
                     </ComboBox>
                     <TextBlock Text="El campo no puede estar vacio" 
            Foreground="Red" 

@@ -1,5 +1,6 @@
 ﻿using WPFApp1.DTOS;
 using WPFApp1.Enums;
+using WPFApp1.Repositorios;
 
 namespace WPFApp1.Interfaces
 {
@@ -13,5 +14,6 @@ namespace WPFApp1.Interfaces
         bool EliminarProducto(string ProductoID, TipoEliminacion TipoEliminacion);
         bool ModificacionMasiva(List<ProductoEditar_Propiedad_Valor> lista);
         List<ProductoCatalogo> RecuperarLotePorIDS(string propiedadNombre, List<string> IDs);
+        List<ProductoCatalogo> RecuperarLotePorPropiedades(List<Propiedad_Valor> Busqueda);
     }
 }

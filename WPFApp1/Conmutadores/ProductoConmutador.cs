@@ -1,7 +1,8 @@
-﻿using WPFApp1.DTOS;
+﻿using Org.BouncyCastle.Crypto;
+using WPFApp1.DTOS;
+using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Repositorios;
-using WPFApp1.Enums;
 
 namespace WPFApp1.Conmutadores
 {
@@ -115,6 +116,17 @@ namespace WPFApp1.Conmutadores
             else
             {
                 return _repoLocal.RecuperarLotePorIDS(propiedadNombre, IDs);
+            }
+        }
+        public List<ProductoCatalogo> RecuperarLotePorPropiedades(List<Propiedad_Valor> Busqueda)
+        {
+            if (_repoServer._accesoDB.LeerConfiguracionManual())
+            {
+                return _repoServer.RecuperarLotePorPropiedades(Busqueda);
+            }
+            else
+            {
+                return _repoLocal.RecuperarLotePorPropiedades(Busqueda);
             }
         }
     }

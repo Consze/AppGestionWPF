@@ -20,6 +20,7 @@
     <None Remove="iconos\aniadir-registro.png" />
     <None Remove="iconos\arriba1.png" />
     <None Remove="iconos\ascending-sort.png" />
+    <None Remove="iconos\botonSuma1.png" />
     <None Remove="iconos\busqueda1.png" />
     <None Remove="iconos\carrito1.png" />
     <None Remove="iconos\check.png" />
@@ -59,6 +60,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\arriba1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iconos\botonSuma1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iconos\busqueda1.png">

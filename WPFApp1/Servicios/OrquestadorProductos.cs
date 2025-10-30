@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.Design;
-using Org.BouncyCastle.Crypto;
-using WPFApp1.Conmutadores;
+﻿using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Enums;

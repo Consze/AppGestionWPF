@@ -4,9 +4,11 @@ using System.IO;
 using System.Windows.Input;
 using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
+using WPFApp1.Entidades;
 using WPFApp1.Enums;
 using WPFApp1.Interfaces;
 using WPFApp1.Mensajes;
+using WPFApp1.Repositorios;
 using WPFApp1.Servicios;
 
 namespace WPFApp1.ViewModels
@@ -27,7 +29,13 @@ namespace WPFApp1.ViewModels
         private readonly ProductoConmutador _productoServicio;
         private readonly OrquestadorProductos OrquestadorProductos;
         private readonly ServicioIndexacionProductos _servicioIndexacion;
+        private readonly IConmutadorEntidadGenerica<Categorias> servicioCategorias;
+        private readonly IConmutadorEntidadGenerica<Marcas> servicioMarcas;
+        private readonly IConmutadorEntidadGenerica<Ubicaciones> servicioUbicaciones;
         public ObservableCollection<ProductoBase> ColeccionProductos { get; set; }
+        public ObservableCollection<Categorias> ColeccionCategorias { get; set; }
+        public ObservableCollection<Marcas> ColeccionMarcas { get; set; }
+        public ObservableCollection<Ubicaciones> ColeccionUbicaciones { get; set; }
         public ObservableCollection<string> BusquedasRecientes{ get; set; }
         public bool _mostrarBotonRegresar;
         public bool MostrarBotonRegresar
@@ -140,6 +148,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private bool _BusquedaAvanzadaActiva;
+        public bool BusquedaAvanzadaActiva
+        {
+            get { return _BusquedaAvanzadaActiva; }
+            set
+            {
+                if (_BusquedaAvanzadaActiva != value)
+                {
+                    _BusquedaAvanzadaActiva = value;
+                    OnPropertyChanged(nameof(BusquedaAvanzadaActiva));
+                }
+            }
+        }
         private bool _procesando = true;
         public bool Procesando {
             get { return _procesando; }
@@ -152,12 +173,92 @@ namespace WPFApp1.ViewModels
                 }
             }        
         }
+
+        //Bindings de busqueda avanzada
+        private Categorias _categoriaBuscada;
+        public Categorias CategoriaBuscada
+        {
+            get { return _categoriaBuscada; }
+            set
+            {
+                if (_categoriaBuscada != value)
+                {
+                    _categoriaBuscada = value;
+                    OnPropertyChanged(nameof(CategoriaBuscada));
+                }
+            }
+        }
+        private Marcas _marcaBuscada;
+        public Marcas MarcaBuscada
+        {
+            get { return _marcaBuscada; }
+            set
+            {
+                if (_marcaBuscada != value)
+                {
+                    _marcaBuscada = value;
+                    OnPropertyChanged(nameof(MarcaBuscada));
+                }
+            }
+        }
+        private Ubicaciones _ubicacionBuscada;
+        public Ubicaciones UbicacionBuscada
+        {
+            get { return _ubicacionBuscada; }
+            set
+            {
+                if (_ubicacionBuscada != value)
+                {
+                    _ubicacionBuscada = value;
+                    OnPropertyChanged(nameof(UbicacionBuscada));
+                }
+            }
+        }
+        private bool? _toggleItemsExistentes;
+        public bool? ToggleItemsExistentes
+        {
+            get { return _toggleItemsExistentes; }
+            set
+            {
+                if (_toggleItemsExistentes != value)
+                {
+                    _toggleItemsExistentes = value;
+                    OnPropertyChanged(nameof(ToggleItemsExistentes));
+                }
+            }
+        }
+        private bool? _toggleItemsPrecioPublico;
+        public bool? ToggleItemsPrecioPublico
+        {
+            get { return _toggleItemsPrecioPublico; }
+            set
+            {
+                if (_toggleItemsPrecioPublico != value)
+                {
+                    _toggleItemsPrecioPublico = value;
+                    OnPropertyChanged(nameof(ToggleItemsPrecioPublico));
+                }
+            }
+        }
+        private bool? _toggleItemsVisibilidadWeb;
+        public bool? ToggleItemsVisibilidadWeb
+        {
+            get { return _toggleItemsVisibilidadWeb; }
+            set
+            {
+                if (_toggleItemsVisibilidadWeb != value)
+                {
+                    _toggleItemsVisibilidadWeb = value;
+                    OnPropertyChanged(nameof(ToggleItemsVisibilidadWeb));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand SeleccionarBusquedaPreviaCommand { get; }
         public ICommand ItemDoubleClickCommand { get; private set; }
         public ICommand AniadirProductoCommand { get; private set; }
         public ICommand AlternarFormatoVistaCommand { get; private set; }
-        public ICommand BuscarTituloCommand { get; private set; }
+        public ICommand EjecutarBusquedaCommand { get; private set; }
         public ICommand LimpiarBusquedaCommand { get; private set; }
         public ICommand EliminarItemCommand { get; private set; }
         public ICommand DuplicarItemCommand { get; }
@@ -167,13 +268,21 @@ namespace WPFApp1.ViewModels
         public ICommand AniadirItemCarritoCommand { get; }
         public ICommand AniadirItemLoteEdicionCommand { get; }
         public ICommand ElegirTodoLoteCommand { get; }
+        public ICommand ToggleBusquedaAvanzadaCommand { get; }
+        public ICommand ReiniciarParametrosBusquedaCommand { get; }
         private ServicioSFX _servicioSFX { get; set; }
-        public CatalogoViewModel(ProductoConmutador productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador)
+        public CatalogoViewModel(ProductoConmutador productoServicio, ServicioIndexacionProductos ServicioIndexacion, OrquestadorProductos _orquestador,
+            IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas, IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones)
         {
-            _servicioIndexacion = ServicioIndexacion;
             Procesando = true;
+
+            _servicioIndexacion = ServicioIndexacion;
+            servicioCategorias = _servicioCategorias;
+            servicioMarcas = _servicioMarcas;
+            servicioUbicaciones = _servicioUbicaciones;
             _productoServicio = productoServicio;
             OrquestadorProductos = _orquestador;
+
             _tituloVista = "Catálogo";
             _mostrarBotonRegresar = false;
             _mostrarVistaTabular = false;
@@ -181,22 +290,37 @@ namespace WPFApp1.ViewModels
             _botonCruzVisible = false;
             _historialVisible = false;
 
+            //Busqueda Avanzada bindings
+            BusquedaAvanzadaActiva = false;
+            CategoriaBuscada = null;
+            MarcaBuscada = null;
+            UbicacionBuscada = null;
+            ToggleItemsExistentes = true;
+            ToggleItemsPrecioPublico = null;
+            ToggleItemsVisibilidadWeb = null;
+
             BusquedasRecientes = new ObservableCollection<string>();
+            ColeccionCategorias = new ObservableCollection<Categorias>();
             ColeccionProductos = new ObservableCollection<ProductoBase>();
+            ColeccionMarcas = new ObservableCollection<Marcas>();
+            ColeccionUbicaciones = new ObservableCollection<Ubicaciones>();
+
             EliminarItemCommand = new RelayCommand<ProductoBase>(EliminarItem);
             LimpiarBusquedaCommand = new RelayCommand<object>(async (param) => await LimpiarBusquedaAsync());
             DuplicarItemCommand = new RelayCommand<ProductoBase>(DuplicarItem);
             ItemDoubleClickCommand = new RelayCommand<object>(async (param) => await EjecutarDobleClickItem(param));
             AniadirProductoCommand = new RelayCommand<object>(async (param) => await MostrarAniadirProducto());
             AlternarFormatoVistaCommand = new RelayCommand<object>(async (param) => await AlternarFormatoVista());
-            BuscarTituloCommand = new RelayCommand<object>(async (param) => await BuscarTitulo());
+            EjecutarBusquedaCommand = new RelayCommand<object>(async (param) => await EjecutarBusqueda());
             EliminarTextoBusquedaCommand = new RelayCommand<object>(EliminarTextoBusqueda);
             BusquedaRecibeFocoCommand = new RelayCommand<object>(BusquedaRecibeFoco);
             BusquedaPierdeFocoCommand = new RelayCommand<object>(BusquedaPierdeFoco);
+            ToggleBusquedaAvanzadaCommand = new RelayCommand<object>(ToggleBusquedaAvanzada);
             AniadirItemLoteEdicionCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemLoteEdicion(param));
             AniadirItemCarritoCommand = new RelayCommand<ProductoBase>(async (param) => await AniadirItemCarrito(param));
             ElegirTodoLoteCommand = new RelayCommand<ProductoBase>(async (param) => await ElegirTodoLote(param));
             SeleccionarBusquedaPreviaCommand = new RelayCommand<object>(async (param) => await SeleccionarBusquedaPrevia(param));
+            ReiniciarParametrosBusquedaCommand = new RelayCommand<object>(ReiniciarParametrosBusqueda);
 
             Messenger.Default.Subscribir<ProductoAniadidoMensaje>(OnNuevoProductoAniadido);
             Messenger.Default.Subscribir<ProductoModificadoMensaje>(OnProductoModificado);
@@ -204,6 +328,20 @@ namespace WPFApp1.ViewModels
 
             Procesando = false;
             _servicioSFX = new ServicioSFX();
+        }
+        public void ReiniciarParametrosBusqueda(object parameter)
+        {
+            BusquedaAvanzadaActiva = false;
+            CategoriaBuscada = null;
+            MarcaBuscada = null;
+            UbicacionBuscada = null;
+            ToggleItemsExistentes = true;
+            ToggleItemsPrecioPublico = null;
+            ToggleItemsVisibilidadWeb = null;
+        }
+        public void ToggleBusquedaAvanzada(object parameter)
+        {
+            BusquedaAvanzadaActiva = !BusquedaAvanzadaActiva;
         }
         public async Task ElegirTodoLote(object parameter)
         {
@@ -304,19 +442,18 @@ namespace WPFApp1.ViewModels
             if(EntradaElegida is string termino)
             {
                 TextoBusqueda = termino;
-                await BuscarTitulo();
+                BusquedaAvanzadaActiva = false;
+                await EjecutarBusqueda();
             }
         }
         public void BusquedaPierdeFoco(object parameter)
         {
             HistorialVisible = false;
-            //Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
         }
         public void BusquedaRecibeFoco(object parameter)
         {
-            if(BusquedasRecientes.Count > 0)
+            if(BusquedasRecientes.Count > 0 && !BusquedaAvanzadaActiva)
                 HistorialVisible = true;
-            //Messenger.Default.Publish(new AbrirVistaAniadirProductoMensaje());
         }
         public void EliminarTextoBusqueda(object parameter)
         {
@@ -327,6 +464,9 @@ namespace WPFApp1.ViewModels
             Procesando = true;
             await CargarEstadoInicialAsync();
             await CargarProductosAsync();
+            await CargarCategoriasAsync();
+            await CargarMarcasAsync();
+            await CargarUbicacionesAsync();
             Procesando = false;
         }
         public async Task CargarEstadoInicialAsync()
@@ -388,56 +528,65 @@ namespace WPFApp1.ViewModels
             }
             Messenger.Default.Publish(new CerrarVistaAniadirProductoMensaje());
         }
-        private async Task BuscarTitulo()
+        private async Task EjecutarBusqueda()
         {
             _servicioSFX.Paginacion();
-            if(TextoBusqueda != null)
+            this.Procesando = true;
+            if (BusquedaAvanzadaActiva)
             {
-                this.Procesando = true;
-                int lenCadena = TextoBusqueda.Length;
-                if (decimal.TryParse(TextoBusqueda.Substring(0, lenCadena - 1), out decimal eanBuscado) && (lenCadena == 10 || lenCadena == 13))
-                {
-                    await BuscarEAN(TextoBusqueda);
-                }
-                else
-                {
-                    await Task.Run(() => BuscarProductosTitulos(TextoBusqueda));
-                }
-
-                if (!string.IsNullOrEmpty(TextoBusqueda) && !BusquedasRecientes.Contains(TextoBusqueda))
-                {
-                    BusquedasRecientes.Insert(0, TextoBusqueda);
-                    if (BusquedasRecientes.Count > 7)
-                    {
-                        BusquedasRecientes.RemoveAt(BusquedasRecientes.Count -1);
-                    }
-                }
-
-                string cuerpoNotificacion = string.Empty;
-                string IconoAUtilizar = string.Empty;
-                if (ColeccionProductos.Count < 1)
-                {
-                    _servicioSFX.Suspenso();
-                    cuerpoNotificacion = "No se hallaron resultados para la busqueda";
-                    IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
-                    TituloVista = "Sin coincidencias...";
-                }
-                else
-                {
-                    _servicioSFX.Confirmar();
-                    string verbo = ColeccionProductos.Count > 1 ? "hallaron" : "hallo";
-                    string palabra = ColeccionProductos.Count > 1 ? "coincidencias" : "coincidencia";
-                    cuerpoNotificacion = $"Se {verbo} {ColeccionProductos.Count} {palabra}!";
-                    IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
-                    TituloVista = "Coincidencias";
-                }
-                
-                MostrarBotonRegresar = true;
-                Notificacion _notificacion = new Notificacion { Mensaje = cuerpoNotificacion, Titulo = TituloVista, IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
-                Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
-                this.Procesando = false;
+                await RealizarBusquedaAvanzada();
+                BusquedaAvanzadaActiva = false;
             }
-            TextoBusqueda = string.Empty;
+            else
+            {
+                if (TextoBusqueda != null)
+                {
+                    int lenCadena = TextoBusqueda.Length;
+                    if (decimal.TryParse(TextoBusqueda.Substring(0, lenCadena - 1), out decimal eanBuscado) && (lenCadena == 10 || lenCadena == 13))
+                    {
+                        await BuscarEAN(TextoBusqueda);
+                    }
+                    else
+                    {
+                        await Task.Run(() => BuscarProductosTitulos(TextoBusqueda));
+                    }
+
+                    // Persistir busquedas recientes
+                    if (!string.IsNullOrEmpty(TextoBusqueda) && !BusquedasRecientes.Contains(TextoBusqueda))
+                    {
+                        BusquedasRecientes.Insert(0, TextoBusqueda);
+                        if (BusquedasRecientes.Count > 7)
+                        {
+                            BusquedasRecientes.RemoveAt(BusquedasRecientes.Count - 1);
+                        }
+                    }
+                    TextoBusqueda = string.Empty;
+                }
+            }
+
+            string cuerpoNotificacion = string.Empty;
+            string IconoAUtilizar = string.Empty;
+            if (ColeccionProductos.Count < 1)
+            {
+                _servicioSFX.Suspenso();
+                cuerpoNotificacion = "No se hallaron resultados para la busqueda";
+                IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
+                TituloVista = "Sin coincidencias...";
+            }
+            else
+            {
+                _servicioSFX.Confirmar();
+                string verbo = ColeccionProductos.Count > 1 ? "hallaron" : "hallo";
+                string palabra = ColeccionProductos.Count > 1 ? "coincidencias" : "coincidencia";
+                cuerpoNotificacion = $"Se {verbo} {ColeccionProductos.Count} {palabra}!";
+                IconoAUtilizar = Path.GetFullPath(IconoNotificacion.OK);
+                TituloVista = "Coincidencias";
+            }
+
+            MostrarBotonRegresar = true;
+            Notificacion _notificacion = new Notificacion { Mensaje = cuerpoNotificacion, Titulo = TituloVista, IconoRuta = IconoAUtilizar, Urgencia = MatrizEisenhower.C1 };
+            Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
+            this.Procesando = false;
         }
         private async Task BuscarEAN(string EanBuscado)
         {
@@ -462,6 +611,89 @@ namespace WPFApp1.ViewModels
                     ColeccionProductos.Add(item);
                 }
             });
+        }
+        private async Task RealizarBusquedaAvanzada()
+        {
+            List<Propiedad_Valor> parametrosBusqueda = new List<Propiedad_Valor>();
+
+            if (CategoriaBuscada != null)
+            {
+                Propiedad_Valor categoriaBuscar = new Propiedad_Valor
+                {
+                    PropiedadNombre = "Categoria",
+                    Valor = CategoriaBuscada.ID
+                };
+                parametrosBusqueda.Add(categoriaBuscar);
+            }
+
+            if (UbicacionBuscada != null)
+            {
+                Propiedad_Valor ubicacionBuscar = new Propiedad_Valor
+                {
+                    PropiedadNombre = "UbicacionID",
+                    Valor = UbicacionBuscada.ID
+                };
+                parametrosBusqueda.Add(ubicacionBuscar);
+            }
+
+            if (MarcaBuscada != null)
+            {
+                Propiedad_Valor marcaBuscar = new Propiedad_Valor
+                {
+                    PropiedadNombre = "MarcaID",
+                    Valor = MarcaBuscada.ID
+                };
+                parametrosBusqueda.Add(marcaBuscar);
+            }
+
+            if (ToggleItemsVisibilidadWeb != null)
+            {
+                Propiedad_Valor visWebBuscar = new Propiedad_Valor
+                {
+                    PropiedadNombre = "VisibilidadWeb",
+                    Valor = ToggleItemsVisibilidadWeb == true ? "1" : "0"
+                };
+                parametrosBusqueda.Add(visWebBuscar);
+            }
+
+            if (ToggleItemsExistentes != null)
+            {
+                Propiedad_Valor itemsExistentesBuscar = new Propiedad_Valor
+                {
+                    PropiedadNombre = "Haber",
+                    Valor = ToggleItemsExistentes == true ? "1" : "0"
+                };
+                parametrosBusqueda.Add(itemsExistentesBuscar);
+            }
+
+            if (ToggleItemsPrecioPublico != null)
+            {
+                Propiedad_Valor precioPublicoBuscar = new Propiedad_Valor
+                {
+                    PropiedadNombre = "PrecioPublico",
+                    Valor = ToggleItemsPrecioPublico == true ? "1" : "0"
+                };
+                parametrosBusqueda.Add(precioPublicoBuscar);
+            }
+
+            List<ProductoCatalogo> coincidencias = _productoServicio.RecuperarLotePorPropiedades(parametrosBusqueda);
+
+            ColeccionProductos.Clear();
+            foreach (var producto in coincidencias)
+            {
+                ProductoBase item = new ProductoBase
+                {
+                    Nombre = producto.Nombre,
+                    ID = producto.ID,
+                    Precio = producto.Precio,
+                    Categoria = producto.CategoriaNombre,
+                    RutaImagen = producto.RutaImagen,
+                    ProductoSKU = producto.ProductoSKU,
+                    FechaCreacion = producto.FechaCreacion,
+                    FechaModificacion = producto.FechaModificacion
+                };
+                ColeccionProductos.Add(item);
+            }
         }
         private async Task BuscarProductosTitulos(string Titulo)
         {
@@ -538,6 +770,51 @@ namespace WPFApp1.ViewModels
                     FechaModificacion = producto.FechaModificacion
                 };
                 ColeccionProductos.Add(_registro);
+            }
+        }
+        private async Task CargarCategoriasAsync()
+        {
+            await foreach(var categoria in servicioCategorias.RecuperarStreamAsync())
+            {
+                Categorias registro = new Categorias
+                {
+                    Nombre = categoria.Nombre,
+                    ID = categoria.ID,
+                    FechaCreacion = categoria.FechaCreacion,
+                    FechaModificacion = categoria.FechaModificacion,
+                    EsEliminado = categoria.EsEliminado
+                };
+                ColeccionCategorias.Add(registro);
+            }
+        }
+        private async Task CargarMarcasAsync()
+        {
+            await foreach (var marca in servicioMarcas.RecuperarStreamAsync())
+            {
+                Marcas registro = new Marcas
+                {
+                    Nombre = marca.Nombre,
+                    ID = marca.ID,
+                    FechaCreacion = marca.FechaCreacion,
+                    FechaModificacion = marca.FechaModificacion,
+                    EsEliminado = marca.EsEliminado
+                };
+                ColeccionMarcas.Add(registro);
+            }
+        }
+        private async Task CargarUbicacionesAsync()
+        {
+            await foreach (var ubicacion in servicioUbicaciones.RecuperarStreamAsync())
+            {
+                Ubicaciones registro = new Ubicaciones
+                {
+                    Nombre = ubicacion.Nombre,
+                    ID = ubicacion.ID,
+                    FechaCreacion = ubicacion.FechaCreacion,
+                    FechaModificacion = ubicacion.FechaModificacion,
+                    EsEliminado = ubicacion.EsEliminado
+                };
+                ColeccionUbicaciones.Add(registro);
             }
         }
         /// <summary>

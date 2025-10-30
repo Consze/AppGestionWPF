@@ -75,11 +75,11 @@
         </Grid.RowDefinitions>
 
         <!--Panel-->
-        <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,10">
+        <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" x:Name="Cabecera">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -102,24 +102,33 @@
                         </ContentControl.Content>
                     </ContentControl>
                 </Border>
-                
-                <Button x:Name="Retroceso" Margin="5,0,0,0" BorderThickness="0" Command="{Binding LimpiarBusquedaCommand}" Visibility="{Binding MostrarBotonRegresar, Converter={StaticResource BooleanToVisibility}}">
+
+                <Button x:Name="Retroceso" Margin="5,0,0,0" BorderThickness="0" Command="{Binding LimpiarBusquedaCommand}" Cursor="Hand"
+                        Visibility="{Binding MostrarBotonRegresar, Converter={StaticResource BooleanToVisibility}}">
                     <Button.Background>
                         <SolidColorBrush Color="Transparent"/>
                     </Button.Background>
                     <Image Width="25" Height="25" Source="/iconos/retroceso1.png" Style="{StaticResource ImagenHover}"/>
                 </Button>
             </StackPanel>
-            
-            <StackPanel Orientation="Horizontal" Grid.Column="2">
+
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="1" x:Name="PanelBusqueda" Grid.ColumnSpan="2">
+                <Button Style="{StaticResource BotonSinEstilo}" Margin="10,2,10,0" Cursor="Hand"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ToggleBusquedaAvanzadaCommand}">
+                    <Button.Background>
+                        <SolidColorBrush Color="Transparent"/>
+                    </Button.Background>
+                    <Image Width="24" Height="24" Source="/iconos/botonSuma1.png" Style="{StaticResource ImagenHover}"/>
+                </Button>
+                
                 <Border Background="White"
                     CornerRadius="10"
-                    Height="30"
+                    Height="30" x:Name="BackgroundBusqueda"
                     Width="250"
                     HorizontalAlignment="Left"
                     Margin="0,0,10,0">
                     <Border.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding BuscarTituloCommand}" />
+                        <KeyBinding Key="Enter" Command="{Binding EjecutarBusquedaCommand}"/>
                     </Border.InputBindings>
                     
                     <Grid Margin="2">
@@ -133,8 +142,8 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="Busqueda" Margin="10,3" BorderThickness="0" Command="{Binding BuscarTituloCommand}" 
-                            HorizontalAlignment="Left" Grid.Column="0">
+                        <Button x:Name="Busqueda" Margin="10,3" BorderThickness="0" Command="{Binding EjecutarBusquedaCommand}" 
+                            HorizontalAlignment="Left" Grid.Column="0" Cursor="Hand">
                             <Button.Background>
                                 <SolidColorBrush Color="Transparent"/>
                             </Button.Background>
@@ -196,7 +205,7 @@
                         </TextBox>
 
                         <Popup IsOpen="{Binding HistorialVisible}"
-                           PlacementTarget="{Binding ElementName=BusquedaTextbox}"
+                           PlacementTarget="{Binding ElementName=BackgroundBusqueda}"
                            Placement="Bottom"        
                            StaysOpen="True"
                            AllowsTransparency="True"
@@ -204,7 +213,7 @@
                            Panel.ZIndex="1000"
                            VerticalOffset="10" Cursor="">
                             <Border Background="White" BorderBrush="#CCC" BorderThickness="0.5" Padding="2"
-                                Width="{Binding ElementName=BusquedaTextbox, Path=ActualWidth}" >
+                                Width="{Binding ElementName=BackgroundBusqueda, Path=ActualWidth}" >
                                 <ListBox ItemsSource="{Binding BusquedasRecientes}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
@@ -234,8 +243,110 @@
                                 </ListBox>
                             </Border>
                         </Popup>
-                        
-                        
+                        <Popup IsOpen="{Binding BusquedaAvanzadaActiva}"
+                           PlacementTarget="{Binding ElementName=PanelBusqueda}"
+                           Placement="Bottom"     
+                           StaysOpen="True"
+                           AllowsTransparency="True"
+                           PopupAnimation="Fade"
+                           Panel.ZIndex="1000" Cursor="Hand"
+                           VerticalOffset="10">
+                            <Border Background="White" BorderBrush="Black" BorderThickness="0.5" Padding="15"
+                                    >
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10"
+                                        ShadowDepth="0.1"
+                                        Direction="0"
+                                        Opacity="0.1"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" Margin="10,0">
+
+                                        <TextBlock Text="Categoría" FontSize="20"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <ComboBox Style="{StaticResource CBOXValidable}"
+                                                DisplayMemberPath="Nombre" Cursor="Hand"
+                                                x:Name="Categorias" FontSize="20"
+                                                SelectedItem="{Binding CategoriaBuscada, Mode=TwoWay}"
+                                                ItemsSource="{Binding ColeccionCategorias}"
+                                                Margin="2">
+                                            </ComboBox>
+                                            <Button BorderThickness="0" Command="{Binding IngresarCategoriaCommand}" Margin="10,0,0,0" Grid.Column="1">
+                                                <Button.Background>
+                                                    <SolidColorBrush Color="Transparent"/>
+                                                </Button.Background>
+                                                <Image Width="14" Height="14" Source="/iconos/lapizEdicion.png"/>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <TextBlock Text="Exclusivas" FontSize="20" Margin="0,10,0,0"/>
+                                        <CheckBox IsChecked="{Binding ToggleItemsExistentes}" IsThreeState="True" Cursor="Hand" Margin="0,5,0,0">
+                                            <TextBlock FontWeight="Regular" FontSize="14">Items con existencias</TextBlock>
+                                        </CheckBox>
+                                        <CheckBox IsChecked="{Binding ToggleItemsPrecioPublico}" IsThreeState="True" Cursor="Hand" Margin="0,2,0,0">
+                                            <TextBlock FontWeight="Regular" FontSize="14">Items con Precio Publico</TextBlock>
+                                        </CheckBox>
+                                        <CheckBox IsChecked="{Binding ToggleItemsVisibilidadWeb}" IsThreeState="True" Cursor="Hand" Margin="0,2,0,0">
+                                            <TextBlock FontWeight="Regular" FontSize="14">Items que se muestran Online</TextBlock>
+                                        </CheckBox>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="0" Margin="50,0">
+                                        <TextBlock Text="Marca" FontSize="20"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <ComboBox Style="{StaticResource CBOXValidable}"
+                                                DisplayMemberPath="Nombre"
+                                                x:Name="Marcas" FontSize="20"
+                                                SelectedItem="{Binding MarcaBuscada, Mode=TwoWay}"
+                                                ItemsSource="{Binding ColeccionMarcas}"
+                                                Margin="2" Cursor="Hand">
+                                            </ComboBox>
+                                            <Button BorderThickness="0" Command="{Binding IngresarMarcaCommand}" Margin="10,0,0,0" Grid.Column="1">
+                                                <Button.Background>
+                                                    <SolidColorBrush Color="Transparent"/>
+                                                </Button.Background>
+                                                <Image Width="14" Height="14" Source="/iconos/lapizEdicion.png"/>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <TextBlock Text="Ubicacion" FontSize="20" Margin="0,10,0,0"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <ComboBox Style="{StaticResource CBOXValidable}"
+        DisplayMemberPath="Nombre" Cursor="Hand"
+        x:Name="UBicacion" FontSize="20"
+        SelectedItem="{Binding UbicacionBuscada, Mode=TwoWay}"
+        ItemsSource="{Binding ColeccionUbicaciones}"
+        Margin="2">
+                                            </ComboBox>
+                                            <Button BorderThickness="0" Command="{Binding IngresarUbicacionCommand}" Margin="10,0,0,0" Grid.Column="1">
+                                                <Button.Background>
+                                                    <SolidColorBrush Color="Transparent"/>
+                                                </Button.Background>
+                                                <Image Width="14" Height="14" Source="/iconos/lapizEdicion.png"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <Button Style="{StaticResource BotonSinEstilo}" Margin="10,5,10,0" Grid.Row="0" Grid.Column="2" Cursor="Hand"
+                                        HorizontalAlignment="Center" VerticalAlignment="Top" Command="{Binding ReiniciarParametrosBusquedaCommand}">
+                                        <Button.Background>
+                                            <SolidColorBrush Color="Transparent"/>
+                                        </Button.Background>
+                                        <TextBlock Text="Eliminar parametros" Foreground="Blue" FontSize="16"/>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </Popup>
+
                         <Button x:Name="BorrarTexto" Margin="10,5" BorderThickness="0" Command="{Binding EliminarTextoBusquedaCommand}" 
                             HorizontalAlignment="Left" Grid.Column="2" Visibility="{Binding BotonCruzVisible, Converter={StaticResource BooleanToVisibility}}">
                             <Button.Background>
@@ -247,7 +358,7 @@
                     </Grid>
                 </Border>
 
-                <Button Style="{StaticResource BotonSinEstilo}" Margin="10,2,10,0" 
+                <Button Style="{StaticResource BotonSinEstilo}" Margin="10,2,10,0" Cursor="Hand"
                 HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AlternarFormatoVistaCommand}">
                     <Path Style="{StaticResource CuadradoIcono}">
                         <Path.RenderTransform>
@@ -259,14 +370,14 @@
                     </Path>
                 </Button>
 
-                <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0" Command="{Binding AniadirProductoCommand}">
+                <Button x:Name="Aniadir" Margin="0,0,10,0" BorderThickness="0" Cursor="Hand" Command="{Binding AniadirProductoCommand}">
                     <Button.Background>
                         <SolidColorBrush Color="Transparent"/>
                     </Button.Background>
                     <Image Width="24" Height="24" Source="/iconos/aniadir-registro.png" Style="{StaticResource ImagenHover}"/>
                 </Button>
 
-                <Button x:Name="ElegirTodo" Margin="0,0,10,0" BorderThickness="0" Command="{Binding ElegirTodoLoteCommand}">
+                <Button x:Name="ElegirTodo" Margin="0,0,10,0" BorderThickness="0" Cursor="Hand" Command="{Binding ElegirTodoLoteCommand}">
                     <Button.Background>
                         <SolidColorBrush Color="Transparent"/>
                     </Button.Background>
@@ -276,7 +387,7 @@
         </Grid>
         
         <!--Vista tabular-->
-        <DataGrid x:Name="Tabla"  Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ColeccionProductos}"
+        <DataGrid x:Name="Tabla"  Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ColeccionProductos}" Cursor="Hand"
               Visibility="{Binding MostrarVistaTabular, Converter={StaticResource BooleanToVisibility}}" FontSize="18"
               FontFamily="Monserrat" AutoGenerateColumns="False" Background="Transparent" GridLinesVisibility="None" 
               BorderBrush="Transparent" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column">
