@@ -434,6 +434,10 @@ namespace WPFApp1.Servicios
             }
             return IDNuevaVersion;
         }
+        public void ImportarProductosDesdeFuente()
+        {
+
+        }
         public ProductoCatalogo RecuperarProductoPorID(string ID)
         {
             return productoServicio.RecuperarProductoPorID(ID);

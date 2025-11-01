@@ -359,7 +359,7 @@ namespace WPFApp1.ViewModels
                 // Sonido
                 if (Notificacion.NuevaNotificacion.IconoRuta == Path.GetFullPath(IconoNotificacion.OK))
                 {
-                    servicioSFX.Confirmar();
+                     servicioSFX.Confirmar();
                 }
                 else if(Notificacion.NuevaNotificacion.IconoRuta == Path.GetFullPath(IconoNotificacion.NOTIFICACION))
                 {

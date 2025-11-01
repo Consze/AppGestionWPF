@@ -145,7 +145,7 @@ namespace WPFApp1
 
             services.AddSingleton<PanelSecundarioCatalogoViewModel>();
             services.AddSingleton<PanelSecundarioEdicionLoteViewModel>();
-            services.AddTransient<MainWindowViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
             services.AddTransient<AniadirProductoViewModel>();
             services.AddTransient<ConfigurarSQLServerViewModel>();
             services.AddTransient<CatalogoViewModel>();
@@ -192,6 +192,8 @@ namespace WPFApp1
             _mainWindow.Closing += MainWindow_Closing;
             _mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
             _splashScreen.Close();
+            
+            _mainWindow.Show();
             _mainWindow.Activate();
         }
         private void ValidarIntegridadDirectorios()

@@ -5,13 +5,11 @@ namespace WPFApp1
 {
     public partial class MainWindow : Window
     {
-        public MainWindowViewModel ViewModel { get; set; }
         public bool PermitirCierrre { get; set; }
-        public MainWindow()
+        public MainWindow(MainWindowViewModel viewModel)
         {
             PermitirCierrre = false;
-            ViewModel = new MainWindowViewModel();
-            DataContext = ViewModel;
+            DataContext = viewModel;
             this.Closing += Window_Closing;
             InitializeComponent();
         }

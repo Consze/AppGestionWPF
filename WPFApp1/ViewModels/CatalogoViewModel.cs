@@ -501,7 +501,6 @@ namespace WPFApp1.ViewModels
                 {
                     ColeccionProductos.Remove(ProductoEliminar);
                     _productoServicio.EliminarProducto(ProductoEliminar.ProductoSKU, TipoEliminacion.Logica);
-                    _servicioSFX.Confirmar();
                     Notificacion _notificacion = new Notificacion { Mensaje = "Item Eliminado", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                     Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
                 } 
@@ -521,7 +520,6 @@ namespace WPFApp1.ViewModels
                     ProductoMensaje.ProductoSKU = OrquestadorProductos.CrearProducto(productoCompleto);
                     ProductoMensaje.Categoria = productoCompleto.CategoriaNombre;
                     Messenger.Default.Publish(new ProductoAniadidoMensaje { NuevoProducto = ProductoMensaje });
-                    _servicioSFX.Confirmar();
                     Notificacion _notificacion = new Notificacion { Mensaje = "Item Duplicado!", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
                     Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
                 }
@@ -548,7 +546,7 @@ namespace WPFApp1.ViewModels
                     }
                     else
                     {
-                        await Task.Run(() => BuscarProductosTitulos(TextoBusqueda));
+                        await BuscarProductosTitulos(TextoBusqueda);
                     }
 
                     // Persistir busquedas recientes
@@ -568,14 +566,12 @@ namespace WPFApp1.ViewModels
             string IconoAUtilizar = string.Empty;
             if (ColeccionProductos.Count < 1)
             {
-                _servicioSFX.Suspenso();
                 cuerpoNotificacion = "No se hallaron resultados para la busqueda";
                 IconoAUtilizar = Path.GetFullPath(IconoNotificacion.SUSPENSO1);
                 TituloVista = "Sin coincidencias...";
             }
             else
-            {
-                _servicioSFX.Confirmar();
+            {   
                 string verbo = ColeccionProductos.Count > 1 ? "hallaron" : "hallo";
                 string palabra = ColeccionProductos.Count > 1 ? "coincidencias" : "coincidencia";
                 cuerpoNotificacion = $"Se {verbo} {ColeccionProductos.Count} {palabra}!";
