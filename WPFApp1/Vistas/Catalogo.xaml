@@ -214,14 +214,14 @@
                            VerticalOffset="10" Cursor="">
                             <Border Background="White" BorderBrush="#CCC" BorderThickness="0.5" Padding="2"
                                 Width="{Binding ElementName=BackgroundBusqueda, Path=ActualWidth}" >
-                                <ListBox ItemsSource="{Binding BusquedasRecientes}">
+                                <ListBox ItemsSource="{Binding BusquedasRecientes}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Button Command="{Binding DataContext.SeleccionarBusquedaPreviaCommand,
                                                     RelativeSource={RelativeSource AncestorType=Popup}}"
                                                     CommandParameter="{Binding}"
                                                     Background="Transparent"
-                                                    BorderThickness="0"
+                                                    BorderThickness="0" Width="{Binding ElementName=BackgroundBusqueda, Path=ActualWidth}"
                                                     Padding="6,4"
                                                     Cursor="Hand"
                                                     HorizontalAlignment="Stretch"

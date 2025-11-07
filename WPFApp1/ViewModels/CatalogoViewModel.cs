@@ -558,7 +558,6 @@ namespace WPFApp1.ViewModels
                             BusquedasRecientes.RemoveAt(BusquedasRecientes.Count - 1);
                         }
                     }
-                    TextoBusqueda = string.Empty;
                 }
             }
 
