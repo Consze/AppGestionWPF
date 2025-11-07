@@ -585,12 +585,12 @@ namespace WPFApp1.ViewModels
         }
         private async Task BuscarEAN(string EanBuscado)
         {
-            List<ProductoCatalogo> registros = await Task.Run(() => OrquestadorProductos.BuscarProductoEAN(EanBuscado));
+            ResultadosBusquedaEAN registros = await Task.Run(() => OrquestadorProductos.BuscarProductoEAN(EanBuscado));
 
             App.Current.Dispatcher.Invoke(() =>
             {
                 ColeccionProductos.Clear();
-                foreach (var producto in registros)
+                foreach (var producto in registros.Productos)
                 {
                     ProductoBase item = new ProductoBase
                     {
@@ -604,6 +604,12 @@ namespace WPFApp1.ViewModels
                         FechaModificacion = producto.FechaModificacion
                     };
                     ColeccionProductos.Add(item);
+                }
+
+                if(registros.HayVersionesObsoletas)
+                {
+                    Notificacion _notificacion = new Notificacion { Mensaje = "Algunos resultados incluyen codigos de barra desactualizados", Titulo = TituloVista, IconoRuta = IconoNotificacion.NOTIFICACION, Urgencia = MatrizEisenhower.C1 };
+                    Messenger.Default.Publish(new NotificacionEmergente { NuevaNotificacion = _notificacion });
                 }
             });
         }

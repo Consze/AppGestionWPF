@@ -1,4 +1,5 @@
-﻿using WPFApp1.Conmutadores;
+﻿using System.Collections.Generic;
+using WPFApp1.Conmutadores;
 using WPFApp1.DTOS;
 using WPFApp1.Entidades;
 using WPFApp1.Enums;
@@ -74,25 +75,25 @@ namespace WPFApp1.Servicios
                 {"FechaCreacion",ServicioAsociado.Null}
             };
         }
-        public List<ProductoCatalogo> BuscarProductoEAN(string EanBuscado)
+        public ResultadosBusquedaEAN BuscarProductoEAN(string EanBuscado)
         {
             List<Versiones> versiones = versionesServicio.BuscarEan(EanBuscado);
+            List<string> listaProductosBuscados = versiones.Select(item => item.ProductoID).ToList();
 
-            List<string> listaProductosBuscados = new List<string>();
-            List<Versiones> versionesIncluyenProducto = new List<Versiones>();
-            List<string> VersionesBuscadas = new List<string>();
-            foreach (Versiones item in versiones)
+            List<Versiones> versionesIncluyenProducto = versionesServicio.RecuperarLotePorIDS("ProductoID", listaProductosBuscados);
+            List<string> VersionesBuscadas = versionesIncluyenProducto.Select(coincidencias => coincidencias.ID).ToList();
+
+            // Presentar resultados
+            ResultadosBusquedaEAN Resultados = new ResultadosBusquedaEAN
             {
-                listaProductosBuscados.Add(item.ProductoID);
-            }
+                Productos = productoServicio.RecuperarLotePorIDS("ProductoVersionID", VersionesBuscadas),
+                HayVersionesObsoletas = false
+            };
 
-            versionesIncluyenProducto = versionesServicio.RecuperarLotePorIDS("ProductoID", listaProductosBuscados);
-            foreach(Versiones coincidencias in versionesIncluyenProducto)
-            {
-                VersionesBuscadas.Add(coincidencias.ID);
-            }
-
-            return productoServicio.RecuperarLotePorIDS("ProductoVersionID", VersionesBuscadas);
+            List<Versiones> versionesIncluyenEAN = versiones.OrderBy(x => x.ID).ToList();
+            List<Versiones> versionesIncluyenProductoID = versionesIncluyenProducto.OrderBy(y => y.ID).ToList();
+            Resultados.HayVersionesObsoletas = !versionesIncluyenEAN.SequenceEqual(versionesIncluyenProductoID);
+            return Resultados;
         }
         public bool EliminarProducto (string ProductoID, TipoEliminacion TipoEliminacion)
         {
