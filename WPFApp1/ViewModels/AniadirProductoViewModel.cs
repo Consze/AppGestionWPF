@@ -23,12 +23,14 @@ namespace WPFApp1.ViewModels
     public class AniadirProductoViewModel : INotifyPropertyChanged
     {
         private readonly IConmutadorEntidadGenerica<Formatos> servicioFormatos;
+        private readonly IConmutadorEntidadGenerica<Condiciones> servicioCondiciones;
         private readonly IConmutadorEntidadGenerica<Marcas> servicioMarcas;
         private readonly IConmutadorEntidadGenerica<Categorias> servicioCategorias;
         private readonly IConmutadorEntidadGenerica<Ubicaciones> servicioUbicaciones;
         private readonly OrquestadorProductos OrquestadorProductos;
         public ObservableCollection<Formatos> Formatos { get; } = new();
         public ObservableCollection<Marcas> Marcas { get; } = new();
+        public ObservableCollection<Condiciones> Condiciones { get; } = new();
         public ObservableCollection<Categorias> Categorias { get; } = new();
         public ObservableCollection<Ubicaciones> Ubicaciones { get; } = new();
         public bool EsModoEdicion { get; set; }
@@ -162,6 +164,32 @@ namespace WPFApp1.ViewModels
                 {
                     _ToggleSeleccionUbicacion = value;
                     OnPropertyChanged(nameof(ToggleSeleccionUbicacion));
+                }
+            }
+        }
+        private bool _ToggleEdicionCondicion;
+        public bool ToggleEdicionCondicion
+        {
+            get { return _ToggleEdicionCondicion; }
+            set
+            {
+                if (_ToggleEdicionCondicion != value)
+                {
+                    _ToggleEdicionCondicion = value;
+                    OnPropertyChanged(nameof(ToggleEdicionCondicion));
+                }
+            }
+        }
+        private bool _ToggleSeleccionCondicion;
+        public bool ToggleSeleccionCondicion
+        {
+            get { return _ToggleSeleccionCondicion; }
+            set
+            {
+                if (_ToggleSeleccionCondicion != value)
+                {
+                    _ToggleSeleccionCondicion = value;
+                    OnPropertyChanged(nameof(ToggleSeleccionCondicion));
                 }
             }
         }
@@ -659,10 +687,11 @@ namespace WPFApp1.ViewModels
         public ICommand SeleccionRapidaMarcasCommand { get; }
         public ICommand SeleccionRapidaCategoriasCommand { get; }
         public ICommand SeleccionRapidaUbicacionesCommand { get; }
+        public ICommand SeleccionRapidaCondicionesCommand { get; }
 
         public AniadirProductoViewModel(OrquestadorProductos _orquestador, IConmutadorEntidadGenerica<Formatos> _servicioFormatos,
             IConmutadorEntidadGenerica<Marcas> _servicioMarcas, IConmutadorEntidadGenerica<Categorias> _servicioCategorias,
-            IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones)
+            IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones, IConmutadorEntidadGenerica<Condiciones> _servicioCondiciones)
         {
             //Imagen
             RutaImagenSeleccionada = string.Empty;
@@ -691,6 +720,8 @@ namespace WPFApp1.ViewModels
             _ToggleEdicionUbicacion = false;
             _ToggleSeleccionUbicacion = true;
             _ToggleColapsarSeccionEnvios = false;
+            _ToggleEdicionCondicion = false;
+            _ToggleSeleccionCondicion = true;
 
             _iconoEdicion = "/iconos/lapizEdicion.png";
             _iconoEdicionFormato = "/iconos/lapizEdicion.png";
@@ -698,6 +729,7 @@ namespace WPFApp1.ViewModels
             _iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
             _iconoToggleSeccionEnvios = "/iconos/abajo1.png";
             _iconoSeleccionRapida = "/iconos/lista1.png";
+            _iconoSeleccionCondicion = "";
 
             _leyendaBotonImagen = "Añadir imagen";
 
@@ -721,6 +753,7 @@ namespace WPFApp1.ViewModels
             servicioMarcas = _servicioMarcas;
             servicioCategorias = _servicioCategorias;
             servicioUbicaciones = _servicioUbicaciones;
+            servicioCondiciones = _servicioCondiciones;
 
             Conflicto = true;
             BotonHabilitado = false;
@@ -754,6 +787,13 @@ namespace WPFApp1.ViewModels
             { 
                 Formatos.Add(formato); 
             } 
+        }
+        private async Task CargarCondiciones()
+        {
+            await foreach (var condicion in servicioCondiciones.RecuperarStreamAsync())
+            {
+                Condiciones.Add(condicion);
+            }
         }
         private async Task CargarMarcas()
         {
