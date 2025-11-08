@@ -299,6 +299,15 @@ namespace WPFApp1.Repositorios
             UNIQUE (Nombre) ON CONFLICT IGNORE
         );
 
+        CREATE IF NOT EXISTS TABLE Productos_condiciones  (
+            ID VARCHAR(36) PRIMARY KEY,
+            Nombre VARCHAR(255) NOT NULL,
+            EsEliminado BOOLEAN NOT NULL DEFAULT 0,
+            FechaCreacion DATETIME,
+            FechaModificacion DATETIME,
+            UNIQUE (Nombre) ON CONFLICT IGNORE
+        );
+
         CREATE TABLE IF NOT EXISTS Productos_titulos (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             producto_id VARCHAR(36),
@@ -325,8 +334,10 @@ namespace WPFApp1.Repositorios
             EsEliminado BOOLEAN DEFAULT 0,
             formato_id VARCHAR(36),
             RutaRelativaImagen TEXT,
+            condicion_id VARCHAR(36),
             UNIQUE (producto_id, EAN, Marca_id, formato_id, RutaRelativaImagen) ON CONFLICT IGNORE,
             FOREIGN KEY(formato_id) REFERENCES Productos_formatos(ID),
+            FOREIGN KEY(condicion_id) REFERENCES Productos_condiciones(ID),
             FOREIGN KEY(producto_id) REFERENCES Productos(ID),
             FOREIGN KEY(Marca_id) REFERENCES Marcas(ID)
         );

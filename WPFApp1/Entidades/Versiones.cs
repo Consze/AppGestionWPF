@@ -41,6 +41,19 @@
                 }
             }
         }
+        private string _condicionID;
+        public string CondicionID
+        {
+            get => _condicionID;
+            set
+            {
+                if (_condicionID != value)
+                {
+                    _condicionID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private string _formatoID;
         public string FormatoID
         {

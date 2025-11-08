@@ -44,6 +44,9 @@ namespace WPFApp1
             services.AddTransient<RepoUbicacionesSQLite>();
             services.AddTransient<RepoUbicacionesSQLServer>();
 
+            services.AddTransient<RepoCondicionesSQLite>();
+            services.AddTransient<RepoCondicionesSQLServer>();
+
             services.AddTransient<RepoMarcasSQLite>();
             services.AddTransient<RepoMarcasSQLServer>();
 
@@ -74,6 +77,7 @@ namespace WPFApp1
 
             // Conmutadores
             services.AddTransient<IConmutadorEntidadGenerica<Formatos>, ConmutadorFormatos>();
+            services.AddTransient<IConmutadorEntidadGenerica<Condiciones>, ConmutadorCondiciones>();
             services.AddTransient<VersionesConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Marcas>, MarcasConmutador>();
             services.AddTransient<IConmutadorEntidadGenerica<Ubicaciones>, UbicacionesConmutador>();

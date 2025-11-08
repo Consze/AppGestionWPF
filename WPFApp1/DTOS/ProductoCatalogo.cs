@@ -183,9 +183,35 @@
                 }
             }
         }
+        private string _condicionID;
+        public string CondicionID
+        {
+            get => _condicionID;
+            set
+            {
+                if (_condicionID != value)
+                {
+                    _condicionID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         //Cadenas
+        private string _condicionNombre;
+        public string CondicionNombre
+        {
+            get => _condicionNombre;
+            set
+            {
+                if (_condicionNombre != value)
+                {
+                    _condicionNombre = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private string _ean;
         public string EAN
         {

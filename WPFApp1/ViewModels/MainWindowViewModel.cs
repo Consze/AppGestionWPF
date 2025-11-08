@@ -7,8 +7,6 @@ using WPFApp1.Mensajes;
 using WPFApp1.Vistas;
 using WPFApp1.Servicios;
 using System.IO;
-using System.Linq.Expressions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace WPFApp1.ViewModels
 {
