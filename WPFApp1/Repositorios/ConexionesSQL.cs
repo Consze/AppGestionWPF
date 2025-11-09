@@ -335,7 +335,7 @@ namespace WPFApp1.Repositorios
             formato_id VARCHAR(36),
             RutaRelativaImagen TEXT,
             condicion_id VARCHAR(36),
-            UNIQUE (producto_id, EAN, Marca_id, formato_id, RutaRelativaImagen) ON CONFLICT IGNORE,
+            UNIQUE (producto_id, EAN, Marca_id, formato_id, RutaRelativaImagen, condicion_id) ON CONFLICT IGNORE,
             FOREIGN KEY(formato_id) REFERENCES Productos_formatos(ID),
             FOREIGN KEY(condicion_id) REFERENCES Productos_condiciones(ID),
             FOREIGN KEY(producto_id) REFERENCES Productos(ID),

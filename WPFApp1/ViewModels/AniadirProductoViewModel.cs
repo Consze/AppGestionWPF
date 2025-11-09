@@ -323,6 +323,19 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _iconoEdicionCondicion;
+        public string iconoEdicionCondicion
+        {
+            get { return _iconoEdicionCondicion; }
+            set
+            {
+                if (_iconoEdicionCondicion != value)
+                {
+                    _iconoEdicionCondicion = value;
+                    OnPropertyChanged(nameof(iconoEdicionCondicion));
+                }
+            }
+        }
 
 
         //---- Propiedades de registro -----
@@ -448,6 +461,20 @@ namespace WPFApp1.ViewModels
                 {
                     _ubicacionNombre = value;
                     OnPropertyChanged(nameof(UbicacionNombre));
+                    ValidarBotonSubmit();
+                }
+            }
+        }
+        private string _condicionNombre;
+        public string CondicionNombre
+        {
+            get { return _condicionNombre; }
+            set
+            {
+                if (_condicionNombre != value)
+                {
+                    _condicionNombre = value;
+                    OnPropertyChanged(nameof(CondicionNombre));
                     ValidarBotonSubmit();
                 }
             }
@@ -657,6 +684,21 @@ namespace WPFApp1.ViewModels
                 }
             }
         }
+        private string _condicionID;
+        public string CondicionID
+        {
+            get { return _condicionID; }
+            set
+            {
+                if (_condicionID != value)
+                {
+                    Condiciones _registro = Condiciones.FirstOrDefault(c => c.ID == value);
+                    CondicionNombre = _registro.Nombre;
+                    _condicionID = value;
+                    OnPropertyChanged(nameof(CondicionID));
+                }
+            }
+        }
         private string _productoID;
         public string ProductoID
         {
@@ -682,6 +724,7 @@ namespace WPFApp1.ViewModels
         public ICommand ModificarFormatoCommand { get; }
         public ICommand ModificarCategoriaCommand { get; }
         public ICommand ModificarUbicacionCommand { get; }
+        public ICommand ModificarCondicionCommand { get; }
         public ICommand ColapsarSeccionEnviosCommand { get; }
         public ICommand SeleccionRapidaFormatosCommand { get; }
         public ICommand SeleccionRapidaMarcasCommand { get; }
@@ -729,7 +772,7 @@ namespace WPFApp1.ViewModels
             _iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
             _iconoToggleSeccionEnvios = "/iconos/abajo1.png";
             _iconoSeleccionRapida = "/iconos/lista1.png";
-            _iconoSeleccionCondicion = "";
+            _iconoEdicionCondicion = "/iconos/lapizEdicion.png";
 
             _leyendaBotonImagen = "Añadir imagen";
 
@@ -742,6 +785,7 @@ namespace WPFApp1.ViewModels
             ModificarFormatoCommand = new RelayCommand<object>(ModificarFormato);
             ModificarCategoriaCommand = new RelayCommand<object>(ModificarCategoria);
             ModificarUbicacionCommand = new RelayCommand<object>(ModificarUbicacion);
+            ModificarCondicionCommand = new RelayCommand<object>(ModificarCondicion);
             ColapsarSeccionEnviosCommand = new RelayCommand<object> (ToggleSeccionEnvios);
             SeleccionRapidaUbicacionesCommand = new RelayCommand<object>(SeleccionRapida);
 
@@ -823,6 +867,7 @@ namespace WPFApp1.ViewModels
             await CargarMarcas();
             await CargarCategorias();
             await CargarUbicaciones();
+            await CargarCondiciones();
         }
         public async Task ConfigurarEdicionDeProducto(ProductoCatalogo Producto)
         {
@@ -840,6 +885,7 @@ namespace WPFApp1.ViewModels
             EAN = Producto.EAN;
             CategoriaNombre = Producto.CategoriaNombre;
             MarcaNombre = Producto.MarcaNombre;
+            CondicionNombre = Producto.CondicionNombre;
 
             //Fecha
             FechaCreacionProducto = Producto.FechaCreacion;
@@ -852,6 +898,7 @@ namespace WPFApp1.ViewModels
             UbicacionID = Producto.UbicacionID;
             FormatoID = Producto.FormatoProductoID;
             ProductoID = Producto.ID;
+            CondicionID = Producto.CondicionID;
 
             //Booleanas
             VisibilidadWeb = Producto.VisibilidadWeb;
@@ -943,13 +990,15 @@ namespace WPFApp1.ViewModels
                 Categoria = CategoriaProductoID,
                 ProductoVersionID = ProductoVersionID,
                 MarcaID = MarcaProductoID,
+                CondicionID = CondicionID,
 
                 Nombre = NombreProducto,
-                RutaImagen = RutaImagenSeleccionada,
+                RutaImagen = string.IsNullOrWhiteSpace(RutaImagenSeleccionada) ? string.Empty : Path.GetFullPath(RutaImagenSeleccionada),
                 CategoriaNombre = CategoriaNombre,
                 UbicacionNombre = UbicacionNombre,
                 FormatoNombre = FormatoNombre,
                 MarcaNombre = MarcaNombre,
+                CondicionNombre = CondicionNombre,
                 EAN = EAN,
 
                 VisibilidadWeb = VisibilidadWeb,
@@ -972,7 +1021,7 @@ namespace WPFApp1.ViewModels
             {
                 ProductoModificado.FechaModificacion = DateTime.Now;
                 ProductoModificado.Categoria = ProductoModificado.CategoriaNombre;
-                ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(RutaImagenSeleccionada) ? string.Empty : Path.GetFullPath(RutaImagenSeleccionada);
+                //ProductoModificado.RutaImagen = string.IsNullOrWhiteSpace(RutaImagenSeleccionada) ? string.Empty : Path.GetFullPath(RutaImagenSeleccionada);
                 Messenger.Default.Publish(new ProductoModificadoMensaje { ProductoModificado = ProductoModificado });
                 CerrarVistaCommand.Execute(0);
                 Notificacion _notificacion = new Notificacion { Mensaje = "Item editado exitosamente", Titulo = "Operación Completada", IconoRuta = Path.GetFullPath(IconoNotificacion.OK), Urgencia = MatrizEisenhower.C1 };
@@ -1248,6 +1297,20 @@ namespace WPFApp1.ViewModels
             else
             {
                 iconoEdicionUbicacion = "/iconos/lapizEdicion.png";
+            }
+        }
+        public void ModificarCondicion(object parameter)
+        {
+            ToggleEdicionCondicion = !ToggleEdicionCondicion;
+            ToggleSeleccionCondicion = !ToggleSeleccionCondicion;
+
+            if (ToggleEdicionCondicion)
+            {
+                iconoEdicionCondicion = "/iconos/seleccion1.png";
+            }
+            else
+            {
+                iconoEdicionCondicion = "/iconos/lapizEdicion.png";
             }
         }
         public void ToggleSeccionEnvios(object parameter)

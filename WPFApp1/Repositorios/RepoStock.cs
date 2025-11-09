@@ -91,8 +91,7 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_condiciones AS cd ON v.condicion_id = cd.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
-            WHERE s.SKU_Producto = @IdBuscada
-                AND s.haber > 0;";
+            WHERE s.SKU_Producto = @IdBuscada";
 
             try
             {
@@ -221,7 +220,7 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_condiciones AS cd ON v.condicion_id = cd.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
-            WHERE {MapeoDTO[propiedadNombre]} IN ({parametros}) AND s.Haber > 0;";
+            WHERE {MapeoDTO[propiedadNombre]} IN ({parametros});";
 
             List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
             using (SqliteConnection conexion = _accesoDB.ObtenerConexionDB())
@@ -1025,8 +1024,7 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_condiciones AS cd ON v.condicion_id = cd.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
-            WHERE s.SKU_Producto = @IdBuscada
-                AND s.haber > 0;";
+            WHERE s.SKU_Producto = @IdBuscada;";
 
             try
             {
@@ -1155,7 +1153,7 @@ namespace WPFApp1.Repositorios
             INNER JOIN Productos_condiciones AS cd ON v.condicion_id = cd.id
             INNER JOIN Marcas AS m ON v.Marca_id = m.id
             INNER JOIN Ubicaciones_inventario AS u ON s.ubicacion_id = u.id
-            WHERE {MapeoDTO[propiedadNombre]} IN ({parametros}) AND s.Haber > 0;";
+            WHERE {MapeoDTO[propiedadNombre]} IN ({parametros});";
 
             List<ProductoCatalogo> listaRegistros = new List<ProductoCatalogo>();
             using (SqlConnection conexion = _accesoDB.ObtenerConexionDB())

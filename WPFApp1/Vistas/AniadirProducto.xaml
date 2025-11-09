@@ -243,7 +243,7 @@
                                 <Button.Background>
                                     <SolidColorBrush Color="Transparent"/>
                                 </Button.Background>
-                                <Image Width="12" Height="12" Source="{Binding iconoEdicionCondicion}"/>
+                                <Image Width="12" Height="12" Source="{Binding iconoSeleccionRapida}"/>
                             </Button>
 
                             <StackPanel Orientation="Horizontal" Grid.Row="2">

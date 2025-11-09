@@ -157,7 +157,8 @@ namespace WPFApp1.ViewModels
                 {"Precio", "Precio" },
                 {"EsEliminado", "Eliminacion" },
                 {"VisibilidadWeb","Se muestra Online" },
-                {"PrecioPublico","Precio Publico" }
+                {"PrecioPublico","Precio Publico" },
+                {"CondicionID", "Condicion" }
             };
         }
         public void ActualizarContenidoControl()
@@ -226,6 +227,7 @@ namespace WPFApp1.ViewModels
                 "FechaModificacion",
                 "CategoriaNombre",
                 "UbicacionNombre",
+                "CondicionNombre",
                 "MarcaNombre",
                 "EAN",
                 "RutaImagen",

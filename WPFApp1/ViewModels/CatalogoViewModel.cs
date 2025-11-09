@@ -719,6 +719,7 @@ namespace WPFApp1.ViewModels
             _servicioSFX.Shuffle();
             this.MostrarBotonRegresar = false;
             this.TituloVista = "Catálogo";
+            ReiniciarParametrosBusqueda(null);
         }
         public async Task AlternarFormatoVistaAsync()
         {

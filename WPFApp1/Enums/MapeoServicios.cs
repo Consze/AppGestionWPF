@@ -10,6 +10,7 @@
         Categorias,
         Indexacion,
         Arquetipo,
+        Condiciones,
         Null
     }
 }

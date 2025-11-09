@@ -16,6 +16,7 @@ namespace WPFApp1.Servicios
         private readonly IConmutadorEntidadGenerica<Formatos> formatoServicio;
         private readonly VersionesConmutador versionesServicio;
         private readonly IConmutadorEntidadGenerica<Arquetipos> arquetiposServicio;
+        private readonly IConmutadorEntidadGenerica<Condiciones> condicionesServicio;
         private readonly IConmutadorEntidadGenerica<Ubicaciones> ubicacionesServicio;
         private readonly IConmutadorEntidadGenerica<Categorias> categoriasServicio;
         private readonly IConmutadorEntidadGenerica<Marcas> marcasServicio;
@@ -25,7 +26,7 @@ namespace WPFApp1.Servicios
             VersionesConmutador _servicioVersiones, ServicioIndexacionProductos _servicioIndexacion, 
             IConmutadorEntidadGenerica<Arquetipos> _servicioArquetipo, IConmutadorEntidadGenerica<Ubicaciones> _servicioUbicaciones,
             IConmutadorEntidadGenerica<Categorias> _servicioCategorias, IConmutadorEntidadGenerica<Marcas> _servicioMarcas,
-            ServicioVentas _servicioVentas)
+            ServicioVentas _servicioVentas, IConmutadorEntidadGenerica<Condiciones> _condicionesServicio)
         {
             productoServicio = _servicioProductos;
             indexacionServicio = _servicioIndexacion;
@@ -36,6 +37,7 @@ namespace WPFApp1.Servicios
             categoriasServicio = _servicioCategorias;
             marcasServicio = _servicioMarcas;
             servicioVentas = _servicioVentas;
+            condicionesServicio = _condicionesServicio;
             MapeoPropiedades = new Dictionary<string, ServicioAsociado>(StringComparer.OrdinalIgnoreCase)
             {
                 // Propiedad de Clase , Servicio Asociado
@@ -43,11 +45,13 @@ namespace WPFApp1.Servicios
                 {"EAN", ServicioAsociado.Versiones },
                 {"MarcaID", ServicioAsociado.Versiones },
                 {"FormatoProductoID", ServicioAsociado.Versiones },
+                {"CondicionID", ServicioAsociado.Versiones },
                 
                 // Inserción de nueva entidad auxiliar
                 {"MarcaNombre", ServicioAsociado.Marcas },
                 {"CategoriaNombre", ServicioAsociado.Categorias },
                 {"UbicacionNombre", ServicioAsociado.Ubicaciones },
+                {"CondicionNombre", ServicioAsociado.Condiciones },
                 
                 {"FormatoNombre", ServicioAsociado.Formatos },
                 {"Alto", ServicioAsociado.Formatos},
@@ -156,6 +160,7 @@ namespace WPFApp1.Servicios
             bool ActualizarUbicacion = false;
             bool ActualizarFormato = false;
             bool ActualizarCategoria = false;
+            bool ActualizarCondicion = false;
 
             //1 - Bucle de relevamiento
             foreach (var propiedad in propiedadesEntidad)
@@ -190,12 +195,16 @@ namespace WPFApp1.Servicios
                             ActualizarCategoria = true;
                             break;
 
+                        case ServicioAsociado.Condiciones:
+                            ActualizarCondicion = true;
+                            break;
+
                     }
                 }
             }
 
             //2 - Llamada a servicios condicional
-            if(ActualizarMarca)
+            if(ActualizarMarca) // VERSION
             {
                 Marcas _marcas = new Marcas
                 {
@@ -203,9 +212,10 @@ namespace WPFApp1.Servicios
                 };
                 string nuevaMarcaID = marcasServicio.Insertar(_marcas);
                 productoModificado.MarcaID = nuevaMarcaID;
+                ActualizarVersion = true;
             }
 
-            if(ActualizarFormato)
+            if(ActualizarFormato) // VERSION
             {
                 Formatos _formato = new Formatos
                 {
@@ -217,9 +227,21 @@ namespace WPFApp1.Servicios
                 };
                 string nuevoFormatoID = formatoServicio.Insertar(_formato);
                 productoModificado.FormatoProductoID = nuevoFormatoID;
+                ActualizarVersion = true;
             }
 
-            if(ActualizarUbicacion)
+            if(ActualizarCondicion) // VERSION
+            {
+                Condiciones _condicion = new Condiciones
+                {
+                    Nombre = productoModificado.CondicionNombre
+                };
+                string nuevaCondicionID = condicionesServicio.Insertar(_condicion);
+                productoModificado.CondicionID = nuevaCondicionID;
+                ActualizarVersion = true;
+            }
+
+            if(ActualizarUbicacion) // STOCK
             {
                 Ubicaciones _ubicacion = new Ubicaciones
                 {
@@ -229,7 +251,7 @@ namespace WPFApp1.Servicios
                 productoModificado.UbicacionID = nuevaUbicacionID;
             }
 
-            if(ActualizarCategoria)
+            if(ActualizarCategoria) // ARQUETIPO
             {
                 Categorias _categoria = new Categorias
                 {
@@ -240,7 +262,7 @@ namespace WPFApp1.Servicios
                 ActualizarArquetipo = true;
             }
 
-            if(ActualizarArquetipo)
+            if(ActualizarArquetipo) // ARQUETIPO
             {
                 Arquetipos _registro = new Arquetipos
                 {
@@ -266,9 +288,7 @@ namespace WPFApp1.Servicios
 
             //3 - Llamada a conmutador para asentar cambios en Stock
             bool ActualizacionStock = productoServicio.ModificarProducto(productoModificado);
-
-
-            return ActualizacionStock || ActualizarVersion || ActualizarArquetipo || ActualizarUbicacion || ActualizarMarca;
+            return ActualizacionStock || ActualizarVersion || ActualizarArquetipo || ActualizarUbicacion || ActualizarMarca || ActualizarCondicion || ActualizarFormato;
         }
         public bool ModificarListaProductos(List<ProductoEditar_Propiedad_Valor> ListaModificar)
         {
@@ -420,13 +440,7 @@ namespace WPFApp1.Servicios
                 RutaRelativaImagen = productoModificado.RutaImagen,
                 FormatoID = productoModificado.FormatoProductoID,
                 MarcaID = productoModificado.MarcaID,
-
-                /**
-                EsEliminado = Falso por defecto en DB
-                FechaCreacion = DateTime.Now, Completado por conmutador
-                FechaModificacion = Vacio
-                ID = UUID Generada por conmutador
-                */
+                CondicionID = productoModificado.CondicionID
             };
 
             if (!object.Equals(versionActual, versionModificada))
